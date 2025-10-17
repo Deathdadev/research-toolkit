@@ -31,8 +31,6 @@ A comprehensive Python library for conducting research across multiple methodolo
 - Complete coverage for all symbols
 - Better cross-platform compatibility
 
-See [IMPROVEMENTS_SUMMARY.md](IMPROVEMENTS_SUMMARY.md) for full details.
-
 ---
 
 ## Overview
