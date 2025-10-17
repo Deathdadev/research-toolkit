@@ -1,0 +1,9 @@
+{
+  "study_date": "2025-10-17T22:21:02.636772",
+  "data_sources": [
+    "OpenWeatherMap Air Pollution API v2.5",
+    "Public demographic data (Wikipedia, City statistics)"
+  ],
+  "methodology": "Cross-sectional observational study",
+  "ethical_approval": "Not required - uses only public aggregate data"
+}

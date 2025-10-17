@@ -13,20 +13,22 @@ This demonstrates:
 
 Data Source: GitHub API (real, verifiable data)
 """
-
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-from scipy import stats
+# Standard library imports
 from datetime import datetime
+from typing import Any, Dict, List, Optional, Tuple
 import json
 import os
 
-# Import from research_toolkit library
-from research_toolkit.core import SafeOutput, ReportFormatter, StatisticalFormatter
-from research_toolkit.references import APA7ReferenceManager
+# Third-party imports
+from scipy import stats
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
 
+# Local imports (research_toolkit)
+from research_toolkit import ReportFormatter, SafeOutput, StatisticalFormatter, get_symbol
+from research_toolkit.references import APA7ReferenceManager
 
 class GitHubRepositoryObservation:
     """
@@ -36,12 +38,18 @@ class GitHubRepositoryObservation:
     Design: Cross-sectional descriptive
     """
     
-    def __init__(self):
+    def __init__(self) -> None:
+        """
+        Initialize observational study.
+        
+        Note:
+            Uses publicly available GitHub repository metadata.
+        """
         self.references = APA7ReferenceManager()
         
         # Add references
         self.github_ref = self.references.add_reference(
-            'api',
+            'website',
             author='GitHub',
             year='2024',
             title='GitHub REST API',
@@ -49,6 +57,9 @@ class GitHubRepositoryObservation:
             retrieved=datetime.now().strftime('%B %d, %Y')
         )
         
+        
+        self.formatter = ReportFormatter()
+        self.stat_formatter = StatisticalFormatter()
         self.metadata = {
             'research_type': 'Observational Study (Empirical - Descriptive)',
             'study_date': datetime.now().isoformat(),
@@ -86,25 +97,28 @@ class GitHubRepositoryObservation:
             'ethical_considerations': 'Uses only publicly available repository metadata; no personal data'
         }
         
-        self.data = None
+        self.data: Optional[pd.DataFrame] = None
     
-    def collect_observations(self):
+    def collect_observations(self) -> pd.DataFrame:
         """
         Collect observational data from GitHub repositories.
-        Uses simulated data based on typical patterns if API unavailable.
+        
+        Returns:
+            DataFrame containing repository observations
+            
+        Note:
+            Uses simulated data based on typical patterns if API unavailable.
         """
-        print("\n" + "="*70)
-        print("DATA COLLECTION")
-        print("="*70)
-        print(f"Data Source: {self.metadata['data_source']}")
-        print(f"Population: {self.metadata['population']}")
-        print(f"Sample: {self.metadata['sample']}")
-        print(f"Observation Date: {datetime.now().strftime('%Y-%m-%d')}")
+        self.formatter.print_section("DATA COLLECTION")
+        SafeOutput.safe_print(f"Data Source: {self.metadata['data_source']}")
+        SafeOutput.safe_print(f"Population: {self.metadata['population']}")
+        SafeOutput.safe_print(f"Sample: {self.metadata['sample']}")
+        SafeOutput.safe_print(f"Observation Date: {datetime.now().strftime('%Y-%m-%d')}")
         
         # Simulated data based on typical GitHub patterns
         # In production: Replace with actual GitHub API calls
-        print("\nNote: Using simulated data based on typical repository patterns")
-        print("For production: Replace with GitHub API calls")
+        SafeOutput.safe_print("\nNote: Using simulated data based on typical repository patterns")
+        SafeOutput.safe_print("For production: Replace with GitHub API calls")
         
         np.random.seed(42)
         n_repos = 50
@@ -149,13 +163,18 @@ class GitHubRepositoryObservation:
         
         self.data = pd.DataFrame(observations)
         
-        print(f"\nCollected observations for {len(self.data)} repositories")
-        print(f"Variables observed: {len(self.metadata['variables_observed'])}")
+        SafeOutput.safe_print(f"\nCollected observations for {len(self.data)} repositories")
+        SafeOutput.safe_print(f"Variables observed: {len(self.metadata['variables_observed'])}")
         
         return self.data
     
-    def save_raw_data(self, filename='04_observational_raw_data.csv'):
-        """Save raw observational data"""
+    def save_raw_data(self, filename: str = '04_observational_raw_data.csv') -> None:
+        """
+        Save raw observational data.
+        
+        Args:
+            filename: Output CSV filename
+        """
         if self.data is not None:
             self.data.to_csv(filename, index=False)
             
@@ -163,118 +182,108 @@ class GitHubRepositoryObservation:
             with open(metadata_file, 'w') as f:
                 json.dump(self.metadata, f, indent=2)
             
-            print(f"\n[OK] Raw observations saved to: {filename}")
-            print(f"[OK] Metadata saved to: {metadata_file}")
+            SafeOutput.safe_print(f"\n{get_symbol('checkmark')} Raw observations saved to: {filename}")
+            SafeOutput.safe_print(f"{get_symbol('checkmark')} Metadata saved to: {metadata_file}")
     
-    def data_quality_check(self):
-        """Check quality of observations"""
-        print("\n" + "="*70)
-        print("DATA QUALITY CHECK")
-        print("="*70)
+    def data_quality_check(self) -> None:
+        """Check quality of observations and report completeness."""
+        self.formatter.print_section("DATA QUALITY CHECK")
         
-        print(f"\nTotal observations: {len(self.data)}")
-        print(f"Complete cases: {len(self.data.dropna())} ({len(self.data.dropna())/len(self.data)*100:.1f}%)")
+        SafeOutput.safe_print(f"\nTotal observations: {len(self.data)}")
+        SafeOutput.safe_print(f"Complete cases: {len(self.data.dropna())} ({len(self.data.dropna())/len(self.data)*100:.1f}%)")
         
-        print(f"\nMissing data:")
+        SafeOutput.safe_print(f"\nMissing data:")
         missing = self.data.isnull().sum()
         if missing.sum() == 0:
-            print("  No missing data detected")
+            SafeOutput.safe_print("  No missing data detected")
         else:
-            print(missing[missing > 0])
+            SafeOutput.safe_print(missing[missing > 0])
         
-        print(f"\nVariable types:")
-        print(self.data.dtypes)
+        SafeOutput.safe_print(f"\nVariable types:")
+        SafeOutput.safe_print(self.data.dtypes)
     
-    def descriptive_statistics(self):
-        """Comprehensive descriptive analysis"""
-        print("\n" + "="*70)
-        print("DESCRIPTIVE STATISTICS")
-        print("="*70)
+    def descriptive_statistics(self) -> None:
+        """Comprehensive descriptive analysis of all variables."""
+        self.formatter.print_section("DESCRIPTIVE STATISTICS")
         
-        print("\n--- NUMERIC VARIABLES ---")
+        SafeOutput.safe_print("\n--- NUMERIC VARIABLES ---")
         numeric_vars = ['stars', 'forks', 'issues', 'size_kb', 'contributors']
         
         for var in numeric_vars:
-            print(f"\n{var.upper()}:")
-            print(f"  M = {self.data[var].mean():.1f}")
-            print(f"  SD = {self.data[var].std():.1f}")
-            print(f"  Median = {self.data[var].median():.1f}")
-            print(f"  Range = [{self.data[var].min():.0f}, {self.data[var].max():.0f}]")
-            print(f"  IQR = {self.data[var].quantile(0.75) - self.data[var].quantile(0.25):.1f}")
+            SafeOutput.safe_print(f"\n{var.upper()}:")
+            SafeOutput.safe_print(f"  M = {self.data[var].mean():.1f}")
+            SafeOutput.safe_print(f"  SD = {self.data[var].std():.1f}")
+            SafeOutput.safe_print(f"  Median = {self.data[var].median():.1f}")
+            SafeOutput.safe_print(f"  Range = [{self.data[var].min():.0f}, {self.data[var].max():.0f}]")
+            SafeOutput.safe_print(f"  IQR = {self.data[var].quantile(0.75) - self.data[var].quantile(0.25):.1f}")
             
             # Skewness
             skew = stats.skew(self.data[var])
-            print(f"  Skewness = {skew:.3f}", end="")
+            SafeOutput.safe_print(f"  Skewness = {skew:.3f}", end="")
             if abs(skew) < 0.5:
-                print(" (approximately symmetric)")
+                SafeOutput.safe_print(" (approximately symmetric)")
             elif skew > 0:
-                print(" (right-skewed)")
+                SafeOutput.safe_print(" (right-skewed)")
             else:
-                print(" (left-skewed)")
+                SafeOutput.safe_print(" (left-skewed)")
         
-        print("\n--- CATEGORICAL VARIABLES ---")
+        SafeOutput.safe_print("\n--- CATEGORICAL VARIABLES ---")
         
-        print("\nLICENSE DISTRIBUTION:")
+        SafeOutput.safe_print("\nLICENSE DISTRIBUTION:")
         license_counts = self.data['license'].value_counts()
         for license_type, count in license_counts.items():
             pct = count / len(self.data) * 100
-            print(f"  {license_type}: {count} ({pct:.1f}%)")
+            SafeOutput.safe_print(f"  {license_type}: {count} ({pct:.1f}%)")
         
-        print("\nDOCUMENTATION:")
+        SafeOutput.safe_print("\nDOCUMENTATION:")
         docs_yes = self.data['has_documentation'].sum()
         docs_no = len(self.data) - docs_yes
-        print(f"  Has documentation: {docs_yes} ({docs_yes/len(self.data)*100:.1f}%)")
-        print(f"  No documentation: {docs_no} ({docs_no/len(self.data)*100:.1f}%)")
+        SafeOutput.safe_print(f"  Has documentation: {docs_yes} ({docs_yes/len(self.data)*100:.1f}%)")
+        SafeOutput.safe_print(f"  No documentation: {docs_no} ({docs_no/len(self.data)*100:.1f}%)")
     
-    def identify_patterns(self):
-        """Identify patterns and relationships"""
-        print("\n" + "="*70)
-        print("PATTERN IDENTIFICATION")
-        print("="*70)
+    def identify_patterns(self) -> None:
+        """Identify patterns and relationships in observational data."""
+        self.formatter.print_section("PATTERN IDENTIFICATION")
         
         numeric_vars = ['stars', 'forks', 'issues', 'size_kb', 'contributors']
         
-        print("\nCORRELATION MATRIX:")
+        SafeOutput.safe_print("\nCORRELATION MATRIX:")
         corr_matrix = self.data[numeric_vars].corr()
-        print(corr_matrix.round(3))
+        SafeOutput.safe_print(corr_matrix.round(3))
         
-        print("\nSTRONG CORRELATIONS (|r| > 0.5):")
+        SafeOutput.safe_print("\nSTRONG CORRELATIONS (|r| > 0.5):")
         for i in range(len(numeric_vars)):
             for j in range(i+1, len(numeric_vars)):
                 r = corr_matrix.iloc[i, j]
                 if abs(r) > 0.5:
                     var1 = numeric_vars[i]
                     var2 = numeric_vars[j]
-                    print(f"  {var1} <-> {var2}: r = {r:.3f}")
+                    SafeOutput.safe_print(f"  {var1} <-> {var2}: r = {r:.3f}")
         
-        print("\nKEY OBSERVATIONS:")
-        print("  - Stars and forks are strongly correlated")
-        print("  - Contributors increase with repository popularity")
-        print("  - Repository size shows moderate variability")
+        SafeOutput.safe_print("\nKEY OBSERVATIONS:")
+        SafeOutput.safe_print("  - Stars and forks are strongly correlated")
+        SafeOutput.safe_print("  - Contributors increase with repository popularity")
+        SafeOutput.safe_print("  - Repository size shows moderate variability")
     
-    def analyze_distributions(self):
-        """Analyze distributions of key variables"""
-        print("\n" + "="*70)
-        print("DISTRIBUTION ANALYSIS")
-        print("="*70)
+    def analyze_distributions(self) -> None:
+        """Analyze distributions of key variables using normality tests."""
+        self.formatter.print_section("DISTRIBUTION ANALYSIS")
         
         # Test normality for numeric variables
         numeric_vars = ['stars', 'forks', 'issues', 'contributors']
         
-        print("\nNormality Tests (Shapiro-Wilk):")
+        SafeOutput.safe_print("\nNormality Tests (Shapiro-Wilk):")
         for var in numeric_vars:
             stat, p = stats.shapiro(self.data[var])
-            print(f"  {var}: W = {stat:.4f}, p = {p:.4f}", end="")
+            SafeOutput.safe_print(f"  {var}: W = {stat:.4f}, p = {p:.4f}", end="")
             if p > 0.05:
-                print(" (approximately normal)")
+                SafeOutput.safe_print(" (approximately normal)")
             else:
-                print(" (non-normal)")
+                SafeOutput.safe_print(" (non-normal)")
     
-    def visualize_observations(self):
-        """Create comprehensive visualizations"""
-        print("\n" + "="*70)
-        print("VISUALIZATIONS")
-        print("="*70)
+    def visualize_observations(self) -> None:
+        """Create comprehensive visualizations of observational data."""
+        self.formatter.print_section("VISUALIZATIONS")
         
         fig = plt.figure(figsize=(16, 12))
         gs = fig.add_gridspec(3, 3, hspace=0.3, wspace=0.3)
@@ -351,112 +360,104 @@ class GitHubRepositoryObservation:
         ax8.grid(True, alpha=0.3, axis='x')
         
         plt.savefig('04_observational_analysis.png', dpi=300, bbox_inches='tight')
-        print("\n[OK] Visualizations saved to: 04_observational_analysis.png")
+        SafeOutput.safe_print(f"\n{get_symbol('checkmark')} Visualizations saved to: 04_observational_analysis.png")
         plt.close()
     
-    def compare_documentation_groups(self):
-        """Compare repositories with and without documentation"""
-        print("\n" + "="*70)
-        print("DOCUMENTATION COMPARISON")
-        print("="*70)
+    def compare_documentation_groups(self) -> None:
+        """Compare repositories with and without documentation."""
+        self.formatter.print_section("DOCUMENTATION COMPARISON")
         
         with_docs = self.data[self.data['has_documentation'] == True]
         without_docs = self.data[self.data['has_documentation'] == False]
         
-        print(f"\nRepositories WITH documentation (n = {len(with_docs)}):")
-        print(f"  Mean stars: {with_docs['stars'].mean():.0f}")
-        print(f"  Mean contributors: {with_docs['contributors'].mean():.1f}")
+        SafeOutput.safe_print(f"\nRepositories WITH documentation (n = {len(with_docs)}):")
+        SafeOutput.safe_print(f"  Mean stars: {with_docs['stars'].mean():.0f}")
+        SafeOutput.safe_print(f"  Mean contributors: {with_docs['contributors'].mean():.1f}")
         
-        print(f"\nRepositories WITHOUT documentation (n = {len(without_docs)}):")
-        print(f"  Mean stars: {without_docs['stars'].mean():.0f}")
-        print(f"  Mean contributors: {without_docs['contributors'].mean():.1f}")
+        SafeOutput.safe_print(f"\nRepositories WITHOUT documentation (n = {len(without_docs)}):")
+        SafeOutput.safe_print(f"  Mean stars: {without_docs['stars'].mean():.0f}")
+        SafeOutput.safe_print(f"  Mean contributors: {without_docs['contributors'].mean():.1f}")
         
         if len(without_docs) > 0:
             t_stat, p_value = stats.ttest_ind(
                 with_docs['stars'], 
                 without_docs['stars']
             )
-            print(f"\nt-test comparing stars: t = {t_stat:.3f}, p = {p_value:.4f}")
+            SafeOutput.safe_print(f"\nt-test comparing stars: t = {t_stat:.3f}, p = {p_value:.4f}")
     
-    def generate_report(self):
-        """Generate APA-style observational report"""
-        print("\n" + "="*70)
-        print("RESEARCH REPORT")
-        print("="*70)
+    def generate_report(self) -> None:
+        """Generate APA-style observational report with interpretation."""
+        self.formatter.print_section("RESEARCH REPORT")
         
-        print(f"\nTitle: {self.metadata['title']}")
-        print(f"\nResearch Question: {self.metadata['research_question']}")
+        SafeOutput.safe_print(f"\nTitle: {self.metadata['title']}")
+        SafeOutput.safe_print(f"\nResearch Question: {self.metadata['research_question']}")
         
-        print("\n--- ABSTRACT ---")
-        print(f"\nThis observational study described characteristics of popular ")
-        print(f"Python repositories on GitHub ({self.github_ref}). ")
-        print(f"A sample of {len(self.data)} repositories was systematically observed. ")
-        print(f"Descriptive statistics, frequency distributions, and correlation ")
-        print(f"analyses revealed patterns in repository characteristics.")
+        SafeOutput.safe_print("\n--- ABSTRACT ---")
+        SafeOutput.safe_print(f"\nThis observational study described characteristics of popular ")
+        SafeOutput.safe_print(f"Python repositories on GitHub ({self.github_ref}). ")
+        SafeOutput.safe_print(f"A sample of {len(self.data)} repositories was systematically observed. ")
+        SafeOutput.safe_print(f"Descriptive statistics, frequency distributions, and correlation ")
+        SafeOutput.safe_print(f"analyses revealed patterns in repository characteristics.")
         
-        print("\n--- RESULTS ---")
-        print(f"\nDescriptive analysis of {len(self.data)} Python repositories ")
-        print(f"revealed the following characteristics:")
+        SafeOutput.safe_print("\n--- RESULTS ---")
+        SafeOutput.safe_print(f"\nDescriptive analysis of {len(self.data)} Python repositories ")
+        SafeOutput.safe_print(f"revealed the following characteristics:")
         
-        print(f"\nPopularity metrics showed that repositories had an average of ")
-        print(f"{self.data['stars'].mean():.0f} stars (SD = {self.data['stars'].std():.0f}, ")
-        print(f"Median = {self.data['stars'].median():.0f}) and ")
-        print(f"{self.data['forks'].mean():.0f} forks (SD = {self.data['forks'].std():.0f}).")
+        SafeOutput.safe_print(f"\nPopularity metrics showed that repositories had an average of ")
+        SafeOutput.safe_print(f"{self.data['stars'].mean():.0f} stars (SD = {self.data['stars'].std():.0f}, ")
+        SafeOutput.safe_print(f"Median = {self.data['stars'].median():.0f}) and ")
+        SafeOutput.safe_print(f"{self.data['forks'].mean():.0f} forks (SD = {self.data['forks'].std():.0f}).")
         
-        print(f"\nContributor analysis indicated a mean of ")
-        print(f"{self.data['contributors'].mean():.1f} contributors per repository ")
-        print(f"(SD = {self.data['contributors'].std():.1f}, ")
-        print(f"Range = [{self.data['contributors'].min():.0f}, {self.data['contributors'].max():.0f}]).")
+        SafeOutput.safe_print(f"\nContributor analysis indicated a mean of ")
+        SafeOutput.safe_print(f"{self.data['contributors'].mean():.1f} contributors per repository ")
+        SafeOutput.safe_print(f"(SD = {self.data['contributors'].std():.1f}, ")
+        SafeOutput.safe_print(f"Range = [{self.data['contributors'].min():.0f}, {self.data['contributors'].max():.0f}]).")
         
-        print(f"\nLicense distribution showed that {(self.data['license']=='MIT').sum()} ")
-        print(f"repositories ({(self.data['license']=='MIT').sum()/len(self.data)*100:.1f}%) ")
-        print(f"used MIT license, making it the most common choice.")
+        SafeOutput.safe_print(f"\nLicense distribution showed that {(self.data['license']=='MIT').sum()} ")
+        SafeOutput.safe_print(f"repositories ({(self.data['license']=='MIT').sum()/len(self.data)*100:.1f}%) ")
+        SafeOutput.safe_print(f"used MIT license, making it the most common choice.")
         
-        print(f"\nDocumentation was present in {self.data['has_documentation'].sum()} ")
-        print(f"repositories ({self.data['has_documentation'].sum()/len(self.data)*100:.1f}%).")
+        SafeOutput.safe_print(f"\nDocumentation was present in {self.data['has_documentation'].sum()} ")
+        SafeOutput.safe_print(f"repositories ({self.data['has_documentation'].sum()/len(self.data)*100:.1f}%).")
         
         r_stars_forks, p = stats.pearsonr(self.data['stars'], self.data['forks'])
-        print(f"\nCorrelation analysis revealed a strong positive correlation ")
-        print(f"between stars and forks, r = {r_stars_forks:.3f}, p < .001, ")
-        print(f"suggesting that popular repositories are more frequently forked.")
+        SafeOutput.safe_print(f"\nCorrelation analysis revealed a strong positive correlation ")
+        SafeOutput.safe_print(f"between stars and forks, r = {r_stars_forks:.3f}, p < .001, ")
+        SafeOutput.safe_print(f"suggesting that popular repositories are more frequently forked.")
         
-        print("\n--- INTERPRETATION ---")
-        print("\n[OK] APPROPRIATE CLAIMS:")
-        print("  - 'Popular repositories typically have X characteristics'")
-        print("  - 'Most repositories use MIT license'")
-        print("  - 'Stars and forks are strongly correlated'")
-        print("  - 'Documentation is present in majority of popular repos'")
+        SafeOutput.safe_print("\n--- INTERPRETATION ---")
+        SafeOutput.safe_print(f"\n{get_symbol('checkmark')} APPROPRIATE CLAIMS:")
+        SafeOutput.safe_print("  - 'Popular repositories typically have X characteristics'")
+        SafeOutput.safe_print("  - 'Most repositories use MIT license'")
+        SafeOutput.safe_print("  - 'Stars and forks are strongly correlated'")
+        SafeOutput.safe_print("  - 'Documentation is present in majority of popular repos'")
         
-        print("\n[X] INAPPROPRIATE CLAIMS:")
-        print("  - 'Having documentation CAUSES more stars' (cannot infer causation)")
-        print("  - 'These characteristics apply to ALL repositories' (limited sample)")
-        print("  - Any causal statements from observational data")
+        SafeOutput.safe_print(f"\n{get_symbol('cross')} INAPPROPRIATE CLAIMS:")
+        SafeOutput.safe_print("  - 'Having documentation CAUSES more stars' (cannot infer causation)")
+        SafeOutput.safe_print("  - 'These characteristics apply to ALL repositories' (limited sample)")
+        SafeOutput.safe_print("  - Any causal statements from observational data")
         
-        print("\n[!] LIMITATIONS:")
+        SafeOutput.safe_print("\n[!] LIMITATIONS:")
         for limitation in self.metadata['limitations']:
-            print(f"  - {limitation}")
+            SafeOutput.safe_print(f"  - {limitation}")
         
-        print("\n--- CONCLUSION ---")
-        print("\nThis observational study documented characteristics of popular ")
-        print("Python repositories. Findings provide descriptive baseline for ")
-        print("understanding successful open-source projects. Future research ")
-        print("could examine causal factors through experimental or longitudinal designs.")
+        SafeOutput.safe_print("\n--- CONCLUSION ---")
+        SafeOutput.safe_print("\nThis observational study documented characteristics of popular ")
+        SafeOutput.safe_print("Python repositories. Findings provide descriptive baseline for ")
+        SafeOutput.safe_print("understanding successful open-source projects. Future research ")
+        SafeOutput.safe_print("could examine causal factors through experimental or longitudinal designs.")
     
-    def generate_references(self):
-        """Generate APA 7 reference list"""
-        print("\n" + "="*70)
-        print("REFERENCES")
-        print("="*70)
-        print()
-        print(self.references.generate_reference_list())
+    def generate_references(self) -> None:
+        """Generate APA 7 reference list."""
+        self.formatter.print_section("REFERENCES")
+        SafeOutput.safe_print("")
+        SafeOutput.safe_print(self.references.generate_reference_list())
     
-    def run_full_study(self):
-        """Execute complete observational study"""
-        print("\n" + "="*70)
-        print("OBSERVATIONAL STUDY: GITHUB REPOSITORIES")
-        print("="*70)
-        print(f"Study Date: {datetime.now().strftime('%Y-%m-%d')}")
-        print(f"Research Type: {self.metadata['research_type']}")
+    def run_full_study(self) -> None:
+        """Execute complete observational study workflow."""
+        self.formatter.print_section("OBSERVATIONAL STUDY: GITHUB REPOSITORIES")
+        SafeOutput.safe_print(f"Study Date: {datetime.now().strftime('%Y-%m-%d')}")
+        SafeOutput.safe_print(f"Research Type: {self.metadata['research_type']}")
         
         # Execute workflow
         self.collect_observations()
@@ -470,28 +471,25 @@ class GitHubRepositoryObservation:
         self.generate_report()
         self.generate_references()
         
-        print("\n" + "="*70)
-        print("STUDY COMPLETE")
-        print("="*70)
-        print("\nAll observations documented and can be independently verified.")
-        print("See 04_observational_raw_data.csv for raw observations")
-        print("See 04_observational_analysis.png for visualizations")
+        self.formatter.print_section("STUDY COMPLETE")
+        SafeOutput.safe_print("\nAll observations documented and can be independently verified.")
+        SafeOutput.safe_print("See 04_observational_raw_data.csv for raw observations")
+        SafeOutput.safe_print("See 04_observational_analysis.png for visualizations")
 
 
 if __name__ == "__main__":
-    print("\n" + "="*70)
-    print("EXAMPLE 04: OBSERVATIONAL STUDY")
-    print("="*70)
-    print("\nThis example demonstrates proper observational research:")
-    print("  - Systematic observation without manipulation")
-    print("  - Comprehensive descriptive statistics")
-    print("  - Pattern identification")
-    print("  - No causal claims from observations")
-    print("  - Proper interpretation of descriptive findings")
-    print("  - APA 7 style reporting")
-    print("="*70 + "\n")
+    formatter = ReportFormatter()
+    formatter.print_section("EXAMPLE 04: OBSERVATIONAL STUDY")
+    SafeOutput.safe_print("\nThis example demonstrates proper observational research:")
+    SafeOutput.safe_print("  - Systematic observation without manipulation")
+    SafeOutput.safe_print("  - Comprehensive descriptive statistics")
+    SafeOutput.safe_print("  - Pattern identification")
+    SafeOutput.safe_print("  - No causal claims from observations")
+    SafeOutput.safe_print("  - Proper interpretation of descriptive findings")
+    SafeOutput.safe_print("  - APA 7 style reporting")
+    SafeOutput.safe_print("="*70 + "\n")
     
     study = GitHubRepositoryObservation()
     study.run_full_study()
     
-    print("\n[OK] Example complete. This demonstrates verifiable observational research.")
+    SafeOutput.safe_print(f"\n{get_symbol('checkmark')} Example complete. This demonstrates verifiable observational research.")

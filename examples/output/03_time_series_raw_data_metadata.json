@@ -1,0 +1,30 @@
+{
+  "research_type": "Time Series Analysis (Empirical)",
+  "study_date": "2025-10-17T22:21:21.909026",
+  "title": "Temporal Trends in Urban Air Quality: A Time Series Analysis of PM2.5 Concentrations",
+  "research_question": "Has air quality (PM2.5) changed significantly over the past 2 years?",
+  "hypothesis": {
+    "H0": "No significant trend in PM2.5 levels over time",
+    "H1": "PM2.5 levels show a significant trend (increase or decrease) over time"
+  },
+  "design": "Longitudinal time series analysis",
+  "temporal_unit": "Daily measurements",
+  "time_period": "2 years (730 days)",
+  "variable": "PM2.5 concentration (ug/m3)",
+  "location": "Major urban center",
+  "data_source": "OpenWeather Air Pollution API (ref1)",
+  "statistical_methods": [
+    "Trend analysis (linear regression on time)",
+    "Seasonality decomposition",
+    "Augmented Dickey-Fuller test (stationarity)",
+    "Autocorrelation analysis",
+    "ARIMA forecasting"
+  ],
+  "limitations": [
+    "Cannot establish causation from temporal patterns",
+    "Past patterns may not continue (non-stationarity)",
+    "External events not accounted for",
+    "Single city (limited generalizability)",
+    "Measurement quality depends on sensor network"
+  ]
+}

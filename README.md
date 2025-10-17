@@ -6,6 +6,35 @@ A comprehensive Python library for conducting research across multiple methodolo
 
 ---
 
+## 🎉 What's New in v2.0
+
+### Massive Expansion: 122 Scientific Symbols (up from 21!)
+- **Complete Greek alphabet**: α-ω, Α-Ω (48 symbols)
+- **Math operators**: ×, ÷, ∞, √, ∫, ∑, ∏, ≤, ≥, ≈, ∝, ∈, ∩, ∪, ∀, ∃ (32 symbols)
+- **Superscripts/subscripts**: ²³, ₂₃ (28 symbols)
+- **Chemical formulas**: H₂O, CO₂ (auto-formatting)
+
+### 5 New Statistical Formatters (14 total!)
+- `format_regression()` - R² with adjusted R² and F-test
+- `format_mann_whitney()` - Mann-Whitney U test
+- `format_wilcoxon()` - Wilcoxon signed-rank test
+- `format_kruskal_wallis()` - Kruskal-Wallis H test
+- `format_anova_oneway()` - One-way ANOVA
+
+### Generalized Unit System (No More Hardcoding!)
+- **Template-based units**: `"{mu}g/m{cubed}"` format
+- **SI prefixes**: yocto to yotta (all 20 prefixes)
+- **New functions**: `format_concentration()`, `format_percentage()`
+- **Chemical support**: Automatic subscript formatting
+
+### Enhanced ASCII Fallback (122 fallbacks!)
+- Complete coverage for all symbols
+- Better cross-platform compatibility
+
+See [IMPROVEMENTS_SUMMARY.md](IMPROVEMENTS_SUMMARY.md) for full details.
+
+---
+
 ## Overview
 
 The Research Toolkit provides everything needed to conduct rigorous research across empirical and non-empirical methodologies:
@@ -19,6 +48,104 @@ The Research Toolkit provides everything needed to conduct rigorous research acr
 
 ---
 
+## Key Features
+
+### 1. Core Utilities
+
+- **SafeOutput**: Encoding-safe console/file output (Unicode → ASCII fallback with 122 symbols)
+- **ScientificNotation**: 122 symbols including complete Greek alphabet, math operators, super/subscripts
+- **ReportFormatter**: Professional report generation with formatting helpers
+- **StatisticalFormatter**: 14 APA 7 statistical result formatters (5 new in v2.0!)
+
+### 2. Statistical Formatting (14 Formatters)
+
+Complete APA 7 compliant formatters:
+- `format_p_value()` - p-values (omits leading zero)
+- `format_ci()` - Confidence intervals
+- `format_mean_sd()` - Descriptive statistics
+- `format_correlation()` - Correlation results with df
+- `format_t_test()` - t-test results
+- `format_f_test()` - F-test results
+- `format_chi_square()` - Chi-square results
+- `format_effect_size()` - Effect sizes with interpretation
+- `format_regression()` - **NEW** Regression with R² and adjusted R²
+- `format_mann_whitney()` - **NEW** Mann-Whitney U test
+- `format_wilcoxon()` - **NEW** Wilcoxon signed-rank test
+- `format_kruskal_wallis()` - **NEW** Kruskal-Wallis H test
+- `format_anova_oneway()` - **NEW** One-way ANOVA
+
+### 3. APA 7 Reference Management
+
+- **10 reference types**: journal, book, chapter, website, report, conference, dataset, software, dissertation, government
+- **Advanced name parsing** (NEW in v2.0.0): Handles multiple author name formats
+- **Multiple citations**: Cite multiple sources together
+- **20+ authors**: Proper handling (first 19 ... last)
+- **BibTeX export**: Convert to BibTeX format
+- **Validation**: Check completeness and format
+
+#### Name Parsing Examples (v2.0.0)
+
+```python
+# Parse author names in any format
+parsed = APA7ReferenceManager.parse_author_name("Smith, John Michael")
+# Returns: {'last': 'Smith', 'first': 'John', 'middle': 'Michael',
+#           'initials': 'J. M.', 'formatted_citation': 'Smith',
+#           'formatted_reference': 'Smith, J. M.'}
+
+# Supported formats:
+manager.add_reference('journal',
+    author='Smith, J. M.',          # ✅ Last, Initials
+    author='Smith, John Michael',   # ✅ Last, First Middle
+    author='John Michael Smith',    # ✅ First Middle Last
+    author='Smith',                 # ✅ Last only
+    author='J. M. Smith',          # ✅ Initials Last
+    # All formats work and auto-convert to proper APA 7!
+    ...
+)
+```
+
+### 4. MCP Server (AI Integration)
+
+7 research tools for AI models:
+1. `select_research_type` - Choose methodology
+2. `format_apa7_reference` - Format references
+3. `generate_citation` - Create in-text citations
+4. `validate_reference` - Check APA 7 compliance
+5. `check_data_requirements` - Validate data sources
+6. `get_methodology_guidance` - Research guidance
+7. `validate_interpretation` - Check claim appropriateness
+
+**Educational AI Prompts (NEW!)**
+
+The MCP server includes **4 educational prompts** that teach AI models proper research methodology:
+
+1. **research_methodology_primer** - Teaches core principles: verifiable, reproducible, falsifiable, transparent
+2. **apa_formatting_guide** - Teaches APA 7 formatting using MCP tools
+3. **claim_validation_guide** - Teaches matching claims to evidence by research design
+4. **data_source_guide** - Teaches data requirements (when real data is needed vs synthetic)
+
+**Educational Approach:** Instead of step-by-step instructions, these prompts teach principles and point AI models to:
+- `guidelines/AI_RESEARCH_GUIDELINES.md` - Complete methodology guide
+- `templates/research_template.py` - Structured workflow template
+- `examples/` directory - Working examples for each research type
+
+Each prompt explains decision-making, shows how to use MCP validation tools, and encourages studying examples.
+
+### 5. Research Examples
+
+9 complete working examples:
+- `00_synthetic_example` - What NOT to do
+- `01_correlational_study` - Air quality research
+- `02_comparative_study` - Group comparisons
+- `03_time_series_analysis` - Temporal trends
+- `04_observational_study` - GitHub repositories
+- `05_meta_analysis` - Study synthesis
+- `06_simulation_study` - SIR epidemic model
+- `07_methodological_study` - Power analysis
+- `08_theoretical_model` - Information diffusion theory
+
+---
+
 ## Installation
 
 ```bash
@@ -26,6 +153,7 @@ uv pip install -e .
 ```
 
 ---
+
 
 ## Quick Start
 
@@ -100,83 +228,6 @@ result = server.call_tool("format_apa7_reference", {
 
 ---
 
-## Key Features
-
-### 1. Core Utilities
-
-- **SafeOutput**: Encoding-safe console/file output (Unicode → ASCII fallback)
-- **ScientificNotation**: Greek symbols (α, β, μ) with ASCII fallback
-- **ReportFormatter**: Professional report generation
-- **StatisticalFormatter**: APA 7 statistical result formatting
-
-### 2. Statistical Formatting
-
-Complete APA 7 compliant formatters:
-- `format_p_value()` - p-values (omits leading zero)
-- `format_ci()` - Confidence intervals
-- `format_mean_sd()` - Descriptive statistics
-- `format_correlation()` - Correlation results with df
-- `format_t_test()` - t-test results
-- `format_f_test()` - F-test results
-- `format_chi_square()` - Chi-square results
-- `format_effect_size()` - Effect sizes with interpretation
-
-### 3. APA 7 Reference Management
-
-- **10 reference types**: journal, book, chapter, website, report, conference, dataset, software, dissertation, government
-- **Advanced name parsing** (NEW in v2.0.0): Handles multiple author name formats
-- **Multiple citations**: Cite multiple sources together
-- **20+ authors**: Proper handling (first 19 ... last)
-- **BibTeX export**: Convert to BibTeX format
-- **Validation**: Check completeness and format
-
-#### Name Parsing Examples (v2.0.0)
-
-```python
-# Parse author names in any format
-parsed = APA7ReferenceManager.parse_author_name("Smith, John Michael")
-# Returns: {'last': 'Smith', 'first': 'John', 'middle': 'Michael', 
-#           'initials': 'J. M.', 'formatted_citation': 'Smith',
-#           'formatted_reference': 'Smith, J. M.'}
-
-# Supported formats:
-manager.add_reference('journal',
-    author='Smith, J. M.',          # ✅ Last, Initials
-    author='Smith, John Michael',   # ✅ Last, First Middle
-    author='John Michael Smith',    # ✅ First Middle Last
-    author='Smith',                 # ✅ Last only
-    author='J. M. Smith',          # ✅ Initials Last
-    # All formats work and auto-convert to proper APA 7!
-    ...
-)
-```
-
-### 4. MCP Server (AI Integration)
-
-7 research tools for AI models:
-1. `select_research_type` - Choose methodology
-2. `format_apa7_reference` - Format references
-3. `generate_citation` - Create in-text citations
-4. `validate_reference` - Check APA 7 compliance
-5. `check_data_requirements` - Validate data sources
-6. `get_methodology_guidance` - Research guidance
-7. `validate_interpretation` - Check claim appropriateness
-
-### 5. Research Examples
-
-9 complete working examples:
-- `00_synthetic_example` - What NOT to do
-- `01_correlational_study` - Air quality research
-- `02_comparative_study` - Group comparisons
-- `03_time_series_analysis` - Temporal trends
-- `04_observational_study` - GitHub repositories
-- `05_meta_analysis` - Study synthesis
-- `06_simulation_study` - SIR epidemic model
-- `07_methodological_study` - Power analysis
-- `08_theoretical_model` - Information diffusion theory
-
----
-
 ## Project Structure
 
 ```
@@ -220,62 +271,33 @@ research-toolkit/
 ## Documentation
 
 - **Library Guide**: `docs/LIBRARY_GUIDE.md` - Complete API reference
-- **MCP Integration**: `docs/MCP_INTEGRATION_GUIDE.md` - AI model integration with educational prompts
+- **MCP Integration**: `docs/MCP_INTEGRATION_GUIDE.md` - AI model integration and educational prompts
 - **Research Guidelines**: `guidelines/` - Methodology guides for all research types
 - **Examples**: `examples/` - 9 working examples with full code
-
-### AI Model Prompts (NEW!)
-
-The MCP server now includes **4 educational prompts** that teach AI models proper research methodology:
-
-1. **research_methodology_primer** - Teaches core principles: verifiable, reproducible, falsifiable, transparent
-2. **apa_formatting_guide** - Teaches APA 7 formatting using MCP tools
-3. **claim_validation_guide** - Teaches matching claims to evidence by research design
-4. **data_source_guide** - Teaches data requirements (when real data is needed vs synthetic)
-
-**Educational Approach:** Instead of step-by-step instructions, these prompts teach principles and point AI models to:
-- `guidelines/AI_RESEARCH_GUIDELINES.md` - Complete methodology guide
-- `templates/research_template.py` - Structured workflow template
-- `examples/` directory - Working examples for each research type
-
-Each prompt explains decision-making, shows how to use MCP validation tools, and encourages studying examples. See `docs/MCP_INTEGRATION_GUIDE.md` for details.
-
----
-
-## Requirements
-
-- Python 3.8+ (I have pinned the python version to 3.10)
-- pandas
-- numpy
-- matplotlib
-- seaborn
-- scipy
-- requests
-- python-dotenv
-- scikit-learn
-- statsmodels (optional, for time series)
-
----
-
-## Console Command
-
-After installation:
-
-```bash
-research-toolkit-info
-```
-
-Shows package information, features, and quick start guide.
 
 ---
 
 ## Contributing
 
-This toolkit is designed for:
-- Researchers conducting studies
-- Students learning research methods
-- AI models performing research
-- Educators teaching methodology
+We welcome contributions from researchers, students, educators, and developers! This toolkit serves as **research infrastructure** - improvements should benefit the entire research community.
+
+### Quick Start
+
+1. **Read the Documentation**: [Library Guide](docs/LIBRARY_GUIDE.md) and [Research Guidelines](guidelines/AI_RESEARCH_GUIDELINES.md)
+2. **Explore Examples**: Study the 9 research examples in `examples/`
+3. **Set Up Development**: Clone, install in development mode, and create a feature branch
+4. **Make Changes**: Follow PEP 8 standards, add tests, and update documentation
+5. **Submit PR**: Ensure tests pass and provide clear description
+
+### Contribution Areas
+
+- **Research Methodologies**: New statistical methods and research workflows
+- **APA 7 Formatting**: New reference types and formatting improvements
+- **MCP Server Tools**: Enhanced AI research guidance tools
+- **Core Utilities**: Performance improvements and better error handling
+- **Documentation**: Examples, guides, and educational content
+
+For complete guidelines, see [`CONTRIBUTING.md`](CONTRIBUTING.md) including detailed standards, testing requirements, and review process.
 
 ---
 

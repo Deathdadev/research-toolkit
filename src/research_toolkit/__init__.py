@@ -25,8 +25,11 @@ from .core import (
     ScientificNotation,
     ReportFormatter,
     StatisticalFormatter,
+    get_symbol,
     format_temperature,
-    format_pm25
+    format_pm25,
+    format_concentration,
+    format_percentage
 )
 
 # Import references
@@ -44,8 +47,11 @@ __all__ = [
     'ScientificNotation',
     'ReportFormatter',
     'StatisticalFormatter',
+    'get_symbol',
     'format_temperature',
     'format_pm25',
+    'format_concentration',
+    'format_percentage',
     
     # References
     'APA7ReferenceManager',

@@ -13,17 +13,26 @@ This demonstrates:
 Data Source: OpenWeatherMap API (real, verifiable data)
 """
 
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-from scipy import stats
-from datetime import datetime
+# Standard library imports
 import json
 import os
+from datetime import datetime
+from typing import Any, Dict, List, Optional, Tuple
 
-# Import from research_toolkit library
-from research_toolkit.core import SafeOutput, ReportFormatter, StatisticalFormatter
+# Third-party imports
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+from scipy import stats
+
+# Local imports (research_toolkit)
+from research_toolkit import (
+    ReportFormatter,
+    SafeOutput,
+    StatisticalFormatter,
+    get_symbol
+)
 from research_toolkit.references import APA7ReferenceManager
 
 
@@ -35,20 +44,31 @@ class CoastalInlandComparison:
     Design: Non-experimental group comparison
     """
     
-    def __init__(self, api_key=None):
+    def __init__(self, api_key: Optional[str] = None) -> None:
+        """
+        Initialize comparative study.
+        
+        Args:
+            api_key: OpenWeatherMap API key (optional)
+            
+        Note:
+            Free API key available at https://openweathermap.org/api
+        """
         self.api_key = api_key or os.environ.get('OPENWEATHER_API_KEY')
         self.references = APA7ReferenceManager()
+        self.formatter = ReportFormatter()
+        self.stat_formatter = StatisticalFormatter()
         
         # Add API reference
         self.api_ref = self.references.add_reference(
-            'api',
+            'website',
             author='OpenWeather',
             year='2024',
             title='OpenWeather API',
             url='https://openweathermap.org/api'
         )
         
-        self.metadata = {
+        self.metadata: Dict[str, Any] = {
             'research_type': 'Comparative Study (Empirical)',
             'study_date': datetime.now().isoformat(),
             'title': 'Temperature Differences Between Coastal and Inland Cities: A Comparative Analysis',
@@ -79,7 +99,7 @@ class CoastalInlandComparison:
         }
         
         # Define cities
-        self.coastal_cities = [
+        self.coastal_cities: List[Dict[str, Any]] = [
             {'name': 'Miami', 'lat': 25.7617, 'lon': -80.1918, 'country': 'US'},
             {'name': 'Los Angeles', 'lat': 34.0522, 'lon': -118.2437, 'country': 'US'},
             {'name': 'Sydney', 'lat': -33.8688, 'lon': 151.2093, 'country': 'AU'},
@@ -92,7 +112,7 @@ class CoastalInlandComparison:
             {'name': 'Hong Kong', 'lat': 22.3193, 'lon': 114.1694, 'country': 'HK'}
         ]
         
-        self.inland_cities = [
+        self.inland_cities: List[Dict[str, Any]] = [
             {'name': 'Phoenix', 'lat': 33.4484, 'lon': -112.0740, 'country': 'US'},
             {'name': 'Denver', 'lat': 39.7392, 'lon': -104.9903, 'country': 'US'},
             {'name': 'Madrid', 'lat': 40.4168, 'lon': -3.7038, 'country': 'ES'},
@@ -105,34 +125,41 @@ class CoastalInlandComparison:
             {'name': 'Bangkok', 'lat': 13.7563, 'lon': 100.5018, 'country': 'TH'}
         ]
         
-        self.data = None
+        self.data: Optional[pd.DataFrame] = None
     
-    def collect_data(self):
+    def collect_data(self) -> pd.DataFrame:
         """
         Collect real temperature data from OpenWeatherMap API.
         Falls back to simulated realistic data if API unavailable.
+        
+        Returns:
+            DataFrame containing city temperature data
         """
-        print("\n" + "="*70)
-        print("DATA COLLECTION")
-        print("="*70)
-        print(f"Data Source: OpenWeatherMap API ({self.api_ref})")
-        print(f"Collection Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        self.formatter.print_section("DATA COLLECTION")
+        SafeOutput.safe_print(f"Data Source: OpenWeatherMap API ({self.api_ref})")
+        SafeOutput.safe_print(f"Collection Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         
         if not self.api_key:
-            print("\nWARNING: No API key provided.")
-            print("Using simulated data based on typical temperature patterns.")
-            print("For real data, get free API key from: https://openweathermap.org/api")
+            SafeOutput.safe_print("")
+            SafeOutput.safe_print("WARNING: No API key provided.")
+            SafeOutput.safe_print("Using simulated data based on typical temperature patterns.")
+            SafeOutput.safe_print("For real data, get free API key from: https://openweathermap.org/api")
             return self._generate_realistic_data()
         
         # If API key available, would collect real data here
         # For now, using realistic simulated data
         return self._generate_realistic_data()
     
-    def _generate_realistic_data(self):
-        """Generate realistic temperature data based on actual patterns"""
+    def _generate_realistic_data(self) -> pd.DataFrame:
+        """
+        Generate realistic temperature data based on actual patterns.
+        
+        Returns:
+            DataFrame with city data
+        """
         np.random.seed(42)
         
-        coastal_temps = []
+        coastal_temps: List[Dict[str, Any]] = []
         for city in self.coastal_cities:
             # Coastal cities: moderated by ocean (narrower range, cooler in tropics)
             base_temp = 15 + abs(city['lat']) * 0.3
@@ -146,7 +173,7 @@ class CoastalInlandComparison:
                 'temperature': round(temp, 2)
             })
         
-        inland_temps = []
+        inland_temps: List[Dict[str, Any]] = []
         for city in self.inland_cities:
             # Inland cities: more extreme temperatures
             base_temp = 18 + abs(city['lat']) * 0.4
@@ -162,14 +189,19 @@ class CoastalInlandComparison:
         
         self.data = pd.DataFrame(coastal_temps + inland_temps)
         
-        print(f"\nCollected data for {len(self.data)} cities:")
-        print(f"  Coastal cities: {len(coastal_temps)}")
-        print(f"  Inland cities: {len(inland_temps)}")
+        SafeOutput.safe_print(f"\nCollected data for {len(self.data)} cities:")
+        SafeOutput.safe_print(f"  Coastal cities: n = {len(coastal_temps)}")
+        SafeOutput.safe_print(f"  Inland cities: n = {len(inland_temps)}")
         
         return self.data
     
-    def save_raw_data(self, filename='02_comparative_raw_data.csv'):
-        """Save raw data for verification"""
+    def save_raw_data(self, filename: str = '02_comparative_raw_data.csv') -> None:
+        """
+        Save raw data for verification.
+        
+        Args:
+            filename: Output CSV filename
+        """
         if self.data is not None:
             self.data.to_csv(filename, index=False)
             
@@ -177,97 +209,102 @@ class CoastalInlandComparison:
             with open(metadata_file, 'w') as f:
                 json.dump(self.metadata, f, indent=2)
             
-            print(f"\n[OK] Raw data saved to: {filename}")
-            print(f"[OK] Metadata saved to: {metadata_file}")
-            print("  -> Anyone can verify these results using the saved data")
+            SafeOutput.safe_print(f"\n{get_symbol('checkmark')} Raw data saved to: {filename}")
+            SafeOutput.safe_print(f"{get_symbol('checkmark')} Metadata saved to: {metadata_file}")
+            SafeOutput.safe_print("  -> Anyone can verify these results using the saved data")
     
-    def descriptive_statistics(self):
-        """Calculate descriptive statistics for both groups"""
-        print("\n" + "="*70)
-        print("DESCRIPTIVE STATISTICS")
-        print("="*70)
+    def descriptive_statistics(self) -> None:
+        """Calculate and display descriptive statistics for both groups."""
+        self.formatter.print_section("DESCRIPTIVE STATISTICS")
         
         coastal = self.data[self.data['type'] == 'Coastal']['temperature']
         inland = self.data[self.data['type'] == 'Inland']['temperature']
         
-        print("\nCoastal Cities:")
-        print(f"  n = {len(coastal)}")
-        print(f"  M = {coastal.mean():.2f} C")
-        print(f"  SD = {coastal.std():.2f} C")
-        print(f"  Median = {coastal.median():.2f} C")
-        print(f"  Range = [{coastal.min():.2f}, {coastal.max():.2f}] C")
+        SafeOutput.safe_print("\nCoastal Cities:")
+        SafeOutput.safe_print(f"  n = {len(coastal)}")
+        SafeOutput.safe_print(f"  M = {coastal.mean():.2f} C")
+        SafeOutput.safe_print(f"  SD = {coastal.std():.2f} C")
+        SafeOutput.safe_print(f"  Median = {coastal.median():.2f} C")
+        SafeOutput.safe_print(f"  Range = [{coastal.min():.2f}, {coastal.max():.2f}] C")
         
-        print("\nInland Cities:")
-        print(f"  n = {len(inland)}")
-        print(f"  M = {inland.mean():.2f} C")
-        print(f"  SD = {inland.std():.2f} C")
-        print(f"  Median = {inland.median():.2f} C")
-        print(f"  Range = [{inland.min():.2f}, {inland.max():.2f}] C")
+        SafeOutput.safe_print("\nInland Cities:")
+        SafeOutput.safe_print(f"  n = {len(inland)}")
+        SafeOutput.safe_print(f"  M = {inland.mean():.2f} C")
+        SafeOutput.safe_print(f"  SD = {inland.std():.2f} C")
+        SafeOutput.safe_print(f"  Median = {inland.median():.2f} C")
+        SafeOutput.safe_print(f"  Range = [{inland.min():.2f}, {inland.max():.2f}] C")
         
-        print(f"\nMean Difference: {abs(coastal.mean() - inland.mean()):.2f} C")
+        SafeOutput.safe_print(f"\nMean Difference: {abs(coastal.mean() - inland.mean()):.2f} C")
     
-    def check_assumptions(self):
-        """Check statistical assumptions"""
-        print("\n" + "="*70)
-        print("ASSUMPTION CHECKING")
-        print("="*70)
+    def check_assumptions(self) -> Tuple[bool, bool]:
+        """
+        Check statistical assumptions for t-test.
+        
+        Returns:
+            Tuple of (normality_met, equal_variance_met)
+        """
+        self.formatter.print_section("ASSUMPTION CHECKING")
         
         coastal = self.data[self.data['type'] == 'Coastal']['temperature']
         inland = self.data[self.data['type'] == 'Inland']['temperature']
         
         # Normality test
-        print("\nShapiro-Wilk Test for Normality:")
+        self.formatter.print_subsection("Shapiro-Wilk Test for Normality")
         stat_coastal, p_coastal = stats.shapiro(coastal)
         stat_inland, p_inland = stats.shapiro(inland)
         
-        print(f"  Coastal: W = {stat_coastal:.4f}, p = {p_coastal:.4f}")
-        print(f"  Inland: W = {stat_inland:.4f}, p = {p_inland:.4f}")
+        SafeOutput.safe_print(f"  Coastal: W = {stat_coastal:.4f}, p = {p_coastal:.4f}")
+        SafeOutput.safe_print(f"  Inland: W = {stat_inland:.4f}, p = {p_inland:.4f}")
         
         normal = p_coastal > 0.05 and p_inland > 0.05
         
         if normal:
-            print("  -> Both groups approximately normal (parametric tests appropriate)")
+            SafeOutput.safe_print(f"  -> {get_symbol('checkmark')} Both groups approximately normal (parametric tests appropriate)")
         else:
-            print("  -> At least one group non-normal (consider non-parametric tests)")
+            SafeOutput.safe_print("  -> At least one group non-normal (consider non-parametric tests)")
         
         # Homogeneity of variance
         stat_levene, p_levene = stats.levene(coastal, inland)
-        print(f"\nLevene's Test for Homogeneity of Variance:")
-        print(f"  F = {stat_levene:.4f}, p = {p_levene:.4f}")
+        self.formatter.print_subsection("Levene's Test for Homogeneity of Variance")
+        SafeOutput.safe_print(f"  F = {stat_levene:.4f}, p = {p_levene:.4f}")
         
-        if p_levene > 0.05:
-            print("  -> Variances are approximately equal")
+        equal_var = p_levene > 0.05
+        if equal_var:
+            SafeOutput.safe_print(f"  -> {get_symbol('checkmark')} Variances are approximately equal")
         else:
-            print("  -> Variances are unequal (use Welch's t-test)")
+            SafeOutput.safe_print("  -> Variances are unequal (use Welch's t-test)")
         
-        return normal, p_levene > 0.05
+        return normal, equal_var
     
-    def hypothesis_testing(self):
-        """Conduct independent t-test and effect size calculation"""
-        print("\n" + "="*70)
-        print("HYPOTHESIS TESTING")
-        print("="*70)
+    def hypothesis_testing(self) -> Tuple[float, float]:
+        """
+        Conduct independent t-test and effect size calculation.
+        
+        Returns:
+            Tuple of (p_value, cohens_d)
+        """
+        self.formatter.print_section("HYPOTHESIS TESTING")
         
         coastal = self.data[self.data['type'] == 'Coastal']['temperature']
         inland = self.data[self.data['type'] == 'Inland']['temperature']
         
-        print("\nNull Hypothesis (H0):", self.metadata['hypothesis']['H0'])
-        print("Alternative Hypothesis (H1):", self.metadata['hypothesis']['H1'])
-        print("\nSignificance level: alpha = 0.05")
+        SafeOutput.safe_print(f"\nNull Hypothesis (H0): {self.metadata['hypothesis']['H0']}")
+        SafeOutput.safe_print(f"Alternative Hypothesis (H1): {self.metadata['hypothesis']['H1']}")
+        SafeOutput.safe_print(f"\nSignificance level: {get_symbol('alpha')} = 0.05")
         
         # Independent t-test
         t_stat, p_value = stats.ttest_ind(coastal, inland)
+        df = len(coastal) + len(inland) - 2
         
-        print(f"\nIndependent Samples t-test:")
-        print(f"  t({len(coastal) + len(inland) - 2}) = {t_stat:.3f}")
-        print(f"  p = {p_value:.4f} (two-tailed)")
+        self.formatter.print_subsection("Independent Samples t-test")
+        SafeOutput.safe_print(f"  {self.stat_formatter.format_t_test(t_stat, df, p_value)}")
         
         if p_value < 0.05:
-            print(f"  -> REJECT H0 (p < .05)")
-            print(f"  -> Groups differ significantly")
+            SafeOutput.safe_print(f"  -> {get_symbol('checkmark')} REJECT H0 (p < .05)")
+            SafeOutput.safe_print("  -> Groups differ significantly")
         else:
-            print(f"  -> FAIL TO REJECT H0 (p >= .05)")
-            print(f"  -> No significant difference detected")
+            SafeOutput.safe_print(f"  -> FAIL TO REJECT H0 (p {get_symbol('geq')} .05)")
+            SafeOutput.safe_print("  -> No significant difference detected")
         
         # Effect size (Cohen's d)
         pooled_std = np.sqrt(((len(coastal)-1)*coastal.std()**2 + 
@@ -275,31 +312,19 @@ class CoastalInlandComparison:
                              (len(coastal) + len(inland) - 2))
         cohens_d = (coastal.mean() - inland.mean()) / pooled_std
         
-        print(f"\nEffect Size (Cohen's d): {cohens_d:.3f}")
-        
-        if abs(cohens_d) < 0.2:
-            interpretation = "negligible"
-        elif abs(cohens_d) < 0.5:
-            interpretation = "small"
-        elif abs(cohens_d) < 0.8:
-            interpretation = "medium"
-        else:
-            interpretation = "large"
-        
-        print(f"  Interpretation: {interpretation} effect")
+        self.formatter.print_subsection("Effect Size")
+        SafeOutput.safe_print(f"  {self.stat_formatter.format_effect_size(cohens_d, 'cohens_d')}")
         
         # Non-parametric alternative
         u_stat, p_mann = stats.mannwhitneyu(coastal, inland, alternative='two-sided')
-        print(f"\nMann-Whitney U Test (non-parametric):")
-        print(f"  U = {u_stat:.1f}, p = {p_mann:.4f}")
+        self.formatter.print_subsection("Mann-Whitney U Test (non-parametric)")
+        SafeOutput.safe_print(f"  U = {u_stat:.1f}, {self.stat_formatter.format_p_value(p_mann)}")
         
         return p_value, cohens_d
     
-    def visualize_results(self):
-        """Create visualizations"""
-        print("\n" + "="*70)
-        print("VISUALIZATIONS")
-        print("="*70)
+    def visualize_results(self) -> None:
+        """Create and save visualizations."""
+        self.formatter.print_section("VISUALIZATIONS")
         
         fig, axes = plt.subplots(2, 2, figsize=(14, 10))
         fig.suptitle('Coastal vs Inland Cities: Temperature Comparison', 
@@ -351,68 +376,61 @@ class CoastalInlandComparison:
         
         plt.tight_layout()
         plt.savefig('02_comparative_results.png', dpi=300, bbox_inches='tight')
-        print("\n[OK] Visualizations saved to: 02_comparative_results.png")
+        SafeOutput.safe_print(f"\n{get_symbol('checkmark')} Visualizations saved to: 02_comparative_results.png")
         plt.close()
     
-    def generate_report(self):
-        """Generate APA-style research report"""
-        print("\n" + "="*70)
-        print("RESEARCH REPORT")
-        print("="*70)
+    def generate_report(self) -> None:
+        """Generate APA-style research report."""
+        self.formatter.print_section("RESEARCH REPORT")
         
         coastal = self.data[self.data['type'] == 'Coastal']['temperature']
         inland = self.data[self.data['type'] == 'Inland']['temperature']
         
-        print(f"\nTitle: {self.metadata['title']}")
-        print(f"\nResearch Question: {self.metadata['research_question']}")
+        SafeOutput.safe_print(f"\nTitle: {self.metadata['title']}")
+        SafeOutput.safe_print(f"\nResearch Question: {self.metadata['research_question']}")
         
-        print("\n--- RESULTS ---")
-        print(f"\nDescriptive statistics revealed that coastal cities (n = {len(coastal)}, ")
-        print(f"M = {coastal.mean():.2f}, SD = {coastal.std():.2f}) had different average temperatures ")
-        print(f"compared to inland cities (n = {len(inland)}, M = {inland.mean():.2f}, ")
-        print(f"SD = {inland.std():.2f}).")
+        self.formatter.print_subsection("Results")
+        SafeOutput.safe_print(f"\nDescriptive statistics revealed that coastal cities ({self.stat_formatter.format_mean_sd(coastal.mean(), coastal.std(), len(coastal))})")
+        SafeOutput.safe_print(f"had different average temperatures compared to inland cities")
+        SafeOutput.safe_print(f"({self.stat_formatter.format_mean_sd(inland.mean(), inland.std(), len(inland))}).")
         
         t_stat, p_value = stats.ttest_ind(coastal, inland)
+        df = len(coastal) + len(inland) - 2
         pooled_std = np.sqrt(((len(coastal)-1)*coastal.std()**2 + 
                               (len(inland)-1)*inland.std()**2) / 
                              (len(coastal) + len(inland) - 2))
         cohens_d = (coastal.mean() - inland.mean()) / pooled_std
         
-        print(f"\nAn independent samples t-test indicated that {'this difference was' if p_value < 0.05 else 'there was no'}")
-        print(f"statistically significant {'difference' if p_value < 0.05 else 'evidence of difference'},")
-        print(f"t({len(coastal) + len(inland) - 2}) = {t_stat:.2f}, p = {p_value:.3f}, d = {cohens_d:.2f}.")
+        SafeOutput.safe_print(f"\nAn independent samples t-test indicated that {'this difference was' if p_value < 0.05 else 'there was no'}")
+        SafeOutput.safe_print(f"statistically significant {'difference' if p_value < 0.05 else 'evidence of difference'},")
+        SafeOutput.safe_print(f"{self.stat_formatter.format_t_test(t_stat, df, p_value)}, {self.stat_formatter.format_effect_size(cohens_d, 'cohens_d')}.")
         
-        print("\n--- INTERPRETATION ---")
-        print("\n[OK] APPROPRIATE CLAIMS:")
-        print(f"  - Coastal and inland cities differ significantly in temperature")
-        print(f"  - The effect size is {abs(cohens_d):.2f} (Cohen's d)")
-        print(f"  - Coastal cities showed {'lower' if coastal.mean() < inland.mean() else 'higher'} ")
-        print(f"    temperatures on average")
+        self.formatter.print_subsection("Interpretation")
+        SafeOutput.safe_print(f"\n{get_symbol('checkmark')} APPROPRIATE CLAIMS:")
+        SafeOutput.safe_print("  - Coastal and inland cities differ significantly in temperature")
+        SafeOutput.safe_print(f"  - The effect size is {abs(cohens_d):.2f} (Cohen's d)")
+        SafeOutput.safe_print(f"  - Coastal cities showed {'lower' if coastal.mean() < inland.mean() else 'higher'} temperatures on average")
         
-        print("\n[X] INAPPROPRIATE CLAIMS:")
-        print("  - 'Being coastal CAUSES lower temperatures' (NO - not causal)")
-        print("  - Groups not randomly assigned")
-        print("  - Many confounding variables (latitude, altitude, season)")
+        SafeOutput.safe_print(f"\n{get_symbol('cross')} INAPPROPRIATE CLAIMS:")
+        SafeOutput.safe_print("  - 'Being coastal CAUSES lower temperatures' (NO - not causal)")
+        SafeOutput.safe_print("  - Groups not randomly assigned")
+        SafeOutput.safe_print("  - Many confounding variables (latitude, altitude, season)")
         
-        print("\n--- LIMITATIONS ---")
+        self.formatter.print_subsection("Limitations")
         for limitation in self.metadata['limitations']:
-            print(f"  - {limitation}")
+            SafeOutput.safe_print(f"  - {limitation}")
     
-    def generate_references(self):
-        """Generate APA 7 reference list"""
-        print("\n" + "="*70)
-        print("REFERENCES")
-        print("="*70)
-        print()
-        print(self.references.generate_reference_list())
+    def generate_references(self) -> None:
+        """Generate APA 7 reference list."""
+        self.formatter.print_section("REFERENCES")
+        SafeOutput.safe_print("")
+        SafeOutput.safe_print(self.references.generate_reference_list())
     
-    def run_full_study(self):
-        """Execute complete comparative study"""
-        print("\n" + "="*70)
-        print("COMPARATIVE STUDY: COASTAL VS INLAND CITIES")
-        print("="*70)
-        print(f"Study Date: {datetime.now().strftime('%Y-%m-%d')}")
-        print(f"Research Type: {self.metadata['research_type']}")
+    def run_full_study(self) -> None:
+        """Execute complete comparative study."""
+        self.formatter.print_section("COMPARATIVE STUDY: COASTAL VS INLAND CITIES")
+        SafeOutput.safe_print(f"Study Date: {datetime.now().strftime('%Y-%m-%d')}")
+        SafeOutput.safe_print(f"Research Type: {self.metadata['research_type']}")
         
         # Execute workflow
         self.collect_data()
@@ -424,27 +442,27 @@ class CoastalInlandComparison:
         self.generate_report()
         self.generate_references()
         
-        print("\n" + "="*70)
-        print("STUDY COMPLETE")
-        print("="*70)
-        print("\nAll data and results are saved and can be independently verified.")
-        print("See 02_comparative_raw_data.csv for raw data")
-        print("See 02_comparative_results.png for visualizations")
+        self.formatter.print_section("STUDY COMPLETE")
+        SafeOutput.safe_print("\nAll data and results are saved and can be independently verified.")
+        SafeOutput.safe_print("See 02_comparative_raw_data.csv for raw data")
+        SafeOutput.safe_print("See 02_comparative_results.png for visualizations")
 
 
 if __name__ == "__main__":
-    print("\n" + "="*70)
-    print("EXAMPLE 02: COMPARATIVE STUDY")
-    print("="*70)
-    print("\nThis example demonstrates proper comparative research:")
-    print("  - Comparing two pre-existing groups")
-    print("  - Using appropriate statistical tests")
-    print("  - Calculating effect sizes")
-    print("  - Proper interpretation without claiming causation")
-    print("  - APA 7 style reporting")
-    print("="*70 + "\n")
+    SafeOutput.safe_print("")
+    SafeOutput.safe_print("="*70)
+    SafeOutput.safe_print("EXAMPLE 02: COMPARATIVE STUDY")
+    SafeOutput.safe_print("="*70)
+    SafeOutput.safe_print("\nThis example demonstrates proper comparative research:")
+    SafeOutput.safe_print("  - Comparing two pre-existing groups")
+    SafeOutput.safe_print("  - Using appropriate statistical tests")
+    SafeOutput.safe_print("  - Calculating effect sizes")
+    SafeOutput.safe_print("  - Proper interpretation without claiming causation")
+    SafeOutput.safe_print("  - APA 7 style reporting")
+    SafeOutput.safe_print("="*70)
+    SafeOutput.safe_print("")
     
     study = CoastalInlandComparison()
     study.run_full_study()
     
-    print("\n[OK] Example complete. This demonstrates verifiable comparative research.")
+    SafeOutput.safe_print(f"\n{get_symbol('checkmark')} Example complete. This demonstrates verifiable comparative research.")

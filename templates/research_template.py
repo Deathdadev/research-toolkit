@@ -10,30 +10,53 @@ BEFORE STARTING:
 3. Ensure you have appropriate data sources
 4. Install research_toolkit: pip install -e .
 
-FEATURES PROVIDED BY research_toolkit:
+FEATURES PROVIDED BY research_toolkit v2.0:
 - APA 7 reference formatting (10 reference types)
-- Statistical formatters (9 APA-compliant methods)
-- SafeOutput (cross-platform Unicode/ASCII handling)
+- Statistical formatters (14 APA-compliant methods including regression, Mann-Whitney, Wilcoxon, Kruskal-Wallis)
+- SafeOutput (cross-platform Unicode/ASCII handling with 122 symbol fallbacks)
 - ReportFormatter (professional report generation)
+- Scientific notation with 122 symbols:
+  * Complete Greek alphabet (α-ω, Α-Ω)
+  * Math operators (×, ÷, ∞, √, ∫, ∑, ≤, ≥, ≈, ∝, ∈, ∩, ∪)
+  * Superscripts/subscripts (²³, ₂₃)
+  * Chemical formulas (H₂O, CO₂)
+- Helper functions for common units (temperature, concentrations, percentages)
+- Generalized unit system with SI prefixes
+
+This template follows CONTRIBUTING.md standards:
+- Type hints on all functions
+- Google-style docstrings
+- PEP 8 import organization
+- Encoding-safe output with SafeOutput
+- APA 7 statistical formatting
 """
 
-import pandas as pd
+# Standard library imports
+import json
+from datetime import datetime
+from typing import Optional, Dict, List, Any
+
+# Third-party imports
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy import stats
 from sklearn.linear_model import LinearRegression
-from datetime import datetime
-import json
 
-# Import research_toolkit components
+# Local imports (research_toolkit v2.0)
 from research_toolkit import (
-    ReportFormatter,
     SafeOutput,
+    ReportFormatter,
     StatisticalFormatter,
-    APA7ReferenceManager,
-    ScientificNotation
+    ScientificNotation,
+    get_symbol,
+    format_temperature,
+    format_pm25,
+    format_concentration,
+    format_percentage
 )
+from research_toolkit.references import APA7ReferenceManager
 
 
 class ResearchTemplate:
@@ -42,9 +65,15 @@ class ResearchTemplate:
     Adapt this for your specific research question.
     """
     
-    def __init__(self):
+    def __init__(self) -> None:
+        """
+        Initialize research template with toolkit components.
+        
+        Sets up formatters and reference manager for APA 7 compliant output.
+        """
         # Initialize research_toolkit components
         self.formatter = ReportFormatter()
+        self.stat_formatter = StatisticalFormatter()
         self.ref_manager = APA7ReferenceManager()
         
         # STEP 1: Define your research metadata
@@ -76,21 +105,25 @@ class ResearchTemplate:
             'ethical_considerations': 'DESCRIBE ETHICAL ASPECTS',
         }
         
-        self.data = None
+        self.data: Optional[pd.DataFrame] = None
     
-    def collect_data(self):
+    def collect_data(self) -> Optional[pd.DataFrame]:
         """
-        STEP 2: Collect or load your data
+        STEP 2: Collect or load your data.
         
-        FOR EMPIRICAL RESEARCH:
-        - Use real data from APIs, databases, or files
-        - Document source, access method, and timestamp
-        - Handle errors transparently
-        
-        FOR METHODOLOGICAL RESEARCH:
-        - Generate synthetic data for method testing
-        - Document generation process
-        - State clearly this is method testing
+        Returns:
+            DataFrame with collected data, or None if collection fails
+            
+        Note:
+            FOR EMPIRICAL RESEARCH:
+            - Use real data from APIs, databases, or files
+            - Document source, access method, and timestamp
+            - Handle errors transparently
+            
+            FOR METHODOLOGICAL RESEARCH:
+            - Generate synthetic data for method testing
+            - Document generation process
+            - State clearly this is method testing
         """
         self.formatter.print_section("DATA COLLECTION")
         
@@ -378,7 +411,7 @@ class ResearchTemplate:
 
 if __name__ == "__main__":
     formatter = ReportFormatter()
-    formatter.print_section("RESEARCH TEMPLATE")
+    formatter.print_section("RESEARCH TEMPLATE v2.0")
     SafeOutput.safe_print("\nThis is a template. To use it:")
     SafeOutput.safe_print("  1. Copy this file")
     SafeOutput.safe_print("  2. Fill in your research details")
@@ -386,14 +419,63 @@ if __name__ == "__main__":
     SafeOutput.safe_print("  4. Implement analyses specific to your question")
     SafeOutput.safe_print("  5. Follow the guidelines in: guidelines/AI_RESEARCH_GUIDELINES.md")
     SafeOutput.safe_print("  6. Use research_toolkit library components")
-    SafeOutput.safe_print("\nExample: Format statistics with StatisticalFormatter")
-    SafeOutput.safe_print("  r, p = stats.pearsonr(x, y)")
-    SafeOutput.safe_print("  print(StatisticalFormatter.format_correlation(r, p, n))")
-    SafeOutput.safe_print("\nExample: Add APA 7 references with APA7ReferenceManager")
-    SafeOutput.safe_print("  manager = APA7ReferenceManager()")
-    SafeOutput.safe_print("  key = manager.add_reference('journal', author='Smith, J.', ...)")
-    SafeOutput.safe_print("\nExample: Use SafeOutput for cross-platform printing")
-    SafeOutput.safe_print("  SafeOutput.safe_print('Temperature: 25 degrees C')")
+    
+    SafeOutput.safe_print("\n" + "="*70)
+    SafeOutput.safe_print("NEW in v2.0 - Enhanced Features:")
+    SafeOutput.safe_print("="*70)
+    
+    SafeOutput.safe_print("\n1. EXTENDED SYMBOL SYSTEM (122 symbols)")
+    SafeOutput.safe_print("   Example: Access any Greek letter or math symbol")
+    SafeOutput.safe_print(f"   - Greek: {get_symbol('alpha')}, {get_symbol('beta')}, {get_symbol('theta')}, {get_symbol('lambda')}")
+    SafeOutput.safe_print(f"   - Math: {get_symbol('infinity')}, {get_symbol('integral')}, {get_symbol('sum')}, {get_symbol('leq')}")
+    
+    SafeOutput.safe_print("\n2. CHEMICAL FORMULA FORMATTING")
+    SafeOutput.safe_print("   Example: Automatic subscript conversion")
+    water = ScientificNotation.format_chemical_formula("H2O")
+    co2 = ScientificNotation.format_chemical_formula("CO2")
+    SafeOutput.safe_print(f"   - Water: H2O → {water}")
+    SafeOutput.safe_print(f"   - Carbon dioxide: CO2 → {co2}")
+    
+    SafeOutput.safe_print("\n3. ADVANCED UNIT FORMATTING")
+    SafeOutput.safe_print("   Example: Flexible unit templates with SI prefixes")
+    temp = format_temperature(37.5, scale='C')
+    conc = format_concentration(150, '{mu}M')
+    pct = format_percentage(95.5)
+    SafeOutput.safe_print(f"   - Temperature: {temp}")
+    SafeOutput.safe_print(f"   - Concentration: {conc}")
+    SafeOutput.safe_print(f"   - Percentage: {pct}")
+    
+    SafeOutput.safe_print("\n4. ENHANCED STATISTICAL FORMATTERS")
+    SafeOutput.safe_print("   Example: Format complex statistical results")
+    SafeOutput.safe_print("   - P-values: " + StatisticalFormatter.format_p_value(0.0234))
+    SafeOutput.safe_print("   - Correlation: " + StatisticalFormatter.format_correlation(0.65, 0.001, 100))
+    SafeOutput.safe_print("   - Regression: " + StatisticalFormatter.format_regression(0.456, 0.442, 25.6, 2, 47, 0.001))
+    SafeOutput.safe_print("   - Mann-Whitney: " + StatisticalFormatter.format_mann_whitney(145.5, 20, 20, 0.032))
+    SafeOutput.safe_print("   - Kruskal-Wallis: " + StatisticalFormatter.format_kruskal_wallis(12.45, 2, 0.002))
+    
+    SafeOutput.safe_print("\n5. SYMBOL WITH VALUE FORMATTING")
+    SafeOutput.safe_print("   Example: Format statistical symbols with values")
+    alpha = ScientificNotation.format_with_symbol('alpha', 0.05, decimals=2)
+    beta = ScientificNotation.format_with_symbol('beta', 0.80, decimals=2)
+    mu = ScientificNotation.format_with_symbol('mu', 25.5, decimals=1)
+    SafeOutput.safe_print(f"   - Significance level: {alpha}")
+    SafeOutput.safe_print(f"   - Power: {beta}")
+    SafeOutput.safe_print(f"   - Mean: {mu}")
+    
+    SafeOutput.safe_print("\n6. APA 7 REFERENCES")
+    SafeOutput.safe_print("   Example: Add and format references")
+    SafeOutput.safe_print("   manager = APA7ReferenceManager()")
+    SafeOutput.safe_print("   key = manager.add_reference('journal',")
+    SafeOutput.safe_print("       author='Smith, J. M.',")
+    SafeOutput.safe_print("       year='2023',")
+    SafeOutput.safe_print("       title='Research methods',")
+    SafeOutput.safe_print("       journal='Journal of Science',")
+    SafeOutput.safe_print("       volume='10', pages='1-10')")
+    SafeOutput.safe_print("   # Formats to: Smith, J. M. (2023). Research methods...")
+    
+    SafeOutput.safe_print("\n" + "="*70)
+    SafeOutput.safe_print("For full examples, see: examples/ directory")
+    SafeOutput.safe_print("For detailed guide, see: docs/LIBRARY_GUIDE.md")
     SafeOutput.safe_print("="*70 + "\n")
     
     # Example instantiation:

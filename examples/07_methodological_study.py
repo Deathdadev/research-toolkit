@@ -15,19 +15,21 @@ This demonstrates:
 CRITICAL: This is the ONLY research type where synthetic data is fully appropriate
 because we're making claims about the METHOD, not about real-world phenomena.
 """
-
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-from scipy import stats
+# Standard library imports
 from datetime import datetime
+from typing import Any, Dict, List, Optional, Tuple
 import json
 
-# Import from research_toolkit library
-from research_toolkit.core import SafeOutput, ReportFormatter, StatisticalFormatter
-from research_toolkit.references import APA7ReferenceManager
+# Third-party imports
+from scipy import stats
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
 
+# Local imports (research_toolkit)
+from research_toolkit import ReportFormatter, SafeOutput, StatisticalFormatter, get_symbol
+from research_toolkit.references import APA7ReferenceManager
 
 class PowerAnalysisStudy:
     """
@@ -37,7 +39,13 @@ class PowerAnalysisStudy:
     IMPORTANT: This is appropriate use of synthetic data!
     """
     
-    def __init__(self):
+    def __init__(self) -> None:
+        """
+        Initialize methodological study.
+        
+        Note:
+            Tests statistical method performance using synthetic data.
+        """
         self.references = APA7ReferenceManager()
         
         # Add references
@@ -61,6 +69,9 @@ class PowerAnalysisStudy:
             doi='10.1038/s41592-019-0686-2'
         )
         
+        
+        self.formatter = ReportFormatter()
+        self.stat_formatter = StatisticalFormatter()
         self.metadata = {
             'research_type': 'Methodological Study',
             'study_date': datetime.now().isoformat(),
@@ -93,39 +104,37 @@ class PowerAnalysisStudy:
         
         self.results = None
     
-    def state_methodological_purpose(self):
+    def state_methodological_purpose(self) -> None:
         """
-        CRITICAL: Clearly state this is methodological research
+        State that this tests METHODS, not real-world phenomena.
         """
-        print("\n" + "="*70)
-        print("METHODOLOGICAL STUDY - IMPORTANT DISTINCTION")
-        print("="*70)
-        print("\n[OK] THIS STUDY IS ABOUT:")
-        print("  - Testing statistical METHOD performance")
-        print("  - Evaluating Pearson correlation power")
-        print("  - Providing guidance for sample size planning")
+        self.formatter.print_section("METHODOLOGICAL STUDY - IMPORTANT DISTINCTION")
+        SafeOutput.safe_print("\n{get_symbol('checkmark')} THIS STUDY IS ABOUT:")
+        SafeOutput.safe_print("  - Testing statistical METHOD performance")
+        SafeOutput.safe_print("  - Evaluating Pearson correlation power")
+        SafeOutput.safe_print("  - Providing guidance for sample size planning")
         
-        print("\n[OK] SYNTHETIC DATA IS APPROPRIATE BECAUSE:")
-        print("  - We are testing the METHOD, not studying the world")
-        print("  - We NEED known ground truth to evaluate the method")
-        print("  - Claims are about METHOD properties, not phenomena")
+        SafeOutput.safe_print("\n{get_symbol('checkmark')} SYNTHETIC DATA IS APPROPRIATE BECAUSE:")
+        SafeOutput.safe_print("  - We are testing the METHOD, not studying the world")
+        SafeOutput.safe_print("  - We NEED known ground truth to evaluate the method")
+        SafeOutput.safe_print("  - Claims are about METHOD properties, not phenomena")
         
-        print("\n[X] THIS STUDY IS NOT ABOUT:")
-        print("  - Real-world phenomena or relationships")
-        print("  - Empirical observations")
-        print("  - Substantive claims about any real variables")
+        SafeOutput.safe_print("\n{get_symbol('cross')} THIS STUDY IS NOT ABOUT:")
+        SafeOutput.safe_print("  - Real-world phenomena or relationships")
+        SafeOutput.safe_print("  - Empirical observations")
+        SafeOutput.safe_print("  - Substantive claims about any real variables")
         
-        print("\n[OK] VALID CONCLUSIONS:")
-        print("  - 'Pearson correlation has X% power under these conditions'")
-        print("  - 'Sample size of N is needed to detect effect r'")
-        print("  - 'The method performs well/poorly under condition Y'")
+        SafeOutput.safe_print("\n{get_symbol('checkmark')} VALID CONCLUSIONS:")
+        SafeOutput.safe_print("  - 'Pearson correlation has X% power under these conditions'")
+        SafeOutput.safe_print("  - 'Sample size of N is needed to detect effect r'")
+        SafeOutput.safe_print("  - 'The method performs well/poorly under condition Y'")
         
-        print("\n[X] INVALID CONCLUSIONS:")
-        print("  - Any claims about real-world relationships")
-        print("  - Any substantive empirical findings")
-        print("="*70 + "\n")
+        SafeOutput.safe_print("\n{get_symbol('cross')} INVALID CONCLUSIONS:")
+        SafeOutput.safe_print("  - Any claims about real-world relationships")
+        SafeOutput.safe_print("  - Any substantive empirical findings")
+        SafeOutput.safe_print("="*70 + "\n")
     
-    def generate_test_data(self, n, true_correlation, seed=None):
+    def generate_test_data(self, n: int, true_correlation: float, seed: Optional[int] = None) -> Tuple[np.ndarray, np.ndarray]:
         """
         Generate synthetic data with known correlation.
         
@@ -143,28 +152,26 @@ class PowerAnalysisStudy:
         
         return x, y
     
-    def conduct_power_analysis(self):
+    def conduct_power_analysis(self) -> pd.DataFrame:
         """
         Conduct comprehensive power analysis via Monte Carlo simulation
         """
-        print("\n" + "="*70)
-        print("POWER ANALYSIS VIA MONTE CARLO SIMULATION")
-        print("="*70)
+        self.formatter.print_section("POWER ANALYSIS VIA MONTE CARLO SIMULATION")
         
         sample_sizes = [20, 50, 100, 200]
         true_correlations = [0.1, 0.3, 0.5, 0.7]
         n_simulations = 1000
         alpha = 0.05
         
-        print(f"\nSimulation Parameters:")
-        print(f"  Number of simulations per condition: {n_simulations}")
-        print(f"  Significance level: alpha = {alpha}")
-        print(f"  Sample sizes tested: {sample_sizes}")
-        print(f"  Effect sizes tested: {true_correlations}")
+        SafeOutput.safe_print(f"\nSimulation Parameters:")
+        SafeOutput.safe_print(f"  Number of simulations per condition: {n_simulations}")
+        SafeOutput.safe_print(f"  Significance level: alpha = {alpha}")
+        SafeOutput.safe_print(f"  Sample sizes tested: {sample_sizes}")
+        SafeOutput.safe_print(f"  Effect sizes tested: {true_correlations}")
         
         results = []
         
-        print(f"\nRunning simulations...")
+        SafeOutput.safe_print(f"\nRunning simulations...")
         
         for true_r in true_correlations:
             for n in sample_sizes:
@@ -187,25 +194,23 @@ class PowerAnalysisStudy:
                     'n_simulations': n_simulations
                 })
                 
-                print(f"  r = {true_r:.1f}, n = {n:3d}: Power = {power:.3f} ({power*100:.1f}%)")
+                SafeOutput.safe_print(f"  r = {true_r:.1f}, n = {n:3d}: Power = {power:.3f} ({power*100:.1f}%)")
         
         self.results = pd.DataFrame(results)
         return self.results
     
-    def test_method_bias(self):
+    def test_method_bias(self) -> None:
         """
         Test if Pearson correlation produces biased estimates
         """
-        print("\n" + "="*70)
-        print("BIAS ASSESSMENT")
-        print("="*70)
+        self.formatter.print_section("BIAS ASSESSMENT")
         
         true_r = 0.5
         sample_sizes = [20, 50, 100]
         n_simulations = 1000
         
-        print(f"\nTesting for bias with true r = {true_r}")
-        print(f"Number of simulations: {n_simulations}")
+        SafeOutput.safe_print(f"\nTesting for bias with true r = {true_r}")
+        SafeOutput.safe_print(f"Number of simulations: {n_simulations}")
         
         for n in sample_sizes:
             estimates = []
@@ -219,18 +224,16 @@ class PowerAnalysisStudy:
             bias = estimates.mean() - true_r
             rmse = np.sqrt(np.mean((estimates - true_r)**2))
             
-            print(f"\nSample size n = {n}:")
-            print(f"  True r = {true_r:.4f}")
-            print(f"  Mean estimate = {estimates.mean():.4f}")
-            print(f"  Bias = {bias:.4f} ({abs(bias/true_r)*100:.2f}%)")
-            print(f"  RMSE = {rmse:.4f}")
-            print(f"  95% CI = [{np.percentile(estimates, 2.5):.3f}, {np.percentile(estimates, 97.5):.3f}]")
+            SafeOutput.safe_print(f"\nSample size n = {n}:")
+            SafeOutput.safe_print(f"  True r = {true_r:.4f}")
+            SafeOutput.safe_print(f"  Mean estimate = {estimates.mean():.4f}")
+            SafeOutput.safe_print(f"  Bias = {bias:.4f} ({abs(bias/true_r)*100:.2f}%)")
+            SafeOutput.safe_print(f"  RMSE = {rmse:.4f}")
+            SafeOutput.safe_print(f"  95% CI = [{np.percentile(estimates, 2.5):.3f}, {np.percentile(estimates, 97.5):.3f}]")
     
-    def visualize_power_analysis(self):
+    def visualize_power_analysis(self) -> None:
         """Create power analysis visualizations"""
-        print("\n" + "="*70)
-        print("VISUALIZATIONS")
-        print("="*70)
+        self.formatter.print_section("VISUALIZATIONS")
         
         fig, axes = plt.subplots(1, 2, figsize=(16, 6))
         fig.suptitle('Methodological Study: Power Analysis of Pearson Correlation', 
@@ -266,7 +269,7 @@ class PowerAnalysisStudy:
         
         plt.subplots_adjust(left=0.08, right=0.96, top=0.92, bottom=0.10, wspace=0.30)
         plt.savefig('07_methodological_power_analysis.png', dpi=300, bbox_inches='tight')
-        print("\n[OK] Power analysis visualization saved")
+        SafeOutput.safe_print("\n{get_symbol('checkmark')} Power analysis visualization saved")
         plt.close()
         
         # Sample size recommendations
@@ -298,82 +301,80 @@ class PowerAnalysisStudy:
         ax.tick_params(axis='both', labelsize=10)
         plt.subplots_adjust(left=0.10, right=0.95, top=0.92, bottom=0.10)
         plt.savefig('07_methodological_sample_size_guide.png', dpi=300, bbox_inches='tight')
-        print("[OK] Sample size guide saved")
+        SafeOutput.safe_print("{get_symbol('checkmark')} Sample size guide saved")
         plt.close()
     
-    def generate_report(self):
+    def generate_report(self) -> None:
         """Generate methodological research report"""
-        print("\n" + "="*70)
-        print("METHODOLOGICAL RESEARCH REPORT")
-        print("="*70)
+        self.formatter.print_section("METHODOLOGICAL RESEARCH REPORT")
         
-        print(f"\nTitle: {self.metadata['title']}")
-        print(f"\nResearch Question: {self.metadata['research_question']}")
+        SafeOutput.safe_print(f"\nTitle: {self.metadata['title']}")
+        SafeOutput.safe_print(f"\nResearch Question: {self.metadata['research_question']}")
         
-        print("\n--- ABSTRACT ---")
-        print("\nThis methodological study evaluated the statistical power of ")
-        print(f"Pearson correlation test ({self.scipy_ref}) under various conditions ")
-        print(f"using Monte Carlo simulation ({self.cohen_ref}). ")
-        print(f"Power was assessed across {len(self.results['sample_size'].unique())} ")
-        print(f"sample sizes and {len(self.results['true_correlation'].unique())} ")
-        print(f"effect sizes using {self.results['n_simulations'].iloc[0]} simulations ")
-        print(f"per condition.")
+        SafeOutput.safe_print("\n--- ABSTRACT ---")
+        SafeOutput.safe_print("\nThis methodological study evaluated the statistical power of ")
+        SafeOutput.safe_print(f"Pearson correlation test ({self.scipy_ref}) under various conditions ")
+        SafeOutput.safe_print(f"using Monte Carlo simulation ({self.cohen_ref}). ")
+        SafeOutput.safe_print(f"Power was assessed across {len(self.results['sample_size'].unique())} ")
+        SafeOutput.safe_print(f"sample sizes and {len(self.results['true_correlation'].unique())} ")
+        SafeOutput.safe_print(f"effect sizes using {self.results['n_simulations'].iloc[0]} simulations ")
+        SafeOutput.safe_print(f"per condition.")
         
-        print("\n--- METHODOLOGY ---")
-        print(f"\nDesign: {self.metadata['design']}")
-        print(f"Purpose: {self.metadata['purpose']}")
-        print(f"Data Type: {self.metadata['data_type']}")
-        print(f"Why synthetic data is appropriate: {self.metadata['why_synthetic_ok']}")
+        SafeOutput.safe_print("\n--- METHODOLOGY ---")
+        SafeOutput.safe_print(f"\nDesign: {self.metadata['design']}")
+        SafeOutput.safe_print(f"Purpose: {self.metadata['purpose']}")
+        SafeOutput.safe_print(f"Data Type: {self.metadata['data_type']}")
+        SafeOutput.safe_print(f"Why synthetic data is appropriate: {self.metadata['why_synthetic_ok']}")
         
-        print("\n--- RESULTS ---")
-        print("\nPower analysis revealed that sample size requirements ")
-        print("varied substantially based on the magnitude of the true correlation:")
+        SafeOutput.safe_print("\n--- RESULTS ---")
+        SafeOutput.safe_print("\nPower analysis revealed that sample size requirements ")
+        SafeOutput.safe_print("varied substantially based on the magnitude of the true correlation:")
         
         for true_r in sorted(self.results['true_correlation'].unique()):
-            print(f"\n  For r = {true_r:.1f}:")
+            SafeOutput.safe_print(f"\n  For r = {true_r:.1f}:")
             subset = self.results[self.results['true_correlation'] == true_r]
             
             for _, row in subset.iterrows():
                 power_pct = row['power'] * 100
-                print(f"    n = {int(row['sample_size']):3d}: Power = {power_pct:5.1f}%")
+                SafeOutput.safe_print(f"    n = {int(row['sample_size']):3d}: Power = {power_pct:5.1f}%")
             
             # Find minimum n for 80% power
             adequate = subset[subset['power'] >= 0.80]
             if len(adequate) > 0:
                 min_n = adequate['sample_size'].min()
-                print(f"    -> Minimum n for 80% power: {int(min_n)}")
+                SafeOutput.safe_print(f"    -> Minimum n for 80% power: {int(min_n)}")
             else:
-                print(f"    -> Requires n > {int(subset['sample_size'].max())} for 80% power")
+                SafeOutput.safe_print(f"    -> Requires n > {int(subset['sample_size'].max())} for 80% power")
         
-        print("\n--- INTERPRETATION ---")
-        print("\n[OK] APPROPRIATE CLAIMS (About the METHOD):")
-        print("  - 'Pearson correlation requires n = 85 for 80% power at r = 0.3'")
-        print("  - 'Power increases with sample size and effect size'")
-        print("  - 'Small effects (r = 0.1) require large samples for adequate power'")
-        print("  - 'The method is sensitive to sample size'")
+        SafeOutput.safe_print("\n--- INTERPRETATION ---")
+        SafeOutput.safe_print("\n{get_symbol('checkmark')} APPROPRIATE CLAIMS (About the METHOD):")
+        SafeOutput.safe_print("  - 'Pearson correlation requires n = 85 for 80% power at r = 0.3'")
+        SafeOutput.safe_print("  - 'Power increases with sample size and effect size'")
+        SafeOutput.safe_print("  - 'Small effects (r = 0.1) require large samples for adequate power'")
+        SafeOutput.safe_print("  - 'The method is sensitive to sample size'")
         
-        print("\n[X] INAPPROPRIATE CLAIMS (About phenomena):")
-        print("  - 'X and Y correlate at r = 0.3' (NO! Synthetic data)")
-        print("  - Any claim about real-world relationships")
-        print("  - Any substantive findings about phenomena")
+        SafeOutput.safe_print("\n{get_symbol('cross')} INAPPROPRIATE CLAIMS (About phenomena):")
+        SafeOutput.safe_print("  - 'X and Y correlate at r = 0.3' (NO! Synthetic data)")
+        SafeOutput.safe_print("  - Any claim about real-world relationships")
+        SafeOutput.safe_print("  - Any substantive findings about phenomena")
         
-        print("\n[OK] PRACTICAL IMPLICATIONS:")
-        print("  - Researchers should use these results for sample size planning")
-        print("  - Small pilot studies may be underpowered")
-        print("  - Effect size expectations should inform design")
+        SafeOutput.safe_print("\n{get_symbol('checkmark')} PRACTICAL IMPLICATIONS:")
+        SafeOutput.safe_print("  - Researchers should use these results for sample size planning")
+        SafeOutput.safe_print("  - Small pilot studies may be underpowered")
+        SafeOutput.safe_print("  - Effect size expectations should inform design")
         
-        print("\n--- LIMITATIONS ---")
+        SafeOutput.safe_print("\n--- LIMITATIONS ---")
         for limitation in self.metadata['limitations']:
-            print(f"  - {limitation}")
+            SafeOutput.safe_print(f"  - {limitation}")
         
-        print("\n--- CONCLUSION ---")
-        print("\nThis methodological study provides power estimates for ")
-        print(f"Pearson correlation under various conditions ({self.cohen_ref}). ")
-        print("Results can guide sample size planning in applied research. ")
-        print("However, actual power in specific studies depends on ")
-        print("data characteristics and adherence to test assumptions.")
+        SafeOutput.safe_print("\n--- CONCLUSION ---")
+        SafeOutput.safe_print("\nThis methodological study provides power estimates for ")
+        SafeOutput.safe_print(f"Pearson correlation under various conditions ({self.cohen_ref}). ")
+        SafeOutput.safe_print("Results can guide sample size planning in applied research. ")
+        SafeOutput.safe_print("However, actual power in specific studies depends on ")
+        SafeOutput.safe_print("data characteristics and adherence to test assumptions.")
     
-    def save_results(self, filename='07_methodological_power_results.csv'):
+    def save_results(self, filename: str = '07_methodological_power_results.csv') -> None:
         """Save power analysis results"""
         if self.results is not None:
             self.results.to_csv(filename, index=False)
@@ -382,16 +383,14 @@ class PowerAnalysisStudy:
             with open(metadata_file, 'w') as f:
                 json.dump(self.metadata, f, indent=2)
             
-            print(f"\n[OK] Power analysis results saved to: {filename}")
-            print(f"[OK] Metadata saved to: {metadata_file}")
+            SafeOutput.safe_print(f"\n{get_symbol('checkmark')} Power analysis results saved to: {filename}")
+            SafeOutput.safe_print(f"{get_symbol('checkmark')} Metadata saved to: {metadata_file}")
     
-    def compare_parametric_nonparametric(self):
+    def compare_parametric_nonparametric(self) -> None:
         """
         Bonus: Compare Pearson vs Spearman power
         """
-        print("\n" + "="*70)
-        print("METHOD COMPARISON: PEARSON VS SPEARMAN")
-        print("="*70)
+        self.formatter.print_section("METHOD COMPARISON: PEARSON VS SPEARMAN")
         
         n = 100
         true_r = 0.5
@@ -400,7 +399,7 @@ class PowerAnalysisStudy:
         pearson_power = 0
         spearman_power = 0
         
-        print(f"\nComparing methods with n = {n}, r = {true_r}")
+        SafeOutput.safe_print(f"\nComparing methods with n = {n}, r = {true_r}")
         
         for sim in range(n_simulations):
             x, y = self.generate_test_data(n, true_r, seed=sim)
@@ -418,31 +417,27 @@ class PowerAnalysisStudy:
         pearson_power /= n_simulations
         spearman_power /= n_simulations
         
-        print(f"\nResults:")
-        print(f"  Pearson correlation power: {pearson_power:.3f} ({pearson_power*100:.1f}%)")
-        print(f"  Spearman correlation power: {spearman_power:.3f} ({spearman_power*100:.1f}%)")
-        print(f"  Difference: {abs(pearson_power - spearman_power):.3f}")
+        SafeOutput.safe_print(f"\nResults:")
+        SafeOutput.safe_print(f"  Pearson correlation power: {pearson_power:.3f} ({pearson_power*100:.1f}%)")
+        SafeOutput.safe_print(f"  Spearman correlation power: {spearman_power:.3f} ({spearman_power*100:.1f}%)")
+        SafeOutput.safe_print(f"  Difference: {abs(pearson_power - spearman_power):.3f}")
         
         if pearson_power > spearman_power:
-            print(f"\n  -> Pearson more powerful (for normal data)")
+            SafeOutput.safe_print(f"\n  -> Pearson more powerful (for normal data)")
         else:
-            print(f"\n  -> Spearman competitive or better")
+            SafeOutput.safe_print(f"\n  -> Spearman competitive or better")
     
-    def generate_references(self):
-        """Generate APA 7 reference list"""
-        print("\n" + "="*70)
-        print("REFERENCES")
-        print("="*70)
-        print()
-        print(self.references.generate_reference_list())
+    def generate_references(self) -> None:
+        """Generate APA 7 reference list."""
+        self.formatter.print_section("REFERENCES")
+        SafeOutput.safe_print("")
+        SafeOutput.safe_print(self.references.generate_reference_list())
     
-    def run_full_study(self):
+    def run_full_study(self) -> None:
         """Execute complete methodological study"""
-        print("\n" + "="*70)
-        print("METHODOLOGICAL STUDY: STATISTICAL POWER ANALYSIS")
-        print("="*70)
-        print(f"Study Date: {datetime.now().strftime('%Y-%m-%d')}")
-        print(f"Research Type: {self.metadata['research_type']}")
+        self.formatter.print_section("METHODOLOGICAL STUDY: STATISTICAL POWER ANALYSIS")
+        SafeOutput.safe_print(f"Study Date: {datetime.now().strftime('%Y-%m-%d')}")
+        SafeOutput.safe_print(f"Research Type: {self.metadata['research_type']}")
         
         # State purpose upfront
         self.state_methodological_purpose()
@@ -460,29 +455,26 @@ class PowerAnalysisStudy:
         self.generate_report()
         self.generate_references()
         
-        print("\n" + "="*70)
-        print("METHODOLOGICAL STUDY COMPLETE")
-        print("="*70)
-        print("\nThis study provides guidance for researchers planning correlational studies.")
-        print("Results show how sample size and effect size affect statistical power.")
-        print("\nIMPORTANT: These findings are about the METHOD, not about any real phenomena.")
+        self.formatter.print_section("METHODOLOGICAL STUDY COMPLETE")
+        SafeOutput.safe_print("\nThis study provides guidance for researchers planning correlational studies.")
+        SafeOutput.safe_print("Results show how sample size and effect size affect statistical power.")
+        SafeOutput.safe_print("\nIMPORTANT: These findings are about the METHOD, not about any real phenomena.")
 
 
 if __name__ == "__main__":
-    print("\n" + "="*70)
-    print("EXAMPLE 07: METHODOLOGICAL STUDY")
-    print("="*70)
-    print("\nThis example demonstrates APPROPRIATE use of synthetic data:")
-    print("  - Testing statistical METHOD (not studying phenomena)")
-    print("  - Monte Carlo power analysis")
-    print("  - Method bias assessment")
-    print("  - Parametric vs non-parametric comparison")
-    print("  - Claims about METHOD, not about world")
-    print("  - APA 7 style reporting")
-    print("\n[OK] Synthetic data is APPROPRIATE here because we're testing the method!")
-    print("="*70 + "\n")
+    formatter = ReportFormatter()
+    formatter.print_section("EXAMPLE 07: METHODOLOGICAL STUDY")
+    SafeOutput.safe_print("\nThis example demonstrates APPROPRIATE use of synthetic data:")
+    SafeOutput.safe_print("  - Testing statistical METHOD (not studying phenomena)")
+    SafeOutput.safe_print("  - Monte Carlo power analysis")
+    SafeOutput.safe_print("  - Method bias assessment")
+    SafeOutput.safe_print("  - Parametric vs non-parametric comparison")
+    SafeOutput.safe_print("  - Claims about METHOD, not about world")
+    SafeOutput.safe_print("  - APA 7 style reporting")
+    SafeOutput.safe_print(f"\n{get_symbol('checkmark')} Synthetic data is APPROPRIATE here because we're testing the method!")
+    SafeOutput.safe_print("="*70 + "\n")
     
     study = PowerAnalysisStudy()
     study.run_full_study()
     
-    print("\n[OK] Example complete. This shows when synthetic data IS valid in research.")
+    SafeOutput.safe_print(f"\n{get_symbol('checkmark')} Example complete. This shows when synthetic data IS valid in research.")

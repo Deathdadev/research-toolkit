@@ -1,0 +1,29 @@
+{
+  "research_type": "Comparative Study (Empirical)",
+  "study_date": "2025-10-17T22:21:19.835440",
+  "title": "Temperature Differences Between Coastal and Inland Cities: A Comparative Analysis",
+  "research_question": "Do coastal cities differ from inland cities in average temperature?",
+  "hypothesis": {
+    "H0": "There is no significant difference in temperature between coastal and inland cities",
+    "H1": "Coastal and inland cities differ significantly in average temperature"
+  },
+  "design": "Non-experimental group comparison",
+  "independent_variable": "City type (coastal vs inland)",
+  "dependent_variable": "Average temperature (Celsius)",
+  "data_source": "OpenWeatherMap API (ref1)",
+  "statistical_methods": [
+    "Independent t-test",
+    "Mann-Whitney U test (non-parametric)",
+    "Cohen's d effect size",
+    "Descriptive statistics",
+    "Shapiro-Wilk normality test"
+  ],
+  "limitations": [
+    "Groups not randomly assigned (pre-existing cities)",
+    "Cannot infer causation from group differences",
+    "Single time point measurement",
+    "Confounding variables (latitude, altitude, season) not controlled",
+    "Sample limited to selected cities"
+  ],
+  "ethical_considerations": "Uses only publicly available aggregate data; no personal information"
+}

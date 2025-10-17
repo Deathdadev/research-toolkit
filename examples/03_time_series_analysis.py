@@ -13,19 +13,28 @@ This demonstrates:
 Data Source: Historical air quality data (simulated based on real patterns)
 Note: For production use, replace with actual historical API data
 """
-
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-from scipy import stats
+# Standard library imports
 from datetime import datetime, timedelta
+from typing import Any, Dict, List, Optional, Tuple
 import json
 import warnings
+
+# Third-party imports
+from scipy import stats
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+
 warnings.filterwarnings('ignore')
 
-# Import from research_toolkit library
-from research_toolkit.core import SafeOutput, ReportFormatter, StatisticalFormatter
+# Local imports (research_toolkit)
+from research_toolkit import (
+    ReportFormatter,
+    SafeOutput,
+    StatisticalFormatter,
+    get_symbol
+)
 from research_toolkit.references import APA7ReferenceManager
 
 try:
@@ -35,7 +44,7 @@ try:
     STATSMODELS_AVAILABLE = True
 except ImportError:
     STATSMODELS_AVAILABLE = False
-    print("WARNING: statsmodels not available. Install with: pip install statsmodels")
+    SafeOutput.safe_print("WARNING: statsmodels not available. Install with: pip install statsmodels")
 
 
 class AirQualityTimeSeriesStudy:
@@ -46,12 +55,19 @@ class AirQualityTimeSeriesStudy:
     Design: Longitudinal observational
     """
     
-    def __init__(self):
+    def __init__(self) -> None:
+        """
+        Initialize time series study.
+        
+        Note:
+            Requires statsmodels for advanced time series analysis.
+            Install with: pip install statsmodels
+        """
         self.references = APA7ReferenceManager()
         
         # Add references
         self.api_ref = self.references.add_reference(
-            'api',
+            'website',
             author='OpenWeather',
             year='2024',
             title='Air Quality API',
@@ -66,6 +82,9 @@ class AirQualityTimeSeriesStudy:
             publisher='Proceedings of the 9th Python in Science Conference'
         )
         
+        
+        self.formatter = ReportFormatter()
+        self.stat_formatter = StatisticalFormatter()
         self.metadata = {
             'research_type': 'Time Series Analysis (Empirical)',
             'study_date': datetime.now().isoformat(),
@@ -97,20 +116,22 @@ class AirQualityTimeSeriesStudy:
             ]
         }
         
-        self.data = None
+        self.data: Optional[pd.DataFrame] = None
     
-    def generate_time_series_data(self):
+    def generate_time_series_data(self) -> pd.DataFrame:
         """
         Generate realistic time series data based on typical air quality patterns.
         
-        Note: In production, replace with actual historical API calls.
+        Returns:
+            DataFrame with date index and PM2.5 measurements
+            
+        Note:
+            In production, replace with actual historical API calls.
         """
-        print("\n" + "="*70)
-        print("DATA COLLECTION")
-        print("="*70)
-        print(f"Data Source: {self.metadata['data_source']}")
-        print(f"Time Period: {self.metadata['time_period']}")
-        print(f"Frequency: Daily")
+        self.formatter.print_section("DATA COLLECTION")
+        SafeOutput.safe_print(f"Data Source: {self.metadata['data_source']}")
+        SafeOutput.safe_print(f"Time Period: {self.metadata['time_period']}")
+        SafeOutput.safe_print(f"Frequency: Daily")
         
         # Generate 2 years of daily data
         np.random.seed(42)
@@ -149,14 +170,19 @@ class AirQualityTimeSeriesStudy:
         })
         self.data.set_index('date', inplace=True)
         
-        print(f"\nCollected {len(self.data)} daily observations")
-        print(f"Date range: {self.data.index.min().date()} to {self.data.index.max().date()}")
-        print(f"PM2.5 range: {self.data['pm25'].min():.1f} to {self.data['pm25'].max():.1f} ug/m3")
+        SafeOutput.safe_print(f"\nCollected {len(self.data)} daily observations")
+        SafeOutput.safe_print(f"Date range: {self.data.index.min().date()} to {self.data.index.max().date()}")
+        SafeOutput.safe_print(f"PM2.5 range: {self.data['pm25'].min():.1f} to {self.data['pm25'].max():.1f} ug/m3")
         
         return self.data
     
-    def save_raw_data(self, filename='03_time_series_raw_data.csv'):
-        """Save raw data for verification"""
+    def save_raw_data(self, filename: str = '03_time_series_raw_data.csv') -> None:
+        """
+        Save raw data for verification.
+        
+        Args:
+            filename: Output CSV filename
+        """
         if self.data is not None:
             self.data.to_csv(filename)
             
@@ -164,56 +190,59 @@ class AirQualityTimeSeriesStudy:
             with open(metadata_file, 'w') as f:
                 json.dump(self.metadata, f, indent=2)
             
-            print(f"\n[OK] Raw data saved to: {filename}")
-            print(f"[OK] Metadata saved to: {metadata_file}")
+            SafeOutput.safe_print(f"\n{get_symbol('checkmark')} Raw data saved to: {filename}")
+            SafeOutput.safe_print(f"{get_symbol('checkmark')} Metadata saved to: {metadata_file}")
     
-    def descriptive_statistics(self):
-        """Calculate descriptive statistics"""
-        print("\n" + "="*70)
-        print("DESCRIPTIVE STATISTICS")
-        print("="*70)
+    def descriptive_statistics(self) -> None:
+        """Calculate and display descriptive statistics."""
+        self.formatter.print_section("DESCRIPTIVE STATISTICS")
         
-        print(f"\nObservations: {len(self.data)}")
-        print(f"\nPM2.5 Statistics:")
-        print(f"  M = {self.data['pm25'].mean():.2f} ug/m3")
-        print(f"  SD = {self.data['pm25'].std():.2f} ug/m3")
-        print(f"  Median = {self.data['pm25'].median():.2f} ug/m3")
-        print(f"  Min = {self.data['pm25'].min():.2f} ug/m3")
-        print(f"  Max = {self.data['pm25'].max():.2f} ug/m3")
-        print(f"  IQR = {self.data['pm25'].quantile(0.75) - self.data['pm25'].quantile(0.25):.2f} ug/m3")
+        SafeOutput.safe_print(f"\nObservations: {len(self.data)}")
+        SafeOutput.safe_print(f"\nPM2.5 Statistics:")
+        SafeOutput.safe_print(f"  M = {self.data['pm25'].mean():.2f} ug/m3")
+        SafeOutput.safe_print(f"  SD = {self.data['pm25'].std():.2f} ug/m3")
+        SafeOutput.safe_print(f"  Median = {self.data['pm25'].median():.2f} ug/m3")
+        SafeOutput.safe_print(f"  Min = {self.data['pm25'].min():.2f} ug/m3")
+        SafeOutput.safe_print(f"  Max = {self.data['pm25'].max():.2f} ug/m3")
+        SafeOutput.safe_print(f"  IQR = {self.data['pm25'].quantile(0.75) - self.data['pm25'].quantile(0.25):.2f} ug/m3")
     
-    def test_stationarity(self):
-        """Test for stationarity using Augmented Dickey-Fuller test"""
+    def test_stationarity(self) -> Optional[float]:
+        """
+        Test for stationarity using Augmented Dickey-Fuller test.
+        
+        Returns:
+            P-value from ADF test, or None if statsmodels not available
+        """
         if not STATSMODELS_AVAILABLE:
-            print("\n[SKIPPED] Stationarity test requires statsmodels")
+            SafeOutput.safe_print("\n[SKIPPED] Stationarity test requires statsmodels")
             return None
         
-        print("\n" + "="*70)
-        print("STATIONARITY TESTING")
-        print("="*70)
+        self.formatter.print_section("STATIONARITY TESTING")
         
         result = adfuller(self.data['pm25'].dropna())
         
-        print(f"\nAugmented Dickey-Fuller Test ({self.statsmodels_ref}):")
-        print(f"  ADF Statistic = {result[0]:.4f}")
-        print(f"  p-value = {result[1]:.4f}")
-        print(f"  Critical Values:")
+        SafeOutput.safe_print(f"\nAugmented Dickey-Fuller Test ({self.statsmodels_ref}):")
+        SafeOutput.safe_print(f"  ADF Statistic = {result[0]:.4f}")
+        SafeOutput.safe_print(f"  p-value = {result[1]:.4f}")
+        SafeOutput.safe_print(f"  Critical Values:")
         for key, value in result[4].items():
-            print(f"    {key}: {value:.4f}")
+            SafeOutput.safe_print(f"    {key}: {value:.4f}")
         
         if result[1] < 0.05:
-            print("\n  -> Series is stationary (p < .05)")
+            SafeOutput.safe_print("\n  -> Series is stationary (p < .05)")
         else:
-            print("\n  -> Series is non-stationary (p >= .05)")
-            print("  -> Consider differencing for ARIMA modeling")
+            SafeOutput.safe_print("\n  -> Series is non-stationary (p >= .05)")
+            SafeOutput.safe_print("  -> Consider differencing for ARIMA modeling")
         
         return result[1] < 0.05
     
-    def analyze_trend(self):
-        """Analyze linear trend"""
-        print("\n" + "="*70)
-        print("TREND ANALYSIS")
-        print("="*70)
+    def analyze_trend(self) -> Tuple[float, float]:
+        """Analyze linear trend.
+        
+        Returns:
+            Tuple of (slope, p_value) from linear regression
+        """
+        self.formatter.print_section("TREND ANALYSIS")
         
         # Create numeric time index
         x = np.arange(len(self.data))
@@ -222,29 +251,31 @@ class AirQualityTimeSeriesStudy:
         # Linear regression
         slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
         
-        print(f"\nLinear Trend Analysis:")
-        print(f"  Slope = {slope:.4f} ug/m3 per day")
-        print(f"  Yearly change = {slope * 365:.2f} ug/m3 per year")
-        print(f"  R^2 = {r_value**2:.4f}")
-        print(f"  p-value = {p_value:.6f}")
+        SafeOutput.safe_print(f"\nLinear Trend Analysis:")
+        SafeOutput.safe_print(f"  Slope = {slope:.4f} ug/m3 per day")
+        SafeOutput.safe_print(f"  Yearly change = {slope * 365:.2f} ug/m3 per year")
+        SafeOutput.safe_print(f"  R^2 = {r_value**2:.4f}")
+        SafeOutput.safe_print(f"  p-value = {p_value:.6f}")
         
         if p_value < 0.05:
             direction = "decreasing" if slope < 0 else "increasing"
-            print(f"\n  -> Significant {direction} trend detected (p < .05)")
+            SafeOutput.safe_print(f"\n  -> Significant {direction} trend detected (p < .05)")
         else:
-            print(f"\n  -> No significant linear trend (p >= .05)")
+            SafeOutput.safe_print(f"\n  -> No significant linear trend (p >= .05)")
         
         return slope, p_value
     
-    def decompose_series(self):
-        """Decompose time series into components"""
+    def decompose_series(self) -> Optional[Any]:
+        """Decompose time series into components.
+        
+        Returns:
+            Decomposition result object, or None if statsmodels not available
+        """
         if not STATSMODELS_AVAILABLE:
-            print("\n[SKIPPED] Decomposition requires statsmodels")
+            SafeOutput.safe_print("\n[SKIPPED] Decomposition requires statsmodels")
             return None
         
-        print("\n" + "="*70)
-        print("SEASONALITY DECOMPOSITION")
-        print("="*70)
+        self.formatter.print_section("SEASONALITY DECOMPOSITION")
         
         # Decompose (annual seasonality)
         decomposition = seasonal_decompose(
@@ -253,10 +284,10 @@ class AirQualityTimeSeriesStudy:
             period=365
         )
         
-        print("\nDecomposed into:")
-        print("  - Trend component")
-        print("  - Seasonal component (annual cycle)")
-        print("  - Residual component")
+        SafeOutput.safe_print("\nDecomposed into:")
+        SafeOutput.safe_print("  - Trend component")
+        SafeOutput.safe_print("  - Seasonal component (annual cycle)")
+        SafeOutput.safe_print("  - Residual component")
         
         # Plot decomposition
         fig, axes = plt.subplots(4, 1, figsize=(14, 12))
@@ -279,31 +310,36 @@ class AirQualityTimeSeriesStudy:
         
         plt.tight_layout()
         plt.savefig('03_time_series_decomposition.png', dpi=300, bbox_inches='tight')
-        print("\n[OK] Decomposition plot saved")
+        SafeOutput.safe_print(f"\n{get_symbol('checkmark')} Decomposition plot saved")
         plt.close()
         
         return decomposition
     
-    def forecast_future(self, steps=90):
-        """Forecast future values using ARIMA"""
+    def forecast_future(self, steps: int = 90) -> Optional[pd.Series]:
+        """Forecast future values using ARIMA.
+        
+        Args:
+            steps: Number of time periods to forecast ahead
+            
+        Returns:
+            Forecast series, or None if statsmodels not available
+        """
         if not STATSMODELS_AVAILABLE:
-            print("\n[SKIPPED] Forecasting requires statsmodels")
+            SafeOutput.safe_print("\n[SKIPPED] Forecasting requires statsmodels")
             return None
         
-        print("\n" + "="*70)
-        print("FORECASTING")
-        print("="*70)
+        self.formatter.print_section("FORECASTING")
         
-        print(f"\nFitting ARIMA model...")
-        print(f"Forecasting next {steps} days")
+        SafeOutput.safe_print(f"\nFitting ARIMA model...")
+        SafeOutput.safe_print(f"Forecasting next {steps} days")
         
         # Fit ARIMA model
         model = ARIMA(self.data['pm25'], order=(1, 1, 1))
         fitted = model.fit()
         
-        print(f"\nModel Summary:")
-        print(f"  AIC = {fitted.aic:.2f}")
-        print(f"  BIC = {fitted.bic:.2f}")
+        SafeOutput.safe_print(f"\nModel Summary:")
+        SafeOutput.safe_print(f"  AIC = {fitted.aic:.2f}")
+        SafeOutput.safe_print(f"  BIC = {fitted.bic:.2f}")
         
         # Forecast
         forecast = fitted.forecast(steps=steps)
@@ -313,10 +349,10 @@ class AirQualityTimeSeriesStudy:
             freq='D'
         )
         
-        print(f"\nForecast Statistics:")
-        print(f"  Mean forecast = {forecast.mean():.2f} ug/m3")
-        print(f"  Min forecast = {forecast.min():.2f} ug/m3")
-        print(f"  Max forecast = {forecast.max():.2f} ug/m3")
+        SafeOutput.safe_print(f"\nForecast Statistics:")
+        SafeOutput.safe_print(f"  Mean forecast = {forecast.mean():.2f} ug/m3")
+        SafeOutput.safe_print(f"  Min forecast = {forecast.min():.2f} ug/m3")
+        SafeOutput.safe_print(f"  Max forecast = {forecast.max():.2f} ug/m3")
         
         # Plot forecast
         plt.figure(figsize=(14, 6))
@@ -339,54 +375,52 @@ class AirQualityTimeSeriesStudy:
         plt.grid(True, alpha=0.3)
         plt.tight_layout()
         plt.savefig('03_time_series_forecast.png', dpi=300, bbox_inches='tight')
-        print("\n[OK] Forecast plot saved")
+        SafeOutput.safe_print(f"\n{get_symbol('checkmark')} Forecast plot saved")
         plt.close()
         
         return forecast
     
-    def analyze_autocorrelation(self):
-        """Analyze autocorrelation structure"""
-        print("\n" + "="*70)
-        print("AUTOCORRELATION ANALYSIS")
-        print("="*70)
+    def analyze_autocorrelation(self) -> None:
+        """Analyze autocorrelation structure at key lags."""
+        self.formatter.print_section("AUTOCORRELATION ANALYSIS")
         
         # Calculate autocorrelation
         lags = [1, 7, 30, 365]
         
-        print("\nAutocorrelation at key lags:")
+        SafeOutput.safe_print("\nAutocorrelation at key lags:")
         for lag in lags:
             if lag < len(self.data):
                 acf = self.data['pm25'].autocorr(lag=lag)
-                print(f"  Lag {lag:3d} days: r = {acf:.3f}")
+                SafeOutput.safe_print(f"  Lag {lag:3d} days: r = {acf:.3f}")
     
-    def detect_changepoints(self):
-        """Detect significant changes in the series"""
-        print("\n" + "="*70)
-        print("CHANGEPOINT DETECTION")
-        print("="*70)
+    def detect_changepoints(self) -> pd.Timestamp:
+        """Detect significant changes in the series.
+        
+        Returns:
+            Timestamp of detected changepoint
+        """
+        self.formatter.print_section("CHANGEPOINT DETECTION")
         
         # Simple CUSUM approach
         cumsum = (self.data['pm25'] - self.data['pm25'].mean()).cumsum()
         changepoint_idx = cumsum.abs().idxmax()
         
-        print(f"\nPotential changepoint detected at: {changepoint_idx.date()}")
-        print(f"CUSUM value: {cumsum.loc[changepoint_idx]:.2f}")
+        SafeOutput.safe_print(f"\nPotential changepoint detected at: {changepoint_idx.date()}")
+        SafeOutput.safe_print(f"CUSUM value: {cumsum.loc[changepoint_idx]:.2f}")
         
         # Compare before and after
         before = self.data.loc[:changepoint_idx, 'pm25']
         after = self.data.loc[changepoint_idx:, 'pm25']
         
-        print(f"\nBefore changepoint: M = {before.mean():.2f} ug/m3")
-        print(f"After changepoint: M = {after.mean():.2f} ug/m3")
-        print(f"Difference: {abs(after.mean() - before.mean()):.2f} ug/m3")
+        SafeOutput.safe_print(f"\nBefore changepoint: M = {before.mean():.2f} ug/m3")
+        SafeOutput.safe_print(f"After changepoint: M = {after.mean():.2f} ug/m3")
+        SafeOutput.safe_print(f"Difference: {abs(after.mean() - before.mean()):.2f} ug/m3")
         
         return changepoint_idx
     
-    def visualize_full_analysis(self):
-        """Create comprehensive visualization"""
-        print("\n" + "="*70)
-        print("VISUALIZATIONS")
-        print("="*70)
+    def visualize_full_analysis(self) -> None:
+        """Create comprehensive visualization of all analyses."""
+        self.formatter.print_section("VISUALIZATIONS")
         
         fig, axes = plt.subplots(2, 2, figsize=(16, 10))
         fig.suptitle('Time Series Analysis: Air Quality Trends', 
@@ -448,68 +482,62 @@ class AirQualityTimeSeriesStudy:
         
         plt.tight_layout()
         plt.savefig('03_time_series_analysis.png', dpi=300, bbox_inches='tight')
-        print("\n[OK] Analysis visualizations saved to: 03_time_series_analysis.png")
+        SafeOutput.safe_print(f"\n{get_symbol('checkmark')} Analysis visualizations saved to: 03_time_series_analysis.png")
         plt.close()
     
-    def generate_report(self):
-        """Generate APA-style report"""
-        print("\n" + "="*70)
-        print("RESEARCH REPORT")
-        print("="*70)
+    def generate_report(self) -> None:
+        """Generate APA-style report with results and interpretation."""
+        self.formatter.print_section("RESEARCH REPORT")
         
-        print(f"\nTitle: {self.metadata['title']}")
-        print(f"\nResearch Question: {self.metadata['research_question']}")
+        SafeOutput.safe_print(f"\nTitle: {self.metadata['title']}")
+        SafeOutput.safe_print(f"\nResearch Question: {self.metadata['research_question']}")
         
         slope, p_trend = stats.linregress(
             np.arange(len(self.data)),
             self.data['pm25'].values
         )[:2]
         
-        print("\n--- RESULTS ---")
-        print(f"\nTime series analysis of daily PM2.5 measurements over ")
-        print(f"{self.metadata['time_period']} (N = {len(self.data)} observations) ")
-        print(f"revealed a mean concentration of {self.data['pm25'].mean():.2f} ug/m3 ")
-        print(f"(SD = {self.data['pm25'].std():.2f}).")
+        SafeOutput.safe_print("\n--- RESULTS ---")
+        SafeOutput.safe_print(f"\nTime series analysis of daily PM2.5 measurements over ")
+        SafeOutput.safe_print(f"{self.metadata['time_period']} (N = {len(self.data)} observations) ")
+        SafeOutput.safe_print(f"revealed a mean concentration of {self.data['pm25'].mean():.2f} ug/m3 ")
+        SafeOutput.safe_print(f"(SD = {self.data['pm25'].std():.2f}).")
         
-        print(f"\nLinear regression indicated a {'significant' if p_trend < 0.05 else 'non-significant'} ")
-        print(f"{'decreasing' if slope < 0 else 'increasing'} trend over time, ")
-        print(f"beta = {slope:.4f} ug/m3 per day (approximately {slope*365:.2f} ug/m3 per year), ")
-        print(f"t({len(self.data)-2}) = {slope/std_err:.2f}, p = {p_trend:.4f}." if p_trend < 0.05 else f"p = {p_trend:.4f}.")
+        SafeOutput.safe_print(f"\nLinear regression indicated a {'significant' if p_trend < 0.05 else 'non-significant'} ")
+        SafeOutput.safe_print(f"{'decreasing' if slope < 0 else 'increasing'} trend over time, ")
+        SafeOutput.safe_print(f"beta = {slope:.4f} ug/m3 per day (approximately {slope*365:.2f} ug/m3 per year), ")
+        SafeOutput.safe_print(f"t({len(self.data)-2}) = {slope/std_err:.2f}, p = {p_trend:.4f}." if p_trend < 0.05 else f"p = {p_trend:.4f}.")
         
         if STATSMODELS_AVAILABLE:
-            print(f"\nDecomposition analysis ({self.statsmodels_ref}) revealed ")
-            print(f"seasonal patterns with peak pollution during winter months.")
+            SafeOutput.safe_print(f"\nDecomposition analysis ({self.statsmodels_ref}) revealed ")
+            SafeOutput.safe_print(f"seasonal patterns with peak pollution during winter months.")
         
-        print("\n--- INTERPRETATION ---")
-        print("\n[OK] APPROPRIATE CLAIMS:")
-        print(f"  - PM2.5 levels showed a {'decreasing' if slope < 0 else 'increasing'} trend")
-        print(f"  - Seasonal patterns were observed")
-        print(f"  - Weekly patterns suggest higher weekday pollution")
+        SafeOutput.safe_print("\n--- INTERPRETATION ---")
+        SafeOutput.safe_print(f"\n{get_symbol('checkmark')} APPROPRIATE CLAIMS:")
+        SafeOutput.safe_print(f"  - PM2.5 levels showed a {'decreasing' if slope < 0 else 'increasing'} trend")
+        SafeOutput.safe_print(f"  - Seasonal patterns were observed")
+        SafeOutput.safe_print(f"  - Weekly patterns suggest higher weekday pollution")
         
-        print("\n[X] INAPPROPRIATE CLAIMS:")
-        print("  - 'Policy X CAUSED the decrease' (cannot infer causation)")
-        print("  - Temporal patterns don't establish cause-effect")
-        print("  - Multiple factors could explain trends")
+        SafeOutput.safe_print(f"\n{get_symbol('cross')} INAPPROPRIATE CLAIMS:")
+        SafeOutput.safe_print("  - 'Policy X CAUSED the decrease' (cannot infer causation)")
+        SafeOutput.safe_print("  - Temporal patterns don't establish cause-effect")
+        SafeOutput.safe_print("  - Multiple factors could explain trends")
         
-        print("\n--- LIMITATIONS ---")
+        SafeOutput.safe_print("\n--- LIMITATIONS ---")
         for limitation in self.metadata['limitations']:
-            print(f"  - {limitation}")
+            SafeOutput.safe_print(f"  - {limitation}")
     
-    def generate_references(self):
-        """Generate APA 7 reference list"""
-        print("\n" + "="*70)
-        print("REFERENCES")
-        print("="*70)
-        print()
-        print(self.references.generate_reference_list())
+    def generate_references(self) -> None:
+        """Generate APA 7 reference list."""
+        self.formatter.print_section("REFERENCES")
+        SafeOutput.safe_print("")
+        SafeOutput.safe_print(self.references.generate_reference_list())
     
-    def run_full_study(self):
-        """Execute complete time series analysis"""
-        print("\n" + "="*70)
-        print("TIME SERIES ANALYSIS: AIR QUALITY TRENDS")
-        print("="*70)
-        print(f"Study Date: {datetime.now().strftime('%Y-%m-%d')}")
-        print(f"Research Type: {self.metadata['research_type']}")
+    def run_full_study(self) -> None:
+        """Execute complete time series analysis workflow."""
+        self.formatter.print_section("TIME SERIES ANALYSIS: AIR QUALITY TRENDS")
+        SafeOutput.safe_print(f"Study Date: {datetime.now().strftime('%Y-%m-%d')}")
+        SafeOutput.safe_print(f"Research Type: {self.metadata['research_type']}")
         
         # Execute workflow
         self.generate_time_series_data()
@@ -528,28 +556,25 @@ class AirQualityTimeSeriesStudy:
         self.generate_report()
         self.generate_references()
         
-        print("\n" + "="*70)
-        print("STUDY COMPLETE")
-        print("="*70)
-        print("\nAll data and results are saved and can be independently verified.")
-        print("See 03_time_series_raw_data.csv for raw data")
-        print("See 03_time_series_*.png for visualizations")
+        self.formatter.print_section("STUDY COMPLETE")
+        SafeOutput.safe_print("\nAll data and results are saved and can be independently verified.")
+        SafeOutput.safe_print("See 03_time_series_raw_data.csv for raw data")
+        SafeOutput.safe_print("See 03_time_series_*.png for visualizations")
 
 
 if __name__ == "__main__":
-    print("\n" + "="*70)
-    print("EXAMPLE 03: TIME SERIES ANALYSIS")
-    print("="*70)
-    print("\nThis example demonstrates proper time series research:")
-    print("  - Analyzing temporal trends")
-    print("  - Testing for stationarity")
-    print("  - Decomposing seasonal patterns")
-    print("  - Forecasting future values")
-    print("  - Proper interpretation of temporal patterns")
-    print("  - APA 7 style reporting")
-    print("="*70 + "\n")
+    formatter = ReportFormatter()
+    formatter.print_section("EXAMPLE 03: TIME SERIES ANALYSIS")
+    SafeOutput.safe_print("\nThis example demonstrates proper time series research:")
+    SafeOutput.safe_print("  - Analyzing temporal trends")
+    SafeOutput.safe_print("  - Testing for stationarity")
+    SafeOutput.safe_print("  - Decomposing seasonal patterns")
+    SafeOutput.safe_print("  - Forecasting future values")
+    SafeOutput.safe_print("  - Proper interpretation of temporal patterns")
+    SafeOutput.safe_print("  - APA 7 style reporting")
+    SafeOutput.safe_print("="*70 + "\n")
     
     study = AirQualityTimeSeriesStudy()
     study.run_full_study()
     
-    print("\n[OK] Example complete. This demonstrates verifiable time series research.")
+    SafeOutput.safe_print(f"\n{get_symbol('checkmark')} Example complete. This demonstrates verifiable time series research.")

@@ -12,8 +12,11 @@ from .output import SafeOutput
 from .formatting import (
     ScientificNotation,
     ReportFormatter,
+    get_symbol,
     format_temperature,
-    format_pm25
+    format_pm25,
+    format_concentration,
+    format_percentage
 )
 from .statistics import StatisticalFormatter
 
@@ -24,8 +27,11 @@ __all__ = [
     # Formatting
     'ScientificNotation',
     'ReportFormatter',
+    'get_symbol',
     'format_temperature',
     'format_pm25',
+    'format_concentration',
+    'format_percentage',
     
     # Statistics
     'StatisticalFormatter',

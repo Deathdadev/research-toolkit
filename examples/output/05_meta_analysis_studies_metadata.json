@@ -1,0 +1,38 @@
+{
+  "research_type": "Meta-Analysis (Empirical - Synthesis)",
+  "study_date": "2025-10-17T22:21:26.994426",
+  "title": "Study Hours and Academic Performance: A Meta-Analytic Review",
+  "research_question": "What is the overall correlation between study hours and academic performance?",
+  "design": "Quantitative meta-analysis",
+  "search_strategy": "Systematic review of educational psychology databases",
+  "inclusion_criteria": [
+    "Published peer-reviewed studies",
+    "Measured both study hours and academic performance",
+    "Reported correlation coefficient or convertible statistic",
+    "Sample size reported"
+  ],
+  "exclusion_criteria": [
+    "Non-empirical studies",
+    "Insufficient statistical information",
+    "Duplicate samples"
+  ],
+  "effect_size_metric": "Correlation coefficient (r) converted to Fisher's z",
+  "k_studies": 15,
+  "total_n": 3944,
+  "statistical_methods": [
+    "Fixed-effects model (ref1)",
+    "Random-effects model (ref1)",
+    "Heterogeneity analysis (Q, I^2)",
+    "Publication bias tests (Egger's test)",
+    "Forest plots",
+    "Funnel plots"
+  ],
+  "limitations": [
+    "Quality depends on primary study quality",
+    "Publication bias may affect results",
+    "Study heterogeneity limits interpretability",
+    "Study-level analysis (not individual participants)",
+    "Cannot establish causation (depends on primary designs)",
+    "Restricted to published English-language studies"
+  ]
+}

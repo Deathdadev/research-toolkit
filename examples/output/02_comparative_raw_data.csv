@@ -1,0 +1,21 @@
+city,country,latitude,longitude,type,temperature
+Miami,US,25.7617,-80.1918,Coastal,24.22
+Los Angeles,US,34.0522,-118.2437,Coastal,24.8
+Sydney,AU,-33.8688,151.2093,Coastal,27.1
+Barcelona,ES,41.3851,2.1734,Coastal,31.98
+Rio de Janeiro,BR,-22.9068,-43.1729,Coastal,21.17
+Mumbai,IN,19.076,72.8777,Coastal,20.02
+Singapore,SG,1.3521,103.8198,Coastal,20.14
+Dubai,AE,25.2048,55.2708,Coastal,24.86
+Cape Town,ZA,-33.9249,18.4241,Coastal,23.77
+Hong Kong,HK,22.3193,114.1694,Coastal,23.32
+Phoenix,US,33.4484,-112.074,Inland,29.06
+Denver,US,39.7392,-104.9903,Inland,31.57
+Madrid,ES,40.4168,-3.7038,Inland,35.38
+Brasilia,BR,-15.8267,-47.9218,Inland,14.76
+Delhi,IN,28.6139,77.209,Inland,20.82
+Johannesburg,ZA,-26.2041,28.0473,Inland,25.67
+Riyadh,SA,24.7136,46.6753,Inland,22.82
+Nairobi,KE,-1.2864,36.8172,Inland,20.09
+Mexico City,MX,19.4326,-99.1332,Inland,21.23
+Bangkok,TH,13.7563,100.5018,Inland,16.44

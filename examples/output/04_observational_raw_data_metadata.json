@@ -1,0 +1,36 @@
+{
+  "research_type": "Observational Study (Empirical - Descriptive)",
+  "study_date": "2025-10-17T22:21:24.904412",
+  "title": "Characteristics of Popular Python Repositories: A Descriptive Analysis",
+  "research_question": "What are the characteristics of popular Python repositories on GitHub?",
+  "purpose": "Describe and document observed characteristics",
+  "design": "Cross-sectional observational",
+  "population": "Python repositories on GitHub",
+  "sample": "Top 50 Python repositories by stars",
+  "data_source": "GitHub API (ref1)",
+  "variables_observed": [
+    "Stars count",
+    "Forks count",
+    "Open issues count",
+    "Repository size (KB)",
+    "Number of contributors",
+    "Last update date",
+    "License type",
+    "Has documentation"
+  ],
+  "statistical_methods": [
+    "Descriptive statistics",
+    "Frequency distributions",
+    "Correlation analysis",
+    "Pattern identification"
+  ],
+  "limitations": [
+    "Descriptive only - no causal inferences",
+    "Cross-sectional (single time point)",
+    "Limited to popular repositories (selection bias)",
+    "Limited to Python language",
+    "Cannot generalize to all repositories",
+    "Popularity metrics may not reflect quality"
+  ],
+  "ethical_considerations": "Uses only publicly available repository metadata; no personal data"
+}

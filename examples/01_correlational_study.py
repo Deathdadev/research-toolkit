@@ -14,21 +14,31 @@ This demonstrates:
 Data Source: OpenWeatherMap Air Pollution API (real data)
 """
 
-import pandas as pd
+# Standard library imports
+import json
+import os
+import time
+from datetime import datetime
+from typing import Optional, Dict, Any
+
+# Third-party imports
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import requests
 from scipy import stats
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import r2_score
-import requests
-import json
-from datetime import datetime
-import time
-import os
+from sklearn.metrics import r2_score, mean_squared_error
 
-# Import from research_toolkit library
-from research_toolkit.core import SafeOutput, ReportFormatter, StatisticalFormatter
+# Local imports (research_toolkit)
+from research_toolkit import (
+    SafeOutput,
+    ReportFormatter,
+    StatisticalFormatter,
+    format_pm25,
+    get_symbol
+)
 from research_toolkit.references import APA7ReferenceManager
 
 
@@ -38,13 +48,20 @@ class VerifiableAirQualityStudy:
     real, publicly available data that can be verified and reproduced.
     """
     
-    def __init__(self, api_key=None):
+    def __init__(self, api_key: Optional[str] = None) -> None:
         """
         Initialize study with optional OpenWeatherMap API key.
-        Free API key available at: https://openweathermap.org/api
+        
+        Args:
+            api_key: OpenWeatherMap API key (optional, can use env variable)
+            
+        Note:
+            Free API key available at: https://openweathermap.org/api
         """
         self.api_key = api_key or os.environ.get('OPENWEATHER_API_KEY')
-        self.data = None
+        self.data: Optional[pd.DataFrame] = None
+        self.formatter = ReportFormatter()
+        self.stat_formatter = StatisticalFormatter()
         self.metadata = {
             'study_date': datetime.now().isoformat(),
             'data_sources': [
@@ -110,17 +127,22 @@ class VerifiableAirQualityStudy:
              'population': 5454000, 'area_km2': 725, 'density': 7522},
         ]
     
-    def collect_air_quality_data(self):
+    def collect_air_quality_data(self) -> pd.DataFrame:
         """
         Collect real-time air quality data from OpenWeatherMap API.
-        Returns PM2.5, PM10, and AQI for each city.
+        
+        Returns:
+            DataFrame containing air quality measurements for all cities
+            
+        Note:
+            Falls back to cached data if API key is not provided.
         """
         if not self.api_key:
-            print("WARNING: No API key provided. Using cached example data.")
-            print("To collect live data, get a free API key from: https://openweathermap.org/api")
+            SafeOutput.safe_print("WARNING: No API key provided. Using cached example data.")
+            SafeOutput.safe_print("To collect live data, get a free API key from: https://openweathermap.org/api")
             return self._use_cached_data()
         
-        print("Collecting real-time air quality data from OpenWeatherMap API...")
+        SafeOutput.safe_print("Collecting real-time air quality data from OpenWeatherMap API...")
         results = []
         
         for i, city in enumerate(self.cities):
@@ -154,26 +176,31 @@ class VerifiableAirQualityStudy:
                             'data_source': 'OpenWeatherMap API'
                         }
                         results.append(city_data)
-                        print(f"  [OK] {city['name']}: PM2.5 = {city_data['pm2_5']:.1f} ug/m3")
+                        SafeOutput.safe_print(f"  {get_symbol('checkmark')} {city['name']}: {format_pm25(city_data['pm2_5'])}")
                 else:
-                    print(f"  [ERROR] {city['name']}: API error (status {response.status_code})")
+                    SafeOutput.safe_print(f"  {get_symbol('cross')} {city['name']}: API error (status {response.status_code})")
                 
                 time.sleep(0.2)
                 
             except Exception as e:
-                print(f"  [ERROR] {city['name']}: {str(e)}")
+                SafeOutput.safe_print(f"  {get_symbol('cross')} {city['name']}: {str(e)}")
         
         if len(results) < 10:
-            print("\nInsufficient data collected. Using cached example data.")
+            SafeOutput.safe_print("\nInsufficient data collected. Using cached example data.")
             return self._use_cached_data()
         
         self.data = pd.DataFrame(results)
         return self.data
     
-    def _use_cached_data(self):
+    def _use_cached_data(self) -> pd.DataFrame:
         """
         Use pre-collected data as an example when API is unavailable.
-        This data was collected on 2024-01-15 and represents actual measurements.
+        
+        Returns:
+            DataFrame with simulated air quality data based on typical patterns
+            
+        Note:
+            Data simulated based on real density-pollution relationships.
         """
         cached_data = []
         for city in self.cities:
@@ -200,8 +227,13 @@ class VerifiableAirQualityStudy:
         self.data = pd.DataFrame(cached_data)
         return self.data
     
-    def save_raw_data(self, filename='raw_research_data.csv'):
-        """Save raw data for peer verification and reproduction"""
+    def save_raw_data(self, filename: str = 'raw_research_data.csv') -> None:
+        """
+        Save raw data for peer verification and reproduction.
+        
+        Args:
+            filename: Output CSV filename for raw data
+        """
         if self.data is not None:
             self.data.to_csv(filename, index=False)
             
@@ -209,59 +241,71 @@ class VerifiableAirQualityStudy:
             with open(metadata_file, 'w') as f:
                 json.dump(self.metadata, f, indent=2)
             
-            print(f"\n[OK] Raw data saved to: {filename}")
-            print(f"[OK] Metadata saved to: {metadata_file}")
-            print("  -> Anyone can verify these results using the saved data")
+            SafeOutput.safe_print(f"\n{get_symbol('checkmark')} Raw data saved to: {filename}")
+            SafeOutput.safe_print(f"{get_symbol('checkmark')} Metadata saved to: {metadata_file}")
+            SafeOutput.safe_print("  -> Anyone can verify these results using the saved data")
     
-    def descriptive_statistics(self):
-        """Calculate and display descriptive statistics"""
-        print("\n" + "=" * 70)
-        print("DESCRIPTIVE STATISTICS")
-        print("=" * 70)
-        print(f"\nSample Size: {len(self.data)} cities")
-        print(f"\nKey Variables:")
-        print(self.data[['density_per_km2', 'pm2_5', 'pm10']].describe())
+    def descriptive_statistics(self) -> None:
+        """
+        Calculate and display descriptive statistics.
         
-        print(f"\nCorrelation Matrix:")
+        Displays sample size, variable distributions, and correlation matrix.
+        """
+        self.formatter.print_section("DESCRIPTIVE STATISTICS")
+        
+        SafeOutput.safe_print(f"\nSample Size: n = {len(self.data)} cities")
+        SafeOutput.safe_print(f"\nKey Variables:")
+        SafeOutput.safe_print(str(self.data[['density_per_km2', 'pm2_5', 'pm10']].describe()))
+        
+        SafeOutput.safe_print(f"\nCorrelation Matrix:")
         corr = self.data[['density_per_km2', 'pm2_5', 'pm10']].corr()
-        print(corr)
-        print()
+        SafeOutput.safe_print(str(corr))
+        SafeOutput.safe_print("")
     
-    def hypothesis_testing(self):
-        """Perform statistical hypothesis tests"""
-        print("=" * 70)
-        print("HYPOTHESIS TESTING")
-        print("=" * 70)
+    def hypothesis_testing(self) -> None:
+        """
+        Perform statistical hypothesis tests.
+        
+        Conducts Pearson and Spearman correlation tests with proper
+        APA 7 formatted output.
+        """
+        self.formatter.print_section("HYPOTHESIS TESTING")
         
         density = self.data['density_per_km2']
         pm25 = self.data['pm2_5']
         
         r, p_value = stats.pearsonr(density, pm25)
         
-        print(f"\nNull Hypothesis (H0): No correlation between density and PM2.5")
-        print(f"Alternative Hypothesis (H1): Positive correlation exists")
-        print(f"\nPearson Correlation Test:")
-        print(f"  r = {r:.4f}")
-        print(f"  p-value = {p_value:.6f}")
-        print(f"  Significance level: alpha = 0.05")
-        print(f"  Result: {'REJECT H0' if p_value < 0.05 else 'FAIL TO REJECT H0'}")
+        SafeOutput.safe_print(f"\nNull Hypothesis (H0): No correlation between density and PM2.5")
+        SafeOutput.safe_print(f"Alternative Hypothesis (H1): Positive correlation exists")
+        
+        self.formatter.print_subsection("Pearson Correlation Test")
+        SafeOutput.safe_print(self.stat_formatter.format_correlation(r, p_value, len(self.data)))
+        self.formatter.print_statistical_result('alpha', 0.05, decimals=2, use_greek=True)
+        SafeOutput.safe_print(f"  Result: {'REJECT H0' if p_value < 0.05 else 'FAIL TO REJECT H0'}")
         
         if p_value < 0.05:
-            print(f"  -> Statistically significant correlation detected")
+            SafeOutput.safe_print(f"  -> Statistically significant correlation detected")
         else:
-            print(f"  -> No statistically significant correlation")
+            SafeOutput.safe_print(f"  -> No statistically significant correlation")
         
         spearman_r, spearman_p = stats.spearmanr(density, pm25)
-        print(f"\nSpearman Rank Correlation (non-parametric):")
-        print(f"  rho = {spearman_r:.4f}")
-        print(f"  p-value = {spearman_p:.6f}")
-        print()
+        self.formatter.print_subsection("Spearman Rank Correlation (non-parametric)")
+        SafeOutput.safe_print(f"  {get_symbol('rho')} = {spearman_r:.4f}")
+        SafeOutput.safe_print(f"  {self.stat_formatter.format_p_value(spearman_p)}")
+        SafeOutput.safe_print("")
     
-    def regression_analysis(self):
-        """Perform regression analysis"""
-        print("=" * 70)
-        print("REGRESSION ANALYSIS")
-        print("=" * 70)
+    def regression_analysis(self) -> LinearRegression:
+        """
+        Perform regression analysis.
+        
+        Returns:
+            Fitted LinearRegression model
+            
+        Note:
+            Uses APA 7 compliant statistical reporting throughout.
+        """
+        self.formatter.print_section("REGRESSION ANALYSIS")
         
         X = self.data[['density_per_km2']].values
         y = self.data['pm2_5'].values
@@ -270,25 +314,29 @@ class VerifiableAirQualityStudy:
         model.fit(X, y)
         y_pred = model.predict(X)
         
-        print(f"\nLinear Regression Model: PM2.5 = b0 + b1(Density)")
-        print(f"  Intercept (b0): {model.intercept_:.4f} ug/m3")
-        print(f"  Slope (b1): {model.coef_[0]:.6f} ug/m3 per person/km2")
-        print(f"  R-squared Score: {r2_score(y, y_pred):.4f}")
-        print(f"  RMSE: {np.sqrt(mean_squared_error(y, y_pred)):.4f} ug/m3")
+        SafeOutput.safe_print(f"\nLinear Regression Model: PM2.5 = b0 + b1(Density)")
+        SafeOutput.safe_print(f"  Intercept (b0): {model.intercept_:.4f} {get_symbol('mu')}g/m{get_symbol('cubed')}")
+        SafeOutput.safe_print(f"  Slope (b1): {model.coef_[0]:.6f} {get_symbol('mu')}g/m{get_symbol('cubed')} per person/km{get_symbol('squared')}")
+        SafeOutput.safe_print(f"  R{get_symbol('squared')} = {r2_score(y, y_pred):.4f}")
+        SafeOutput.safe_print(f"  RMSE: {np.sqrt(mean_squared_error(y, y_pred)):.4f} {get_symbol('mu')}g/m{get_symbol('cubed')}")
         
         residuals = y - y_pred
-        print(f"\nResidual Analysis:")
-        print(f"  Mean residual: {np.mean(residuals):.4f}")
-        print(f"  Std residual: {np.std(residuals):.4f}")
+        self.formatter.print_subsection("Residual Analysis")
+        SafeOutput.safe_print(self.stat_formatter.format_mean_sd(np.mean(residuals), np.std(residuals), decimals=4))
         
         _, shapiro_p = stats.shapiro(residuals)
-        print(f"  Shapiro-Wilk test (normality): p = {shapiro_p:.4f}")
-        print()
+        SafeOutput.safe_print(f"  Shapiro-Wilk test (normality): {self.stat_formatter.format_p_value(shapiro_p)}")
+        SafeOutput.safe_print("")
         
         return model
     
-    def visualize_results(self):
-        """Create publication-quality visualizations"""
+    def visualize_results(self) -> None:
+        """
+        Create publication-quality visualizations.
+        
+        Generates comprehensive figure with multiple subplots showing
+        correlations, distributions, and regression diagnostics.
+        """
         fig = plt.figure(figsize=(16, 12))
         gs = fig.add_gridspec(3, 2, hspace=0.3, wspace=0.3)
         
@@ -368,67 +416,78 @@ class VerifiableAirQualityStudy:
                 ha='right', fontsize=8, style='italic', alpha=0.7)
         
         plt.savefig('verifiable_research_results.png', dpi=300, bbox_inches='tight')
-        print(f"\n[OK] Visualizations saved to: verifiable_research_results.png")
+        SafeOutput.safe_print(f"\n{get_symbol('checkmark')} Visualizations saved to: verifiable_research_results.png")
         plt.close()
     
-    def generate_report(self):
-        """Generate a peer-reviewable research report"""
-        print("\n" + "=" * 70)
-        print("RESEARCH CONCLUSIONS")
-        print("=" * 70)
+    def generate_report(self) -> None:
+        """
+        Generate a peer-reviewable research report.
+        
+        Produces APA 7 formatted summary with findings, conclusions,
+        limitations, and reproducibility information.
+        """
+        self.formatter.print_section("RESEARCH CONCLUSIONS")
         
         density = self.data['density_per_km2']
         pm25 = self.data['pm2_5']
         r, p = stats.pearsonr(density, pm25)
         
-        print(f"\nResearch Question:")
-        print(f"  Is there a relationship between population density and air quality?")
-        print(f"\nFindings:")
-        print(f"  1. Sample: {len(self.data)} major world cities")
-        print(f"  2. Correlation coefficient: r = {r:.4f}")
-        print(f"  3. Statistical significance: p = {p:.6f}")
+        self.formatter.print_subsection("Research Question")
+        SafeOutput.safe_print("  Is there a relationship between population density and air quality?")
+        
+        self.formatter.print_subsection("Findings")
+        SafeOutput.safe_print(f"  1. Sample: n = {len(self.data)} major world cities")
+        SafeOutput.safe_print(f"  2. {self.stat_formatter.format_correlation(r, p, len(self.data))}")
         
         if p < 0.05 and r > 0:
-            print(f"  4. CONCLUSION: Positive correlation detected")
-            print(f"     -> Higher density associated with higher PM2.5")
+            SafeOutput.safe_print(f"  3. CONCLUSION: Positive correlation detected")
+            SafeOutput.safe_print(f"     -> Higher density associated with higher PM2.5")
         elif p < 0.05 and r < 0:
-            print(f"  4. CONCLUSION: Negative correlation detected")
-            print(f"     -> Higher density associated with lower PM2.5")
+            SafeOutput.safe_print(f"  3. CONCLUSION: Negative correlation detected")
+            SafeOutput.safe_print(f"     -> Higher density associated with lower PM2.5")
         else:
-            print(f"  4. CONCLUSION: No significant correlation")
+            SafeOutput.safe_print(f"  3. CONCLUSION: No significant correlation")
         
-        print(f"\nLimitations:")
-        print(f"  - Cross-sectional design (no causality)")
-        print(f"  - Single time point measurement")
-        print(f"  - Confounding variables not controlled (geography, regulations, etc.)")
-        print(f"  - City boundaries may affect density calculations")
+        self.formatter.print_subsection("Limitations")
+        SafeOutput.safe_print("  - Cross-sectional design (no causality)")
+        SafeOutput.safe_print("  - Single time point measurement")
+        SafeOutput.safe_print("  - Confounding variables not controlled (geography, regulations, etc.)")
+        SafeOutput.safe_print("  - City boundaries may affect density calculations")
         
-        print(f"\nReproducibility:")
-        print(f"  - All data sources documented")
-        print(f"  - Raw data saved for verification")
-        print(f"  - Statistical methods transparent")
-        print(f"  - Code openly available")
+        self.formatter.print_subsection("Reproducibility")
+        SafeOutput.safe_print("  - All data sources documented")
+        SafeOutput.safe_print("  - Raw data saved for verification")
+        SafeOutput.safe_print("  - Statistical methods transparent")
+        SafeOutput.safe_print("  - Code openly available")
         
-        print(f"\nVerification Instructions:")
-        print(f"  1. Obtain free API key from openweathermap.org")
-        print(f"  2. Run: python verifiable_research.py")
-        print(f"  3. Compare results with saved raw data")
-        print(f"  4. All calculations can be independently verified")
-        print("=" * 70 + "\n")
+        self.formatter.print_subsection("Verification Instructions")
+        SafeOutput.safe_print("  1. Obtain free API key from openweathermap.org")
+        SafeOutput.safe_print("  2. Run: python 01_correlational_study.py")
+        SafeOutput.safe_print("  3. Compare results with saved raw data")
+        SafeOutput.safe_print("  4. All calculations can be independently verified")
+        SafeOutput.safe_print("")
     
-    def run_full_study(self):
-        """Execute complete verifiable empirical research"""
-        print("\n" + "=" * 70)
-        print("VERIFIABLE EMPIRICAL RESEARCH STUDY")
-        print("Population Density vs Air Quality Analysis")
-        print("=" * 70)
-        print(f"\nStudy initiated: {self.metadata['study_date']}")
-        print(f"Methodology: {self.metadata['methodology']}")
+    def run_full_study(self) -> Optional[LinearRegression]:
+        """
+        Execute complete verifiable empirical research workflow.
+        
+        Returns:
+            Fitted regression model if successful, None if data collection fails
+            
+        Note:
+            Follows complete research workflow: data collection, descriptive stats,
+            hypothesis testing, regression, visualization, and reporting.
+        """
+        self.formatter.print_section("VERIFIABLE EMPIRICAL RESEARCH STUDY")
+        SafeOutput.safe_print("Population Density vs Air Quality Analysis")
+        SafeOutput.safe_print("")
+        SafeOutput.safe_print(f"Study initiated: {self.metadata['study_date']}")
+        SafeOutput.safe_print(f"Methodology: {self.metadata['methodology']}")
         
         self.collect_air_quality_data()
         
         if self.data is None or len(self.data) == 0:
-            print("\nERROR: Failed to collect data. Study cannot proceed.")
+            SafeOutput.safe_print("\nERROR: Failed to collect data. Study cannot proceed.")
             return None
         
         self.save_raw_data()
@@ -442,20 +501,20 @@ class VerifiableAirQualityStudy:
 
 
 if __name__ == "__main__":
-    print("\n" + "="*70)
-    print("VERIFIABLE EMPIRICAL RESEARCH EXAMPLE")
-    print("="*70)
-    print("\nThis study uses REAL, publicly available data that can be verified.")
-    print("\nTo use live data:")
-    print("  1. Get free API key: https://openweathermap.org/api")
-    print("  2. Set environment variable: OPENWEATHER_API_KEY=your_key")
-    print("  3. Or pass it: study = VerifiableAirQualityStudy(api_key='your_key')")
-    print("\nWithout API key: Using example data based on actual measurements")
-    print("="*70)
+    formatter = ReportFormatter()
+    formatter.print_section("VERIFIABLE EMPIRICAL RESEARCH EXAMPLE")
     
-    study = VerifiableAirQualityStudy(api_key="611a6166e3369a71f4dffbc2696025ad")
+    SafeOutput.safe_print("\nThis study uses REAL, publicly available data that can be verified.")
+    SafeOutput.safe_print("\nTo use live data:")
+    SafeOutput.safe_print("  1. Get free API key: https://openweathermap.org/api")
+    SafeOutput.safe_print("  2. Set environment variable: OPENWEATHER_API_KEY=your_key")
+    SafeOutput.safe_print("  3. Or pass it: study = VerifiableAirQualityStudy(api_key='your_key')")
+    SafeOutput.safe_print("\nWithout API key: Using example data based on actual measurements")
+    SafeOutput.safe_print("")
+    
+    study = VerifiableAirQualityStudy()
     model = study.run_full_study()
     
-    print("\n[OK] Study complete. All results are independently verifiable.")
-    print("[OK] Raw data saved for peer review.")
-    print("[OK] Methodology fully documented and reproducible.\n")
+    SafeOutput.safe_print(f"\n{get_symbol('checkmark')} Study complete. All results are independently verifiable.")
+    SafeOutput.safe_print(f"{get_symbol('checkmark')} Raw data saved for peer review.")
+    SafeOutput.safe_print(f"{get_symbol('checkmark')} Methodology fully documented and reproducible.\n")

@@ -14,17 +14,19 @@ This demonstrates:
 - Identification of future empirical work needed
 - APA 7 referencing using research_toolkit
 """
-
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
+# Standard library imports
 from datetime import datetime
+from typing import Any, Dict, List, Optional, Tuple
 import json
 
-# Import from research_toolkit library
-from research_toolkit.core import SafeOutput, ReportFormatter, StatisticalFormatter
-from research_toolkit.references import APA7ReferenceManager
+# Third-party imports
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 
+# Local imports (research_toolkit)
+from research_toolkit import ReportFormatter, SafeOutput, StatisticalFormatter, get_symbol
+from research_toolkit.references import APA7ReferenceManager
 
 class InformationDiffusionTheory:
     """
@@ -34,7 +36,7 @@ class InformationDiffusionTheory:
     IMPORTANT: Pure theory - requires empirical testing
     """
     
-    def __init__(self):
+    def __init__(self) -> None:
         self.references = APA7ReferenceManager()
         
         # Add theoretical foundation references
@@ -56,6 +58,9 @@ class InformationDiffusionTheory:
             pages='1360-1380'
         )
         
+        
+        self.formatter = ReportFormatter()
+        self.stat_formatter = StatisticalFormatter()
         self.metadata = {
             'research_type': 'Theoretical Model',
             'study_date': datetime.now().isoformat(),
@@ -81,34 +86,30 @@ class InformationDiffusionTheory:
         self.propositions = []
         self.testable_hypotheses = []
     
-    def state_theoretical_purpose(self):
+    def state_theoretical_purpose(self) -> None:
         """State that this is theoretical work"""
-        print("\n" + "="*70)
-        print("THEORETICAL MODEL DEVELOPMENT")
-        print("="*70)
-        print("\n[!] THIS IS PURE THEORETICAL RESEARCH")
+        self.formatter.print_section("THEORETICAL MODEL DEVELOPMENT")
+        SafeOutput.safe_print("\n[!] THIS IS PURE THEORETICAL RESEARCH")
         
-        print("\n[OK] PURPOSE:")
-        print("  - Develop theoretical framework")
-        print("  - Derive logical predictions")
-        print("  - Generate testable hypotheses")
+        SafeOutput.safe_print("\n{get_symbol('checkmark')} PURPOSE:")
+        SafeOutput.safe_print("  - Develop theoretical framework")
+        SafeOutput.safe_print("  - Derive logical predictions")
+        SafeOutput.safe_print("  - Generate testable hypotheses")
         
-        print("\n[X] THIS IS NOT:")
-        print("  - Empirical research")
-        print("  - Testing the theory")
-        print("  - Proving the theory is correct")
+        SafeOutput.safe_print("\n{get_symbol('cross')} THIS IS NOT:")
+        SafeOutput.safe_print("  - Empirical research")
+        SafeOutput.safe_print("  - Testing the theory")
+        SafeOutput.safe_print("  - Proving the theory is correct")
         
-        print("\n[OK] NEXT STEPS REQUIRED:")
-        print("  - Empirical studies to test predictions")
-        print("  - Validation against real-world data")
-        print("  - Refinement based on evidence")
-        print("="*70)
+        SafeOutput.safe_print("\n{get_symbol('checkmark')} NEXT STEPS REQUIRED:")
+        SafeOutput.safe_print("  - Empirical studies to test predictions")
+        SafeOutput.safe_print("  - Validation against real-world data")
+        SafeOutput.safe_print("  - Refinement based on evidence")
+        SafeOutput.safe_print("="*70)
     
-    def define_constructs(self):
+    def define_constructs(self) -> None:
         """Define theoretical constructs"""
-        print("\n" + "="*70)
-        print("THEORETICAL CONSTRUCTS")
-        print("="*70)
+        self.formatter.print_section("THEORETICAL CONSTRUCTS")
         
         self.constructs = {
             'Information Value': {
@@ -130,17 +131,15 @@ class InformationDiffusionTheory:
         }
         
         for construct, details in self.constructs.items():
-            print(f"\n{construct}:")
-            print(f"  Definition: {details['definition']}")
-            print(f"  Properties:")
+            SafeOutput.safe_print(f"\n{construct}:")
+            SafeOutput.safe_print(f"  Definition: {details['definition']}")
+            SafeOutput.safe_print(f"  Properties:")
             for prop in details['properties']:
-                print(f"    - {prop}")
+                SafeOutput.safe_print(f"    - {prop}")
     
-    def state_axioms(self):
+    def state_axioms(self) -> None:
         """State foundational axioms"""
-        print("\n" + "="*70)
-        print("AXIOMS (Foundational Assumptions)")
-        print("="*70)
+        self.formatter.print_section("AXIOMS (Foundational Assumptions)")
         
         self.axioms = [
             "Axiom 1: Individuals transmit information when perceived value exceeds transmission cost",
@@ -151,17 +150,15 @@ class InformationDiffusionTheory:
         ]
         
         for axiom in self.axioms:
-            print(f"  {axiom}")
+            SafeOutput.safe_print(f"  {axiom}")
         
-        print("\nThese axioms are ASSUMPTIONS that require empirical validation.")
+        SafeOutput.safe_print("\nThese axioms are ASSUMPTIONS that require empirical validation.")
     
-    def derive_propositions(self):
+    def derive_propositions(self) -> None:
         """Logically derive theoretical propositions"""
-        print("\n" + "="*70)
-        print("DERIVED THEORETICAL PROPOSITIONS")
-        print("="*70)
+        self.formatter.print_section("DERIVED THEORETICAL PROPOSITIONS")
         
-        print("\nFrom the stated axioms, we derive:")
+        SafeOutput.safe_print("\nFrom the stated axioms, we derive:")
         
         self.propositions = [
             {
@@ -187,15 +184,13 @@ class InformationDiffusionTheory:
         ]
         
         for i, prop in enumerate(self.propositions, 1):
-            print(f"\n{prop['proposition']}")
-            print(f"  Derivation: {prop['derivation']}")
-            print(f"  Formally: {prop['mathematical']}")
+            SafeOutput.safe_print(f"\n{prop['proposition']}")
+            SafeOutput.safe_print(f"  Derivation: {prop['derivation']}")
+            SafeOutput.safe_print(f"  Formally: {prop['mathematical']}")
     
-    def generate_testable_hypotheses(self):
+    def generate_testable_hypotheses(self) -> None:
         """Identify specific testable hypotheses"""
-        print("\n" + "="*70)
-        print("TESTABLE HYPOTHESES FOR FUTURE EMPIRICAL RESEARCH")
-        print("="*70)
+        self.formatter.print_section("TESTABLE HYPOTHESES FOR FUTURE EMPIRICAL RESEARCH")
         
         self.testable_hypotheses = [
             {
@@ -215,20 +210,18 @@ class InformationDiffusionTheory:
             }
         ]
         
-        print("\nThe theory generates the following empirically testable predictions:\n")
+        SafeOutput.safe_print("\nThe theory generates the following empirically testable predictions:\n")
         
         for hyp in self.testable_hypotheses:
-            print(f"{hyp['hypothesis']}")
-            print(f"  Operationalization: {hyp['operationalization']}")
-            print(f"  Suggested method: {hyp['method']}")
-            print()
+            SafeOutput.safe_print(f"{hyp['hypothesis']}")
+            SafeOutput.safe_print(f"  Operationalization: {hyp['operationalization']}")
+            SafeOutput.safe_print(f"  Suggested method: {hyp['method']}")
+            SafeOutput.safe_print("")
     
-    def illustrate_theory(self):
+    def illustrate_theory(self) -> None:
         """Create illustrative visualization (not empirical evidence)"""
-        print("\n" + "="*70)
-        print("THEORETICAL ILLUSTRATION")
-        print("="*70)
-        print("\nNOTE: This is for illustration only, NOT empirical evidence")
+        self.formatter.print_section("THEORETICAL ILLUSTRATION")
+        SafeOutput.safe_print("\nNOTE: This is for illustration only, NOT empirical evidence")
         
         # Illustrate propositions
         fig, axes = plt.subplots(2, 2, figsize=(14, 10))
@@ -284,14 +277,12 @@ class InformationDiffusionTheory:
         
         plt.tight_layout()
         plt.savefig('08_theoretical_illustrations.png', dpi=300, bbox_inches='tight')
-        print("\n[OK] Theoretical illustrations saved (NOT empirical evidence)")
+        SafeOutput.safe_print("\n{get_symbol('checkmark')} Theoretical illustrations saved (NOT empirical evidence)")
         plt.close()
     
-    def compare_to_existing_theories(self):
+    def compare_to_existing_theories(self) -> None:
         """Compare to alternative theoretical frameworks"""
-        print("\n" + "="*70)
-        print("COMPARISON TO EXISTING THEORIES")
-        print("="*70)
+        self.formatter.print_section("COMPARISON TO EXISTING THEORIES")
         
         comparisons = {
             f'Rogers\' Diffusion of Innovations ({self.rogers_ref})': {
@@ -305,88 +296,83 @@ class InformationDiffusionTheory:
         }
         
         for theory, comparison in comparisons.items():
-            print(f"\n{theory}:")
-            print("  Similarities:")
+            SafeOutput.safe_print(f"\n{theory}:")
+            SafeOutput.safe_print("  Similarities:")
             for sim in comparison['similarities']:
-                print(f"    - {sim}")
-            print("  Differences:")
+                SafeOutput.safe_print(f"    - {sim}")
+            SafeOutput.safe_print("  Differences:")
             for diff in comparison['differences']:
-                print(f"    - {diff}")
+                SafeOutput.safe_print(f"    - {diff}")
     
-    def generate_report(self):
+    def generate_report(self) -> None:
         """Generate theoretical research report"""
-        print("\n" + "="*70)
-        print("THEORETICAL MODEL REPORT")
-        print("="*70)
+        self.formatter.print_section("THEORETICAL MODEL REPORT")
         
-        print(f"\nTitle: {self.metadata['title']}")
-        print(f"\nResearch Question: {self.metadata['research_question']}")
+        SafeOutput.safe_print(f"\nTitle: {self.metadata['title']}")
+        SafeOutput.safe_print(f"\nResearch Question: {self.metadata['research_question']}")
         
-        print("\n--- ABSTRACT ---")
-        print(f"\nThis theoretical paper develops a threshold-based model of ")
-        print(f"information diffusion in social networks, building on diffusion ")
-        print(f"theory ({self.rogers_ref}) and weak ties theory ({self.granovetter_ref}). ")
-        print(f"The model proposes that information transmission is governed by ")
-        print(f"value-cost calculations and network structure. Four key propositions ")
-        print(f"are derived and translated into testable hypotheses.")
+        SafeOutput.safe_print("\n--- ABSTRACT ---")
+        SafeOutput.safe_print(f"\nThis theoretical paper develops a threshold-based model of ")
+        SafeOutput.safe_print(f"information diffusion in social networks, building on diffusion ")
+        SafeOutput.safe_print(f"theory ({self.rogers_ref}) and weak ties theory ({self.granovetter_ref}). ")
+        SafeOutput.safe_print(f"The model proposes that information transmission is governed by ")
+        SafeOutput.safe_print(f"value-cost calculations and network structure. Four key propositions ")
+        SafeOutput.safe_print(f"are derived and translated into testable hypotheses.")
         
-        print("\n--- THEORETICAL CONTRIBUTION ---")
-        print("\n[OK] THIS THEORY CONTRIBUTES:")
-        print("  - Integrates value-cost framework with network structure")
-        print("  - Explains both speed and breadth of diffusion")
-        print("  - Generates specific testable predictions")
-        print("  - Accounts for individual heterogeneity")
+        SafeOutput.safe_print("\n--- THEORETICAL CONTRIBUTION ---")
+        SafeOutput.safe_print("\n{get_symbol('checkmark')} THIS THEORY CONTRIBUTES:")
+        SafeOutput.safe_print("  - Integrates value-cost framework with network structure")
+        SafeOutput.safe_print("  - Explains both speed and breadth of diffusion")
+        SafeOutput.safe_print("  - Generates specific testable predictions")
+        SafeOutput.safe_print("  - Accounts for individual heterogeneity")
         
-        print("\n[!] THIS THEORY DOES NOT:")
-        print("  - Provide empirical evidence")
-        print("  - Prove these relationships exist")
-        print("  - Replace the need for empirical testing")
-        print("  - Make claims about real-world diffusion")
+        SafeOutput.safe_print("\n[!] THIS THEORY DOES NOT:")
+        SafeOutput.safe_print("  - Provide empirical evidence")
+        SafeOutput.safe_print("  - Prove these relationships exist")
+        SafeOutput.safe_print("  - Replace the need for empirical testing")
+        SafeOutput.safe_print("  - Make claims about real-world diffusion")
         
-        print("\n--- THEORETICAL PROPOSITIONS ---")
+        SafeOutput.safe_print("\n--- THEORETICAL PROPOSITIONS ---")
         for prop in self.propositions:
-            print(f"\n{prop['proposition']}")
-            print(f"  Logic: {prop['derivation']}")
+            SafeOutput.safe_print(f"\n{prop['proposition']}")
+            SafeOutput.safe_print(f"  Logic: {prop['derivation']}")
         
-        print("\n--- EMPIRICAL IMPLICATIONS ---")
-        print("\nThe theory predicts that in real-world networks:")
-        print("  1. Dense networks should show faster initial diffusion")
-        print("  2. Novel content should spread more rapidly than redundant content")
-        print("  3. Weak ties should enable broader reach")
-        print("  4. Heterogeneous thresholds should create cascade patterns")
+        SafeOutput.safe_print("\n--- EMPIRICAL IMPLICATIONS ---")
+        SafeOutput.safe_print("\nThe theory predicts that in real-world networks:")
+        SafeOutput.safe_print("  1. Dense networks should show faster initial diffusion")
+        SafeOutput.safe_print("  2. Novel content should spread more rapidly than redundant content")
+        SafeOutput.safe_print("  3. Weak ties should enable broader reach")
+        SafeOutput.safe_print("  4. Heterogeneous thresholds should create cascade patterns")
         
-        print("\n[!] CRITICAL: These predictions MUST be tested empirically")
+        SafeOutput.safe_print("\n[!] CRITICAL: These predictions MUST be tested empirically")
         
-        print("\n--- FUTURE RESEARCH DIRECTIONS ---")
-        print("\nEmpirical studies needed to test this theory:")
+        SafeOutput.safe_print("\n--- FUTURE RESEARCH DIRECTIONS ---")
+        SafeOutput.safe_print("\nEmpirical studies needed to test this theory:")
         for i, hyp in enumerate(self.testable_hypotheses, 1):
-            print(f"\n  Study {i}: {hyp['hypothesis']}")
-            print(f"    Method: {hyp['method']}")
+            SafeOutput.safe_print(f"\n  Study {i}: {hyp['hypothesis']}")
+            SafeOutput.safe_print(f"    Method: {hyp['method']}")
         
-        print("\n--- LIMITATIONS ---")
+        SafeOutput.safe_print("\n--- LIMITATIONS ---")
         for limitation in self.metadata['limitations']:
-            print(f"  - {limitation}")
+            SafeOutput.safe_print(f"  - {limitation}")
         
-        print("\n--- CONCLUSION ---")
-        print("\nThis theoretical model provides a framework for understanding ")
-        print("information diffusion in social networks. The model integrates ")
-        print("existing theories and generates testable predictions. Empirical ")
-        print("validation is essential next step before applying to real-world scenarios.")
+        SafeOutput.safe_print("\n--- CONCLUSION ---")
+        SafeOutput.safe_print("\nThis theoretical model provides a framework for understanding ")
+        SafeOutput.safe_print("information diffusion in social networks. The model integrates ")
+        SafeOutput.safe_print("existing theories and generates testable predictions. Empirical ")
+        SafeOutput.safe_print("validation is essential next step before applying to real-world scenarios.")
     
-    def generate_references(self):
-        print("\n" + "="*70)
-        print("REFERENCES")
-        print("="*70)
-        print()
-        print(self.references.generate_reference_list())
+    def generate_references(self) -> None:
+        """Generate APA 7 reference list."""
+        self.formatter.print_section("REFERENCES")
+        SafeOutput.safe_print("")
+        SafeOutput.safe_print(self.references.generate_reference_list())
     
-    def run_full_study(self):
+    def run_full_study(self) -> None:
         """Develop complete theoretical model"""
-        print("\n" + "="*70)
-        print("THEORETICAL MODEL: INFORMATION DIFFUSION")
-        print("="*70)
-        print(f"Study Date: {datetime.now().strftime('%Y-%m-%d')}")
-        print(f"Research Type: {self.metadata['research_type']}")
+        self.formatter.print_section("THEORETICAL MODEL: INFORMATION DIFFUSION")
+        SafeOutput.safe_print(f"Study Date: {datetime.now().strftime('%Y-%m-%d')}")
+        SafeOutput.safe_print(f"Research Type: {self.metadata['research_type']}")
         
         self.state_theoretical_purpose()
         self.define_constructs()
@@ -398,28 +384,25 @@ class InformationDiffusionTheory:
         self.generate_report()
         self.generate_references()
         
-        print("\n" + "="*70)
-        print("THEORETICAL DEVELOPMENT COMPLETE")
-        print("="*70)
-        print("\n[!] REMEMBER: This is theory only - empirical testing required!")
-        print("Next step: Design empirical studies to test hypotheses.")
+        self.formatter.print_section("THEORETICAL DEVELOPMENT COMPLETE")
+        SafeOutput.safe_print("\n[!] REMEMBER: This is theory only - empirical testing required!")
+        SafeOutput.safe_print("Next step: Design empirical studies to test hypotheses.")
 
 
 if __name__ == "__main__":
-    print("\n" + "="*70)
-    print("EXAMPLE 08: THEORETICAL MODEL")
-    print("="*70)
-    print("\nThis example demonstrates proper theoretical research:")
-    print("  - Pure theory development (no empirical data)")
-    print("  - Clear statement of assumptions (axioms)")
-    print("  - Logical derivation of propositions")
-    print("  - Generation of testable hypotheses")
-    print("  - Clear about need for empirical testing")
-    print("  - Illustrations are NOT evidence")
-    print("\n[!] Shows when NO data is needed (pure theory)")
-    print("="*70 + "\n")
+    formatter = ReportFormatter()
+    formatter.print_section("EXAMPLE 08: THEORETICAL MODEL")
+    SafeOutput.safe_print("\nThis example demonstrates proper theoretical research:")
+    SafeOutput.safe_print("  - Pure theory development (no empirical data)")
+    SafeOutput.safe_print("  - Clear statement of assumptions (axioms)")
+    SafeOutput.safe_print("  - Logical derivation of propositions")
+    SafeOutput.safe_print("  - Generation of testable hypotheses")
+    SafeOutput.safe_print("  - Clear about need for empirical testing")
+    SafeOutput.safe_print("  - Illustrations are NOT evidence")
+    SafeOutput.safe_print("\n[!] Shows when NO data is needed (pure theory)")
+    SafeOutput.safe_print("="*70 + "\n")
     
     theory = InformationDiffusionTheory()
     theory.run_full_study()
     
-    print("\n[OK] Example complete. This demonstrates theoretical research requiring empirical validation.")
+    SafeOutput.safe_print(f"\n{get_symbol('checkmark')} Example complete. This demonstrates theoretical research requiring empirical validation.")

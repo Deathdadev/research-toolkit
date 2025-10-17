@@ -1,0 +1,29 @@
+{
+  "research_type": "Methodological Study",
+  "study_date": "2025-10-17T22:21:31.142064",
+  "title": "Statistical Power of Pearson Correlation: A Monte Carlo Simulation Study",
+  "research_question": "What is the statistical power of Pearson correlation test under varying conditions?",
+  "purpose": "Test METHOD performance (NOT studying real-world phenomena)",
+  "data_type": "SYNTHETIC (appropriate for methodological research)",
+  "why_synthetic_ok": "We are testing the statistical METHOD, not making claims about reality",
+  "design": "Monte Carlo simulation",
+  "factors_varied": [
+    "Sample size (n = 20, 50, 100, 200)",
+    "True population correlation (r = 0.1, 0.3, 0.5, 0.7)",
+    "Number of simulations per condition: 1,000"
+  ],
+  "dependent_variable": "Statistical power (proportion of significant results)",
+  "significance_level": 0.05,
+  "statistical_methods": [
+    "Pearson correlation test (ref2)",
+    "Monte Carlo simulation",
+    "Power analysis (ref1)"
+  ],
+  "claims_about": "METHOD performance, NOT real-world phenomena",
+  "limitations": [
+    "Assumes bivariate normal distribution",
+    "Results specific to Pearson correlation",
+    "Does not address Type I error inflation",
+    "Assumes accurate significance level"
+  ]
+}

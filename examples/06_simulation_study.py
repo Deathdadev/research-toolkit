@@ -15,18 +15,20 @@ This demonstrates:
 - Validation requirement for real-world claims
 - APA 7 referencing using research_toolkit
 """
-
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-from scipy import stats
+# Standard library imports
 from datetime import datetime
+from typing import Any, Dict, List, Optional, Tuple
 import json
 
-# Import from research_toolkit library
-from research_toolkit.core import SafeOutput, ReportFormatter, StatisticalFormatter
-from research_toolkit.references import APA7ReferenceManager
+# Third-party imports
+from scipy import stats
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 
+# Local imports (research_toolkit)
+from research_toolkit import ReportFormatter, SafeOutput, StatisticalFormatter, get_symbol
+from research_toolkit.references import APA7ReferenceManager
 
 class SIREpidemicSimulation:
     """
@@ -36,7 +38,13 @@ class SIREpidemicSimulation:
     IMPORTANT: Results are CONDITIONAL on model assumptions
     """
     
-    def __init__(self):
+    def __init__(self) -> None:
+        """
+        Initialize simulation study.
+        
+        Note:
+            Uses computational modeling to explore theoretical scenarios.
+        """
         self.references = APA7ReferenceManager()
         
         self.kermack_ref = self.references.add_reference(
@@ -49,6 +57,9 @@ class SIREpidemicSimulation:
             pages='700-721'
         )
         
+        
+        self.formatter = ReportFormatter()
+        self.stat_formatter = StatisticalFormatter()
         self.metadata = {
             'research_type': 'Simulation Study (Model-Based)',
             'study_date': datetime.now().isoformat(),
@@ -87,27 +98,33 @@ class SIREpidemicSimulation:
             ]
         }
     
-    def state_assumptions_upfront(self):
-        """MANDATORY: State all model assumptions"""
-        print("\n" + "="*70)
-        print("MODEL ASSUMPTIONS - CRITICAL")
-        print("="*70)
-        print("\n[!] ALL RESULTS ARE CONDITIONAL ON THESE ASSUMPTIONS:")
-        print("\nAssumptions:")
+    def state_assumptions_upfront(self) -> None:
+        """State all assumptions and limitations of the simulation."""
+        self.formatter.print_section("MODEL ASSUMPTIONS - CRITICAL")
+        SafeOutput.safe_print("\n[!] ALL RESULTS ARE CONDITIONAL ON THESE ASSUMPTIONS:")
+        SafeOutput.safe_print("\nAssumptions:")
         for i, assumption in enumerate(self.metadata['assumptions'], 1):
-            print(f"  {i}. {assumption}")
+            SafeOutput.safe_print(f"  {i}. {assumption}")
         
-        print("\nParameters:")
+        SafeOutput.safe_print("\nParameters:")
         for param, info in self.metadata['parameters'].items():
-            print(f"  {param}: {info['value']}")
-            print(f"    Justification: {info['justification']}")
+            SafeOutput.safe_print(f"  {param}: {info['value']}")
+            SafeOutput.safe_print(f"    Justification: {info['justification']}")
         
-        print("\n" + "="*70)
-        print("IF ASSUMPTIONS HOLD, THEN the following results emerge:")
-        print("="*70)
+        self.formatter.print_section("IF ASSUMPTIONS HOLD, THEN the following results emerge:")
     
-    def run_sir_simulation(self, days=200, infection_rate=0.3, recovery_rate=0.1):
-        """Run single SIR simulation"""
+    def run_sir_simulation(self, days: int = 200, infection_rate: float = 0.3, recovery_rate: float = 0.1) -> Dict[str, np.ndarray]:
+        """
+        Run SIR epidemiological simulation.
+        
+        Args:
+            days: Number of days to simulate
+            infection_rate: Beta parameter (infection rate)
+            recovery_rate: Gamma parameter (recovery rate)
+            
+        Returns:
+            Dictionary containing time series for S, I, R compartments
+        """
         N = self.metadata['parameters']['population_size']['value']
         I0 = self.metadata['parameters']['initial_infected']['value']
         
@@ -129,11 +146,9 @@ class SIREpidemicSimulation:
         
         return S, I, R
     
-    def scenario_analysis(self):
-        """Compare different intervention scenarios"""
-        print("\n" + "="*70)
-        print("SCENARIO ANALYSIS")
-        print("="*70)
+    def scenario_analysis(self) -> None:
+        """Compare different intervention scenarios."""
+        self.formatter.print_section("SCENARIO ANALYSIS")
         
         scenarios = {
             'Baseline': {'beta': 0.3, 'gamma': 0.1},
@@ -161,9 +176,9 @@ class SIREpidemicSimulation:
                 'S': S, 'I': I, 'R': R
             }
             
-            print(f"\n{scenario_name}:")
-            print(f"  Peak infections: {peak_infected:.0f} (day {peak_day})")
-            print(f"  Total infected: {total_infected:.0f} ({total_infected/10000*100:.1f}%)")
+            SafeOutput.safe_print(f"\n{scenario_name}:")
+            SafeOutput.safe_print(f"  Peak infections: {peak_infected:.0f} (day {peak_day})")
+            SafeOutput.safe_print(f"  Total infected: {total_infected:.0f} ({total_infected/10000*100:.1f}%)")
         
         # Visualize scenarios
         fig, axes = plt.subplots(2, 2, figsize=(14, 10))
@@ -211,16 +226,14 @@ class SIREpidemicSimulation:
         
         plt.tight_layout()
         plt.savefig('06_simulation_scenarios.png', dpi=300, bbox_inches='tight')
-        print("\n[OK] Scenario visualizations saved")
+        SafeOutput.safe_print("\n{get_symbol('checkmark')} Scenario visualizations saved")
         plt.close()
         
         return results
     
-    def sensitivity_analysis(self):
-        """Test sensitivity to parameter changes"""
-        print("\n" + "="*70)
-        print("SENSITIVITY ANALYSIS")
-        print("="*70)
+    def sensitivity_analysis(self) -> None:
+        """Test sensitivity to parameter changes."""
+        self.formatter.print_section("SENSITIVITY ANALYSIS")
         
         # Test sensitivity to infection rate
         infection_rates = np.linspace(0.1, 0.5, 10)
@@ -237,68 +250,64 @@ class SIREpidemicSimulation:
         plt.title('Sensitivity to Infection Rate Parameter')
         plt.grid(True, alpha=0.3)
         plt.savefig('06_simulation_sensitivity.png', dpi=300, bbox_inches='tight')
-        print("\n[OK] Sensitivity analysis saved")
+        SafeOutput.safe_print("\n{get_symbol('checkmark')} Sensitivity analysis saved")
         plt.close()
         
-        print(f"\nInfection rate range: {infection_rates.min():.2f} to {infection_rates.max():.2f}")
-        print(f"Peak infections range: {min(peak_infections):.0f} to {max(peak_infections):.0f}")
-        print(f"Result variability: {(max(peak_infections)-min(peak_infections))/min(peak_infections)*100:.1f}% change")
+        SafeOutput.safe_print(f"\nInfection rate range: {infection_rates.min():.2f} to {infection_rates.max():.2f}")
+        SafeOutput.safe_print(f"Peak infections range: {min(peak_infections):.0f} to {max(peak_infections):.0f}")
+        SafeOutput.safe_print(f"Result variability: {(max(peak_infections)-min(peak_infections))/min(peak_infections)*100:.1f}% change")
     
-    def generate_report(self):
-        """Generate simulation study report"""
-        print("\n" + "="*70)
-        print("SIMULATION STUDY REPORT")
-        print("="*70)
+    def generate_report(self) -> None:
+        """Generate simulation study report."""
+        self.formatter.print_section("SIMULATION STUDY REPORT")
         
-        print(f"\nTitle: {self.metadata['title']}")
-        print(f"\nResearch Question: {self.metadata['research_question']}")
+        SafeOutput.safe_print(f"\nTitle: {self.metadata['title']}")
+        SafeOutput.safe_print(f"\nResearch Question: {self.metadata['research_question']}")
         
-        print("\n--- IMPORTANT NOTICE ---")
-        print("This is a SIMULATION STUDY. Results are CONDITIONAL on model assumptions.")
-        print("These are NOT predictions about real epidemics without validation.")
+        SafeOutput.safe_print("\n--- IMPORTANT NOTICE ---")
+        SafeOutput.safe_print("This is a SIMULATION STUDY. Results are CONDITIONAL on model assumptions.")
+        SafeOutput.safe_print("These are NOT predictions about real epidemics without validation.")
         
-        print("\n--- RESULTS ---")
-        print("\nSimulation results indicated that:")
-        print("  - Baseline scenario: Peak infections occurred around day X")
-        print("  - Social distancing: Reduced peak by approximately Y%")
-        print("  - Improved treatment: Reduced total infections by Z%")
-        print("  - Combined interventions: Most effective at flattening curve")
+        SafeOutput.safe_print("\n--- RESULTS ---")
+        SafeOutput.safe_print("\nSimulation results indicated that:")
+        SafeOutput.safe_print("  - Baseline scenario: Peak infections occurred around day X")
+        SafeOutput.safe_print("  - Social distancing: Reduced peak by approximately Y%")
+        SafeOutput.safe_print("  - Improved treatment: Reduced total infections by Z%")
+        SafeOutput.safe_print("  - Combined interventions: Most effective at flattening curve")
         
-        print("\n--- INTERPRETATION ---")
-        print("\n[OK] APPROPRIATE CLAIMS (Conditional):")
-        print("  - 'Under model assumptions, social distancing reduces peak infections'")
-        print("  - 'IF infection rate is 0.3, THEN peak occurs around day X'")
-        print("  - 'The model suggests that combined interventions are most effective'")
-        print("  - 'According to this simulation...'")
+        SafeOutput.safe_print("\n--- INTERPRETATION ---")
+        SafeOutput.safe_print("\n{get_symbol('checkmark')} APPROPRIATE CLAIMS (Conditional):")
+        SafeOutput.safe_print("  - 'Under model assumptions, social distancing reduces peak infections'")
+        SafeOutput.safe_print("  - 'IF infection rate is 0.3, THEN peak occurs around day X'")
+        SafeOutput.safe_print("  - 'The model suggests that combined interventions are most effective'")
+        SafeOutput.safe_print("  - 'According to this simulation...'")
         
-        print("\n[X] INAPPROPRIATE CLAIMS (Unconditional):")
-        print("  - 'Real epidemics will behave this way' (NO! Needs validation)")
-        print("  - 'This proves intervention X works' (NO! Model only)")
-        print("  - Any claim as fact without 'according to model' qualifier")
+        SafeOutput.safe_print("\n{get_symbol('cross')} INAPPROPRIATE CLAIMS (Unconditional):")
+        SafeOutput.safe_print("  - 'Real epidemics will behave this way' (NO! Needs validation)")
+        SafeOutput.safe_print("  - 'This proves intervention X works' (NO! Model only)")
+        SafeOutput.safe_print("  - Any claim as fact without 'according to model' qualifier")
         
-        print("\n[!] CRITICAL LIMITATIONS:")
+        SafeOutput.safe_print("\n[!] CRITICAL LIMITATIONS:")
         for limitation in self.metadata['limitations']:
-            print(f"  - {limitation}")
+            SafeOutput.safe_print(f"  - {limitation}")
         
-        print("\n--- CONCLUSION ---")
-        print("\nThis simulation study explored epidemic dynamics under SIR model ")
-        print(f"assumptions ({self.kermack_ref}). Results suggest potential effectiveness ")
-        print("of interventions. However, EMPIRICAL VALIDATION is required before ")
-        print("applying these findings to real-world epidemic management.")
+        SafeOutput.safe_print("\n--- CONCLUSION ---")
+        SafeOutput.safe_print("\nThis simulation study explored epidemic dynamics under SIR model ")
+        SafeOutput.safe_print(f"assumptions ({self.kermack_ref}). Results suggest potential effectiveness ")
+        SafeOutput.safe_print("of interventions. However, EMPIRICAL VALIDATION is required before ")
+        SafeOutput.safe_print("applying these findings to real-world epidemic management.")
     
-    def generate_references(self):
-        print("\n" + "="*70)
-        print("REFERENCES")
-        print("="*70)
-        print()
-        print(self.references.generate_reference_list())
+    def generate_references(self) -> None:
+        """Generate APA 7 reference list."""
+        self.formatter.print_section("REFERENCES")
+        SafeOutput.safe_print("")
+        SafeOutput.safe_print(self.references.generate_reference_list())
     
-    def run_full_study(self):
-        print("\n" + "="*70)
-        print("SIMULATION STUDY: EPIDEMIC INTERVENTIONS")
-        print("="*70)
-        print(f"Study Date: {datetime.now().strftime('%Y-%m-%d')}")
-        print(f"Research Type: {self.metadata['research_type']}")
+    def run_full_study(self) -> None:
+        """Execute complete simulation study workflow."""
+        self.formatter.print_section("SIMULATION STUDY: EPIDEMIC INTERVENTIONS")
+        SafeOutput.safe_print(f"Study Date: {datetime.now().strftime('%Y-%m-%d')}")
+        SafeOutput.safe_print(f"Research Type: {self.metadata['research_type']}")
         
         self.state_assumptions_upfront()
         self.scenario_analysis()
@@ -306,28 +315,25 @@ class SIREpidemicSimulation:
         self.generate_report()
         self.generate_references()
         
-        print("\n" + "="*70)
-        print("SIMULATION STUDY COMPLETE")
-        print("="*70)
-        print("\n[!] REMEMBER: These are model results, not real-world predictions!")
-        print("Empirical validation required for real-world application.")
+        self.formatter.print_section("SIMULATION STUDY COMPLETE")
+        SafeOutput.safe_print("\n[!] REMEMBER: These are model results, not real-world predictions!")
+        SafeOutput.safe_print("Empirical validation required for real-world application.")
 
 
 if __name__ == "__main__":
-    print("\n" + "="*70)
-    print("EXAMPLE 06: SIMULATION STUDY")
-    print("="*70)
-    print("\nThis example demonstrates proper simulation research:")
-    print("  - Explicit statement of all assumptions")
-    print("  - Model-based scenario exploration")
-    print("  - Sensitivity analysis")
-    print("  - CONDITIONAL interpretation (IF-THEN)")
-    print("  - Clear boundaries: model vs reality")
-    print("  - Validation requirement stated")
-    print("\n[!] Shows when synthetic data is acceptable WITH CAVEATS")
-    print("="*70 + "\n")
+    formatter = ReportFormatter()
+    formatter.print_section("EXAMPLE 06: SIMULATION STUDY")
+    SafeOutput.safe_print("\nThis example demonstrates proper simulation research:")
+    SafeOutput.safe_print("  - Explicit statement of all assumptions")
+    SafeOutput.safe_print("  - Model-based scenario exploration")
+    SafeOutput.safe_print("  - Sensitivity analysis")
+    SafeOutput.safe_print("  - CONDITIONAL interpretation (IF-THEN)")
+    SafeOutput.safe_print("  - Clear boundaries: model vs reality")
+    SafeOutput.safe_print("  - Validation requirement stated")
+    SafeOutput.safe_print("\n[!] Shows when synthetic data is acceptable WITH CAVEATS")
+    SafeOutput.safe_print("="*70 + "\n")
     
     sim = SIREpidemicSimulation()
     sim.run_full_study()
     
-    print("\n[OK] Example complete. This demonstrates conditional simulation research.")
+    SafeOutput.safe_print(f"\n{get_symbol('checkmark')} Example complete. This demonstrates conditional simulation research.")
