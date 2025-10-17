@@ -89,9 +89,9 @@ class PowerAnalysisStudy:
             'dependent_variable': 'Statistical power (proportion of significant results)',
             'significance_level': 0.05,
             'statistical_methods': [
-                f'Pearson correlation test ({self.scipy_ref})',
+                f'Pearson correlation test {self.references.get_in_text_citation([self.scipy_ref])}',
                 'Monte Carlo simulation',
-                f'Power analysis ({self.cohen_ref})'
+                f'Power analysis {self.references.get_in_text_citation([self.cohen_ref])}'
             ],
             'claims_about': 'METHOD performance, NOT real-world phenomena',
             'limitations': [
@@ -313,8 +313,8 @@ class PowerAnalysisStudy:
         
         SafeOutput.safe_print("\n--- ABSTRACT ---")
         SafeOutput.safe_print("\nThis methodological study evaluated the statistical power of ")
-        SafeOutput.safe_print(f"Pearson correlation test ({self.scipy_ref}) under various conditions ")
-        SafeOutput.safe_print(f"using Monte Carlo simulation ({self.cohen_ref}). ")
+        SafeOutput.safe_print(f"Pearson correlation test {self.references.get_in_text_citation([self.scipy_ref])} under various conditions ")
+        SafeOutput.safe_print(f"using Monte Carlo simulation {self.references.get_in_text_citation([self.cohen_ref])}. ")
         SafeOutput.safe_print(f"Power was assessed across {len(self.results['sample_size'].unique())} ")
         SafeOutput.safe_print(f"sample sizes and {len(self.results['true_correlation'].unique())} ")
         SafeOutput.safe_print(f"effect sizes using {self.results['n_simulations'].iloc[0]} simulations ")
@@ -369,7 +369,7 @@ class PowerAnalysisStudy:
         
         SafeOutput.safe_print("\n--- CONCLUSION ---")
         SafeOutput.safe_print("\nThis methodological study provides power estimates for ")
-        SafeOutput.safe_print(f"Pearson correlation under various conditions ({self.cohen_ref}). ")
+        SafeOutput.safe_print(f"Pearson correlation under various conditions {self.references.get_in_text_citation([self.cohen_ref])}. ")
         SafeOutput.safe_print("Results can guide sample size planning in applied research. ")
         SafeOutput.safe_print("However, actual power in specific studies depends on ")
         SafeOutput.safe_print("data characteristics and adherence to test assumptions.")

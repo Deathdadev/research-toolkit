@@ -80,7 +80,7 @@ class CoastalInlandComparison:
             'design': 'Non-experimental group comparison',
             'independent_variable': 'City type (coastal vs inland)',
             'dependent_variable': 'Average temperature (Celsius)',
-            'data_source': f'OpenWeatherMap API ({self.api_ref})',
+            'data_source': f'OpenWeatherMap API {self.references.get_in_text_citation([self.api_ref])}',
             'statistical_methods': [
                 'Independent t-test',
                 'Mann-Whitney U test (non-parametric)',
@@ -136,7 +136,7 @@ class CoastalInlandComparison:
             DataFrame containing city temperature data
         """
         self.formatter.print_section("DATA COLLECTION")
-        SafeOutput.safe_print(f"Data Source: OpenWeatherMap API ({self.api_ref})")
+        SafeOutput.safe_print(f"Data Source: OpenWeatherMap API {self.references.get_in_text_citation([self.api_ref])}")
         SafeOutput.safe_print(f"Collection Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         
         if not self.api_key:

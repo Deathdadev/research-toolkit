@@ -62,7 +62,7 @@ class SIREpidemicSimulation:
             'study_date': datetime.now().isoformat(),
             'title': 'Intervention Strategies in Epidemic Spread: A Simulation Study',
             'research_question': 'Under SIR model assumptions, how do interventions affect epidemic dynamics?',
-            'model': f'SIR (Susceptible-Infected-Recovered) model ({self.kermack_ref})',
+            'model': f'SIR (Susceptible-Infected-Recovered) model {self.references.get_in_text_citation([self.kermack_ref])}',
             'data_type': 'MODEL-GENERATED (synthetic)',
             'validity': 'CONDITIONAL on model assumptions',
             'assumptions': [
@@ -290,7 +290,7 @@ class SIREpidemicSimulation:
         
         SafeOutput.safe_print("\n--- CONCLUSION ---")
         SafeOutput.safe_print("\nThis simulation study explored epidemic dynamics under SIR model ")
-        SafeOutput.safe_print(f"assumptions ({self.kermack_ref}). Results suggest potential effectiveness ")
+        SafeOutput.safe_print(f"assumptions {self.references.get_in_text_citation([self.kermack_ref])}. Results suggest potential effectiveness ")
         SafeOutput.safe_print("of interventions. However, EMPIRICAL VALIDATION is required before ")
         SafeOutput.safe_print("applying these findings to real-world epidemic management.")
     

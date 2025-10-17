@@ -98,7 +98,7 @@ class AirQualityTimeSeriesStudy:
             'time_period': '2 years (730 days)',
             'variable': 'PM2.5 concentration (ug/m3)',
             'location': 'Major urban center',
-            'data_source': f'OpenWeather Air Pollution API ({self.api_ref})',
+            'data_source': f'OpenWeather Air Pollution API {self.references.get_in_text_citation([self.api_ref])}',
             'statistical_methods': [
                 'Trend analysis (linear regression on time)',
                 'Seasonality decomposition',
@@ -220,7 +220,7 @@ class AirQualityTimeSeriesStudy:
         
         result = adfuller(self.data['pm25'].dropna())
         
-        SafeOutput.safe_print(f"\nAugmented Dickey-Fuller Test ({self.statsmodels_ref}):")
+        SafeOutput.safe_print(f"\nAugmented Dickey-Fuller Test {self.references.get_in_text_citation([self.statsmodels_ref])}:")
         SafeOutput.safe_print(f"  ADF Statistic = {result[0]:.4f}")
         SafeOutput.safe_print(f"  p-value = {result[1]:.4f}")
         SafeOutput.safe_print("  Critical Values:")
@@ -508,7 +508,7 @@ class AirQualityTimeSeriesStudy:
         SafeOutput.safe_print(f"t({len(self.data)-2}) = {slope/std_err:.2f}, p = {p_trend:.4f}." if p_trend < 0.05 else f"p = {p_trend:.4f}.")
         
         if STATSMODELS_AVAILABLE:
-            SafeOutput.safe_print(f"\nDecomposition analysis ({self.statsmodels_ref}) revealed ")
+            SafeOutput.safe_print(f"\nDecomposition analysis {self.references.get_in_text_citation([self.statsmodels_ref])} revealed ")
             SafeOutput.safe_print("seasonal patterns with peak pollution during winter months.")
         
         SafeOutput.safe_print("\n--- INTERPRETATION ---")

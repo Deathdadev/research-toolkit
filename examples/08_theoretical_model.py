@@ -67,8 +67,8 @@ class InformationDiffusionTheory:
             'data_requirement': 'None (pure theoretical work)',
             'empirical_testing': 'REQUIRED in future work',
             'theoretical_foundations': [
-                f'Diffusion of innovations theory ({self.rogers_ref})',
-                f'Weak ties theory ({self.granovetter_ref})'
+                f'Diffusion of innovations theory {self.references.get_in_text_citation([self.rogers_ref])}',
+                f'Weak ties theory {self.references.get_in_text_citation([self.granovetter_ref])}'
             ],
             'limitations': [
                 'Theoretical only - not empirically tested',
@@ -170,7 +170,7 @@ class InformationDiffusionTheory:
             },
             {
                 'proposition': 'P3: Weak ties facilitate broader diffusion than strong ties',
-                'derivation': f'From Axioms 3, 5, and Granovetter ({self.granovetter_ref}): Weak ties bridge network clusters',
+                'derivation': f'From Axioms 3, 5, and Granovetter {self.references.get_in_text_citation([self.granovetter_ref])}: Weak ties bridge network clusters',
                 'mathematical': 'Diffusion_breadth ∝ Weak_tie_ratio'
             },
             {
@@ -282,11 +282,11 @@ class InformationDiffusionTheory:
         self.formatter.print_section("COMPARISON TO EXISTING THEORIES")
         
         comparisons = {
-            f'Rogers\' Diffusion of Innovations ({self.rogers_ref})': {
+            f'Rogers\' Diffusion of Innovations {self.references.get_in_text_citation([self.rogers_ref])}': {
                 'similarities': ['Emphasizes adoption thresholds', 'Recognizes network effects'],
                 'differences': ['This model adds explicit cost-value calculation', 'Emphasizes network structure more']
             },
-            f'Granovetter\'s Weak Ties ({self.granovetter_ref})': {
+            f'Granovetter\'s Weak Ties {self.references.get_in_text_citation([self.granovetter_ref])}': {
                 'similarities': ['Recognizes importance of weak ties', 'Network structure matters'],
                 'differences': ['This model adds information value decay', 'Includes threshold heterogeneity']
             }
@@ -311,7 +311,7 @@ class InformationDiffusionTheory:
         SafeOutput.safe_print("\n--- ABSTRACT ---")
         SafeOutput.safe_print("\nThis theoretical paper develops a threshold-based model of ")
         SafeOutput.safe_print("information diffusion in social networks, building on diffusion ")
-        SafeOutput.safe_print(f"theory ({self.rogers_ref}) and weak ties theory ({self.granovetter_ref}). ")
+        SafeOutput.safe_print(f"theory {self.references.get_in_text_citation([self.rogers_ref])} and weak ties theory {self.references.get_in_text_citation([self.granovetter_ref])}. ")
         SafeOutput.safe_print("The model proposes that information transmission is governed by ")
         SafeOutput.safe_print("value-cost calculations and network structure. Four key propositions ")
         SafeOutput.safe_print("are derived and translated into testable hypotheses.")

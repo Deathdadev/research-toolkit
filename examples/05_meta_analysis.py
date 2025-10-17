@@ -82,8 +82,8 @@ class StudyHoursMetaAnalysis:
             'k_studies': 15,  # Number of studies included
             'total_n': 0,  # Will be calculated
             'statistical_methods': [
-                f'Fixed-effects model ({self.borenstein_ref})',
-                f'Random-effects model ({self.borenstein_ref})',
+                f'Fixed-effects model {self.references.get_in_text_citation([self.borenstein_ref])}',
+                f'Random-effects model {self.references.get_in_text_citation([self.borenstein_ref])}',
                 'Heterogeneity analysis (Q, I^2)',
                 'Publication bias tests (Egger\'s test)',
                 'Forest plots',
@@ -462,7 +462,7 @@ class StudyHoursMetaAnalysis:
         SafeOutput.safe_print(f"\nThis meta-analysis synthesized {len(self.studies)} studies ")
         SafeOutput.safe_print(f"(total N = {self.metadata['total_n']}) examining the relationship ")
         SafeOutput.safe_print("between study hours and academic performance. Both fixed-effects ")
-        SafeOutput.safe_print(f"and random-effects models ({self.borenstein_ref}) were employed. ")
+        SafeOutput.safe_print(f"and random-effects models {self.references.get_in_text_citation([self.borenstein_ref])} were employed. ")
         SafeOutput.safe_print("Heterogeneity and publication bias were assessed.")
         
         SafeOutput.safe_print("\n--- METHOD ---")

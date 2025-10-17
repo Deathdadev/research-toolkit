@@ -68,7 +68,7 @@ class GitHubRepositoryObservation:
             'design': 'Cross-sectional observational',
             'population': 'Python repositories on GitHub',
             'sample': 'Top 50 Python repositories by stars',
-            'data_source': f'GitHub API ({self.github_ref})',
+            'data_source': f'GitHub API {self.references.get_in_text_citation([self.github_ref])}',
             'variables_observed': [
                 'Stars count',
                 'Forks count',
@@ -393,7 +393,7 @@ class GitHubRepositoryObservation:
         
         SafeOutput.safe_print("\n--- ABSTRACT ---")
         SafeOutput.safe_print("\nThis observational study described characteristics of popular ")
-        SafeOutput.safe_print(f"Python repositories on GitHub ({self.github_ref}). ")
+        SafeOutput.safe_print(f"Python repositories on GitHub {self.references.get_in_text_citation([self.github_ref])}. ")
         SafeOutput.safe_print(f"A sample of {len(self.data)} repositories was systematically observed. ")
         SafeOutput.safe_print("Descriptive statistics, frequency distributions, and correlation ")
         SafeOutput.safe_print("analyses revealed patterns in repository characteristics.")
