@@ -15,9 +15,11 @@ The Research Toolkit is a comprehensive Python library for conducting research a
 ### Core Features
 - **10 APA 7 Reference Types**: journal, book, chapter, website, report, conference, dataset, software, dissertation, government
 - **Advanced Name Parsing**: Handles 5+ author name formats automatically
-- **9 Statistical Formatters**: APA-compliant result formatting
+- **Proper In-Text Citations**: Automatic APA 7 citation formatting (Author, Year) - no placeholder refs
+- **14 Statistical Formatters**: APA-compliant result formatting
+- **122 Scientific Symbols**: Complete Greek alphabet, math operators, super/subscripts
 - **SafeOutput**: Cross-platform Unicode/ASCII handling
-- **8 Research Examples**: All use the library, all tested
+- **8 Research Examples**: All use proper APA citations, all tested
 - **MCP Server**: 7 tools for AI model integration
 
 ### Research Types Covered (8 types)
@@ -137,16 +139,27 @@ reference = APA7ReferenceManager.format_authors_for_reference(authors)
 
 **Examples Updated**:
 - ✅ All 8 examples now import from library
+- ✅ All 8 examples use proper APA citations (GitHub, 2024), (Rogers, 2003), etc.
 - ✅ Removed ~400 lines of duplicate APA7 classes
 - ✅ Fixed field name issues (source → journal)
 - ✅ Fixed Unicode issues (cross-platform compatibility)
 - ✅ Fixed graph formatting (no text overflow)
+
+**Citation System Enhanced** (v2.0.0):
+- ✅ Proper in-text citation method: get_in_text_citation()
+- ✅ All examples updated to use proper citations
+- ✅ No more placeholder references like (ref1), (ref2)
+- ✅ Outputs: (GitHub, 2024), (Virtanen et al., 2020), (Rogers, 2003)
+- ✅ Automatic "et al." for 3+ authors
+- ✅ Proper ampersand handling for 2 authors
 
 **APA7 Manager Enhanced**:
 - ✅ Added 4 new name parsing methods (~200 lines)
 - ✅ Supports 5+ author name formats
 - ✅ Automatic initials generation
 - ✅ Extract name components programmatically
+- ✅ Proper in-text citation formatting with get_in_text_citation()
+- ✅ All examples now output (Author, Year) instead of (ref1)
 
 **Issues Resolved**:
 - ✅ JSON serialization (numpy types)
@@ -208,7 +221,7 @@ research-toolkit/
 
 ---
 
-## 🎓 Statistical Formatters (9 methods)
+## 🎓 Statistical Formatters (14 methods)
 
 ```python
 from research_toolkit.core import StatisticalFormatter
@@ -239,6 +252,8 @@ StatisticalFormatter.format_effect_size(0.45, 'd')  # "d = 0.45 (medium effect)"
 
 # 9. Interpret effect size
 StatisticalFormatter.interpret_effect_size(0.5, 'd')  # "medium"
+
+# 10-14. NEW in v2.0: Regression, Mann-Whitney, Wilcoxon, Kruskal-Wallis, ANOVA
 ```
 
 ---
@@ -310,7 +325,9 @@ $ research-toolkit-info
 - **Root Clutter**: Reduced 81% (21→4 files)
 - **Name Parsing**: 5+ formats supported
 - **Reference Types**: 10 types
-- **Statistical Formatters**: 9 methods
+- **Statistical Formatters**: 14 methods (expanded from 9)
+- **Scientific Symbols**: 122 (expanded from 21)
+- **Citation Format**: Proper APA 7 (Author, Year) in all examples
 - **Documentation**: 15+ comprehensive files
 
 ---

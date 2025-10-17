@@ -360,13 +360,76 @@ Comprehensive reference management with 10 reference types and advanced name par
 
 - `add_reference(ref_type: str, **fields) -> str`: Add reference, returns citation key
 - `format_reference(key: str) -> str`: Format reference in APA 7 style
-- `get_in_text_citation(keys: list, page: str = None, narrative: bool = False) -> str`: Generate in-text citation
+- `get_in_text_citation(keys: list, page: str = None, narrative: bool = False) -> str`: Generate in-text citation (v2.0.0)
 - `export_bibtex(filename: str)`: Export references to BibTeX
 - `validate_reference(key: str) -> dict`: Check reference completeness
-- `parse_author_name(name: str) -> dict`: Parse author name into components (NEW v2.0.0)
-- `parse_multiple_authors(author_string: str) -> list`: Parse multiple authors (NEW v2.0.0)
-- `format_authors_for_citation(authors: list) -> str`: Format for in-text citation (NEW v2.0.0)
-- `format_authors_for_reference(authors: list) -> str`: Format for reference list (NEW v2.0.0)
+- `parse_author_name(name: str) -> dict`: Parse author name into components (v2.0.0)
+- `parse_multiple_authors(author_string: str) -> list`: Parse multiple authors (v2.0.0)
+- `format_authors_for_citation(authors: list) -> str`: Format for in-text citation (v2.0.0)
+- `format_authors_for_reference(authors: list) -> str`: Format for reference list (v2.0.0)
+
+#### In-Text Citations (v2.0.0)
+
+**IMPORTANT:** Use `get_in_text_citation()` to generate proper APA 7 citations. Do **NOT** insert citation keys directly into text.
+
+```python
+from research_toolkit import APA7ReferenceManager
+
+manager = APA7ReferenceManager()
+
+# Add reference
+github_ref = manager.add_reference('website',
+    author='GitHub',
+    year='2024',
+    title='GitHub REST API',
+    url='https://docs.github.com/en/rest'
+)
+
+# ❌ WRONG - Don't use citation keys directly:
+print(f"Data from GitHub API ({github_ref})")
+# Output: "Data from GitHub API (ref1)"  <- Placeholder reference!
+
+# ✅ CORRECT - Use get_in_text_citation():
+print(f"Data from GitHub API {manager.get_in_text_citation([github_ref])}")
+# Output: "Data from GitHub API (GitHub, 2024)"  <- Proper APA 7 citation!
+
+# Examples with different author counts:
+# Single author
+citation1 = manager.get_in_text_citation([github_ref])
+# Returns: "(GitHub, 2024)"
+
+# Two authors (uses ampersand)
+two_author_ref = manager.add_reference('journal',
+    author='Smith, J.; Jones, K.',
+    year='2023',
+    title='Research methods',
+    journal='Journal of Science',
+    volume='10',
+    pages='1-10'
+)
+citation2 = manager.get_in_text_citation([two_author_ref])
+# Returns: "(Smith & Jones, 2023)"
+
+# Three or more authors (uses "et al.")
+three_author_ref = manager.add_reference('journal',
+    author='Virtanen, P.; Gommers, R.; Oliphant, T. E.',
+    year='2020',
+    title='SciPy 1.0',
+    journal='Nature Methods',
+    volume='17',
+    pages='261-272'
+)
+citation3 = manager.get_in_text_citation([three_author_ref])
+# Returns: "(Virtanen et al., 2020)"
+
+# With page numbers
+citation4 = manager.get_in_text_citation([two_author_ref], page='45')
+# Returns: "(Smith & Jones, 2023, p. 45)"
+
+# Narrative format
+citation5 = manager.get_in_text_citation([github_ref], narrative=True)
+# Returns: "GitHub (2024)"
+```
 
 #### Name Parsing Examples (NEW in v2.0.0):
 

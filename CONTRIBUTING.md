@@ -47,9 +47,10 @@ Thank you for your interest in contributing to the Research Toolkit! This projec
    - [MCP Integration Guide](docs/MCP_INTEGRATION_GUIDE.md) - AI model integration
 
 2. **Explore Examples**
-   - Study the 9 research examples in `examples/`
+   - Study the 8 research examples in `examples/`
    - Understand different research methodologies (correlational, comparative, time series, etc.)
    - Learn proper data handling and statistical reporting
+   - See how proper APA 7 citations are implemented
 
 3. **Set Up Development Environment**
    ```bash

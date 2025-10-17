@@ -75,7 +75,8 @@ Complete APA 7 compliant formatters:
 ### 3. APA 7 Reference Management
 
 - **10 reference types**: journal, book, chapter, website, report, conference, dataset, software, dissertation, government
-- **Advanced name parsing** (NEW in v2.0.0): Handles multiple author name formats
+- **Advanced name parsing** (v2.0.0): Handles multiple author name formats
+- **Proper in-text citations** (v2.0.0): Automatic citation formatting - no placeholder refs
 - **Multiple citations**: Cite multiple sources together
 - **20+ authors**: Proper handling (first 19 ... last)
 - **BibTeX export**: Convert to BibTeX format
@@ -100,6 +101,48 @@ manager.add_reference('journal',
     # All formats work and auto-convert to proper APA 7!
     ...
 )
+```
+
+#### In-Text Citations (v2.0.0)
+
+```python
+# Generate proper APA 7 in-text citations
+manager = APA7ReferenceManager()
+
+# Add reference and get citation key
+github_ref = manager.add_reference('website',
+    author='GitHub',
+    year='2024',
+    title='GitHub REST API',
+    url='https://docs.github.com/en/rest'
+)
+
+# Get properly formatted in-text citation
+citation = manager.get_in_text_citation([github_ref])
+# Returns: "(GitHub, 2024)"  ✅ NOT "(ref1)"!
+
+# Multiple authors handled automatically
+rogers_ref = manager.add_reference('book',
+    author='Rogers, E. M.',
+    year='2003',
+    title='Diffusion of innovations',
+    publisher='Free Press'
+)
+citation = manager.get_in_text_citation([rogers_ref])
+# Returns: "(Rogers, 2003)"
+
+# Three or more authors use "et al."
+virtanen_ref = manager.add_reference('journal',
+    author='Virtanen, P.; Gommers, R.; Oliphant, T. E.',
+    year='2020',
+    title='SciPy 1.0: fundamental algorithms for scientific computing',
+    journal='Nature Methods',
+    volume='17',
+    pages='261-272',
+    doi='10.1038/s41592-019-0686-2'
+)
+citation = manager.get_in_text_citation([virtanen_ref])
+# Returns: "(Virtanen et al., 2020)"
 ```
 
 ### 4. MCP Server (AI Integration)
@@ -131,8 +174,7 @@ Each prompt explains decision-making, shows how to use MCP validation tools, and
 
 ### 5. Research Examples
 
-9 complete working examples:
-- `00_synthetic_example` - What NOT to do
+8 complete working examples:
 - `01_correlational_study` - Air quality research
 - `02_comparative_study` - Group comparisons
 - `03_time_series_analysis` - Temporal trends
@@ -141,6 +183,8 @@ Each prompt explains decision-making, shows how to use MCP validation tools, and
 - `06_simulation_study` - SIR epidemic model
 - `07_methodological_study` - Power analysis
 - `08_theoretical_model` - Information diffusion theory
+
+**All examples use proper APA 7 citations** - output includes citations like `(GitHub, 2024)`, `(Rogers, 2003)`, `(Virtanen et al., 2020)` instead of placeholder references.
 
 ---
 
