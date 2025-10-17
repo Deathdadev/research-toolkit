@@ -18,7 +18,7 @@ Data Source: Effect sizes from simulated published studies
 """
 # Standard library imports
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Optional, Tuple
 import json
 
 # Third-party imports
@@ -26,7 +26,6 @@ from scipy import stats
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
 
 # Local imports (research_toolkit)
 from research_toolkit import ReportFormatter, SafeOutput, StatisticalFormatter, get_symbol
@@ -115,7 +114,7 @@ class StudyHoursMetaAnalysis:
         """
         self.formatter.print_section("SYSTEMATIC LITERATURE REVIEW")
         SafeOutput.safe_print(f"\nSearch Strategy: {self.metadata['search_strategy']}")
-        SafeOutput.safe_print(f"\nInclusion Criteria:")
+        SafeOutput.safe_print("\nInclusion Criteria:")
         for criterion in self.metadata['inclusion_criteria']:
             SafeOutput.safe_print(f"  - {criterion}")
         
@@ -320,7 +319,7 @@ class StudyHoursMetaAnalysis:
         # I^2 statistic
         I_squared = max(0, ((Q - df) / Q) * 100)
         
-        SafeOutput.safe_print(f"\nCochran's Q test:")
+        SafeOutput.safe_print("\nCochran's Q test:")
         SafeOutput.safe_print(f"  Q({df}) = {Q:.3f}, p = {p_value:.4f}")
         
         SafeOutput.safe_print(f"\nI^2 statistic: {I_squared:.1f}%")
@@ -357,7 +356,7 @@ class StudyHoursMetaAnalysis:
         # Egger's regression test
         slope, intercept, r, p_value, std_err = stats.linregress(precision, z)
         
-        SafeOutput.safe_print(f"\nEgger's Regression Test:")
+        SafeOutput.safe_print("\nEgger's Regression Test:")
         SafeOutput.safe_print(f"  Intercept = {intercept:.3f}")
         SafeOutput.safe_print(f"  p = {p_value:.4f}")
         
@@ -431,10 +430,9 @@ class StudyHoursMetaAnalysis:
         # Pooled effect line
         weights = self.studies['sample_size'].values / self.studies['sample_size'].sum()
         pooled_r = np.sum(weights * r)
-        ax.axvline(x=pooled_r, color='red', linestyle='--', linewidth=2, label=f'Pooled Effect')
+        ax.axvline(x=pooled_r, color='red', linestyle='--', linewidth=2, label='Pooled Effect')
         
         # Funnel shape (pseudo 95% CI)
-        x_range = np.linspace(r.min() - 0.1, r.max() + 0.1, 100)
         y_max = precision.max() * 1.1
         for ci_multiplier in [1.96]:
             ax.plot(pooled_r + ci_multiplier / np.linspace(1, y_max, 100), 
@@ -463,15 +461,15 @@ class StudyHoursMetaAnalysis:
         SafeOutput.safe_print("\n--- ABSTRACT ---")
         SafeOutput.safe_print(f"\nThis meta-analysis synthesized {len(self.studies)} studies ")
         SafeOutput.safe_print(f"(total N = {self.metadata['total_n']}) examining the relationship ")
-        SafeOutput.safe_print(f"between study hours and academic performance. Both fixed-effects ")
+        SafeOutput.safe_print("between study hours and academic performance. Both fixed-effects ")
         SafeOutput.safe_print(f"and random-effects models ({self.borenstein_ref}) were employed. ")
-        SafeOutput.safe_print(f"Heterogeneity and publication bias were assessed.")
+        SafeOutput.safe_print("Heterogeneity and publication bias were assessed.")
         
         SafeOutput.safe_print("\n--- METHOD ---")
         SafeOutput.safe_print(f"\nA systematic literature review identified {len(self.studies)} ")
         SafeOutput.safe_print(f"eligible studies published between {self.studies['year'].min()} ")
         SafeOutput.safe_print(f"and {self.studies['year'].max()}. Correlation coefficients were ")
-        SafeOutput.safe_print(f"transformed to Fisher's z for analysis.")
+        SafeOutput.safe_print("transformed to Fisher's z for analysis.")
         
         SafeOutput.safe_print("\n--- RESULTS ---")
         
@@ -484,14 +482,14 @@ class StudyHoursMetaAnalysis:
         
         Q, I_squared = self.assess_heterogeneity()
         
-        SafeOutput.safe_print(f"\nFixed-effects meta-analysis revealed an overall correlation of ")
+        SafeOutput.safe_print("\nFixed-effects meta-analysis revealed an overall correlation of ")
         SafeOutput.safe_print(f"r = {pooled_r:.3f}, indicating a {'moderate' if abs(pooled_r) > 0.3 else 'small'} ")
-        SafeOutput.safe_print(f"positive relationship between study hours and academic performance.")
+        SafeOutput.safe_print("positive relationship between study hours and academic performance.")
         
-        SafeOutput.safe_print(f"\nHeterogeneity analysis indicated ")
+        SafeOutput.safe_print("\nHeterogeneity analysis indicated ")
         if I_squared > 50:
             SafeOutput.safe_print(f"substantial heterogeneity (I^2 = {I_squared:.1f}%), ")
-            SafeOutput.safe_print(f"suggesting that effect sizes varied considerably across studies.")
+            SafeOutput.safe_print("suggesting that effect sizes varied considerably across studies.")
         else:
             SafeOutput.safe_print(f"{'low' if I_squared < 25 else 'moderate'} heterogeneity (I^2 = {I_squared:.1f}%).")
         

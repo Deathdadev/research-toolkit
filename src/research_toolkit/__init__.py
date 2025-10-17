@@ -41,7 +41,7 @@ from .research import ResearchToolkitMCPServer, EmpiricalResearchMCPServer
 __all__ = [
     # Version info
     '__version__',
-    
+
     # Core utilities
     'SafeOutput',
     'ScientificNotation',
@@ -52,10 +52,10 @@ __all__ = [
     'format_pm25',
     'format_concentration',
     'format_percentage',
-    
+
     # References
     'APA7ReferenceManager',
-    
+
     # Research tools (MCP Server)
     'ResearchToolkitMCPServer',
     'EmpiricalResearchMCPServer',  # Backward compatibility
@@ -119,19 +119,19 @@ def print_info():
     print("  [OK] MCP server for AI integration")
     print("  [OK] 9 complete research examples")
     print("  [OK] 8 research types covered")
-    
+
     print("\nSupported Research Types:")
     types = get_research_types()
     for category, research_types in types.items():
         print(f"\n{category}:")
         for rt in research_types:
             print(f"  - {rt}")
-    
+
     print("\nQuick Start:")
     print("  from research_toolkit import ReportFormatter, APA7ReferenceManager")
     print("  formatter = ReportFormatter()")
     print("  formatter.print_section('MY RESEARCH')")
-    
+
     print("\nDocumentation:")
     print("  - Library Guide: docs/LIBRARY_GUIDE.md")
     print("  - MCP Integration: docs/MCP_INTEGRATION_GUIDE.md")

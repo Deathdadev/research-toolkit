@@ -19,13 +19,12 @@ import json
 import os
 import time
 from datetime import datetime
-from typing import Optional, Dict, Any
+from typing import Optional
 
 # Third-party imports
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
 import requests
 from scipy import stats
 from sklearn.linear_model import LinearRegression
@@ -39,7 +38,6 @@ from research_toolkit import (
     format_pm25,
     get_symbol
 )
-from research_toolkit.references import APA7ReferenceManager
 
 
 class VerifiableAirQualityStudy:
@@ -147,7 +145,7 @@ class VerifiableAirQualityStudy:
         
         for i, city in enumerate(self.cities):
             try:
-                url = f"http://api.openweathermap.org/data/2.5/air_pollution"
+                url = "http://api.openweathermap.org/data/2.5/air_pollution"
                 params = {
                     'lat': city['lat'],
                     'lon': city['lon'],
@@ -254,10 +252,10 @@ class VerifiableAirQualityStudy:
         self.formatter.print_section("DESCRIPTIVE STATISTICS")
         
         SafeOutput.safe_print(f"\nSample Size: n = {len(self.data)} cities")
-        SafeOutput.safe_print(f"\nKey Variables:")
+        SafeOutput.safe_print("\nKey Variables:")
         SafeOutput.safe_print(str(self.data[['density_per_km2', 'pm2_5', 'pm10']].describe()))
         
-        SafeOutput.safe_print(f"\nCorrelation Matrix:")
+        SafeOutput.safe_print("\nCorrelation Matrix:")
         corr = self.data[['density_per_km2', 'pm2_5', 'pm10']].corr()
         SafeOutput.safe_print(str(corr))
         SafeOutput.safe_print("")
@@ -276,8 +274,8 @@ class VerifiableAirQualityStudy:
         
         r, p_value = stats.pearsonr(density, pm25)
         
-        SafeOutput.safe_print(f"\nNull Hypothesis (H0): No correlation between density and PM2.5")
-        SafeOutput.safe_print(f"Alternative Hypothesis (H1): Positive correlation exists")
+        SafeOutput.safe_print("\nNull Hypothesis (H0): No correlation between density and PM2.5")
+        SafeOutput.safe_print("Alternative Hypothesis (H1): Positive correlation exists")
         
         self.formatter.print_subsection("Pearson Correlation Test")
         SafeOutput.safe_print(self.stat_formatter.format_correlation(r, p_value, len(self.data)))
@@ -285,9 +283,9 @@ class VerifiableAirQualityStudy:
         SafeOutput.safe_print(f"  Result: {'REJECT H0' if p_value < 0.05 else 'FAIL TO REJECT H0'}")
         
         if p_value < 0.05:
-            SafeOutput.safe_print(f"  -> Statistically significant correlation detected")
+            SafeOutput.safe_print("  -> Statistically significant correlation detected")
         else:
-            SafeOutput.safe_print(f"  -> No statistically significant correlation")
+            SafeOutput.safe_print("  -> No statistically significant correlation")
         
         spearman_r, spearman_p = stats.spearmanr(density, pm25)
         self.formatter.print_subsection("Spearman Rank Correlation (non-parametric)")
@@ -314,7 +312,7 @@ class VerifiableAirQualityStudy:
         model.fit(X, y)
         y_pred = model.predict(X)
         
-        SafeOutput.safe_print(f"\nLinear Regression Model: PM2.5 = b0 + b1(Density)")
+        SafeOutput.safe_print("\nLinear Regression Model: PM2.5 = b0 + b1(Density)")
         SafeOutput.safe_print(f"  Intercept (b0): {model.intercept_:.4f} {get_symbol('mu')}g/m{get_symbol('cubed')}")
         SafeOutput.safe_print(f"  Slope (b1): {model.coef_[0]:.6f} {get_symbol('mu')}g/m{get_symbol('cubed')} per person/km{get_symbol('squared')}")
         SafeOutput.safe_print(f"  R{get_symbol('squared')} = {r2_score(y, y_pred):.4f}")
@@ -440,13 +438,13 @@ class VerifiableAirQualityStudy:
         SafeOutput.safe_print(f"  2. {self.stat_formatter.format_correlation(r, p, len(self.data))}")
         
         if p < 0.05 and r > 0:
-            SafeOutput.safe_print(f"  3. CONCLUSION: Positive correlation detected")
-            SafeOutput.safe_print(f"     -> Higher density associated with higher PM2.5")
+            SafeOutput.safe_print("  3. CONCLUSION: Positive correlation detected")
+            SafeOutput.safe_print("     -> Higher density associated with higher PM2.5")
         elif p < 0.05 and r < 0:
-            SafeOutput.safe_print(f"  3. CONCLUSION: Negative correlation detected")
-            SafeOutput.safe_print(f"     -> Higher density associated with lower PM2.5")
+            SafeOutput.safe_print("  3. CONCLUSION: Negative correlation detected")
+            SafeOutput.safe_print("     -> Higher density associated with lower PM2.5")
         else:
-            SafeOutput.safe_print(f"  3. CONCLUSION: No significant correlation")
+            SafeOutput.safe_print("  3. CONCLUSION: No significant correlation")
         
         self.formatter.print_subsection("Limitations")
         SafeOutput.safe_print("  - Cross-sectional design (no causality)")

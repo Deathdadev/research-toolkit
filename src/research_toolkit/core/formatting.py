@@ -14,7 +14,7 @@ class ScientificNotation:
     Manages scientific notation with proper Greek symbols for reports
     and ASCII fallbacks for console output.
     """
-    
+
     # Greek symbol mappings
     GREEK_SYMBOLS = {
         'alpha': 'α', 'beta': 'β', 'gamma': 'γ', 'delta': 'δ',
@@ -31,7 +31,7 @@ class ScientificNotation:
         'Rho': 'Ρ', 'Sigma': 'Σ', 'Tau': 'Τ', 'Upsilon': 'Υ',
         'Phi': 'Φ', 'Chi': 'Χ', 'Psi': 'Ψ', 'Omega': 'Ω',
     }
-    
+
     # Mathematical operators and symbols
     MATH_SYMBOLS = {
         'times': '×', 'divide': '÷', 'minus': '−', 'plus': '+',
@@ -45,7 +45,7 @@ class ScientificNotation:
         'intersection': '∩', 'union': '∪', 'empty_set': '∅',
         'for_all': '∀', 'exists': '∃', 'not_exists': '∄',
     }
-    
+
     # Superscripts and subscripts
     SUPERSCRIPTS = {
         '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
@@ -53,13 +53,13 @@ class ScientificNotation:
         '+': '⁺', '-': '⁻', '=': '⁼', '(': '⁽', ')': '⁾',
         'n': 'ⁿ', 'i': 'ⁱ',
     }
-    
+
     SUBSCRIPTS = {
         '0': '₀', '1': '₁', '2': '₂', '3': '₃', '4': '₄',
         '5': '₅', '6': '₆', '7': '₇', '8': '₈', '9': '₉',
         '+': '₊', '-': '₋', '=': '₌', '(': '₍', ')': '₎',
     }
-    
+
     # Special symbols
     SPECIAL_SYMBOLS = {
         'degree': '°', 'celsius': '℃', 'fahrenheit': '℉',
@@ -70,7 +70,7 @@ class ScientificNotation:
         'copyright': '©', 'registered': '®', 'trademark': '™',
         'section': '§', 'paragraph': '¶', 'dagger': '†', 'double_dagger': '‡',
     }
-    
+
     # Common unit abbreviations
     UNIT_PREFIXES = {
         'yotta': 'Y', 'zetta': 'Z', 'exa': 'E', 'peta': 'P',
@@ -80,7 +80,7 @@ class ScientificNotation:
         'nano': 'n', 'pico': 'p', 'femto': 'f', 'atto': 'a',
         'zepto': 'z', 'yocto': 'y',
     }
-    
+
     @classmethod
     def get_all_symbols(cls) -> Dict[str, str]:
         """
@@ -95,7 +95,7 @@ class ScientificNotation:
             **cls.SPECIAL_SYMBOLS,
             **cls.UNIT_PREFIXES,
         }
-    
+
     @classmethod
     def get_symbol(cls, name: str, use_unicode: bool = True) -> str:
         """
@@ -115,15 +115,15 @@ class ScientificNotation:
             'alpha'
         """
         all_symbols = cls.get_all_symbols()
-        
+
         if name in all_symbols:
             symbol = all_symbols[name]
             return symbol if use_unicode else SafeOutput.ASCII_FALLBACKS.get(symbol, name)
-        
+
         return name
-    
+
     @classmethod
-    def format_with_symbol(cls, symbol_name: str, value: Union[float, str], 
+    def format_with_symbol(cls, symbol_name: str, value: Union[float, str],
                           use_unicode: bool = True, decimals: Optional[int] = None) -> str:
         """
         Format a value with a symbol (e.g., "α = 0.05").
@@ -142,14 +142,14 @@ class ScientificNotation:
             'α = 0.05'
         """
         symbol = cls.get_symbol(symbol_name, use_unicode)
-        
+
         if isinstance(value, (int, float)) and decimals is not None:
             return f"{symbol} = {value:.{decimals}f}"
         else:
             return f"{symbol} = {value}"
-    
+
     @classmethod
-    def format_units(cls, value: float, unit: str, use_unicode: bool = True, 
+    def format_units(cls, value: float, unit: str, use_unicode: bool = True,
                     decimals: int = 2, separator: str = " ") -> str:
         """
         Format a value with scientific units.
@@ -172,7 +172,7 @@ class ScientificNotation:
         """
         formatted_unit = cls.parse_unit_string(unit, use_unicode)
         return f"{value:.{decimals}f}{separator}{formatted_unit}"
-    
+
     @classmethod
     def parse_unit_string(cls, unit: str, use_unicode: bool = True) -> str:
         """
@@ -191,15 +191,15 @@ class ScientificNotation:
         """
         formatted_unit = unit
         all_symbols = cls.get_all_symbols()
-        
+
         for name, symbol in all_symbols.items():
             placeholder = f"{{{name}}}"
             if placeholder in formatted_unit:
                 replacement = cls.get_symbol(name, use_unicode)
                 formatted_unit = formatted_unit.replace(placeholder, replacement)
-        
+
         return formatted_unit
-    
+
     @classmethod
     def to_superscript(cls, text: str, use_unicode: bool = True) -> str:
         """
@@ -220,12 +220,12 @@ class ScientificNotation:
         """
         if not use_unicode:
             return f"^{text}"
-        
+
         result = ""
         for char in text:
             result += cls.SUPERSCRIPTS.get(char, char)
         return result
-    
+
     @classmethod
     def to_subscript(cls, text: str, use_unicode: bool = True) -> str:
         """
@@ -246,12 +246,12 @@ class ScientificNotation:
         """
         if not use_unicode:
             return f"_{text}"
-        
+
         result = ""
         for char in text:
             result += cls.SUBSCRIPTS.get(char, char)
         return result
-    
+
     @classmethod
     def format_chemical_formula(cls, formula: str, use_unicode: bool = True) -> str:
         """
@@ -287,7 +287,7 @@ class ReportFormatter:
     Formats research reports with proper scientific notation.
     Generates both console-friendly and publication-ready versions.
     """
-    
+
     def __init__(self, use_unicode_console: Optional[bool] = None):
         """
         Initialize report formatter.
@@ -299,7 +299,7 @@ class ReportFormatter:
             self.use_unicode_console = SafeOutput.can_encode_unicode()
         else:
             self.use_unicode_console = use_unicode_console
-    
+
     def format_header(self, title: str, width: int = 70, char: str = '=') -> str:
         """
         Format a section header.
@@ -313,7 +313,7 @@ class ReportFormatter:
             Formatted header string
         """
         return f"\n{char * width}\n{title}\n{char * width}"
-    
+
     def format_subheader(self, title: str, char: str = '-') -> str:
         """
         Format a subsection header.
@@ -326,7 +326,7 @@ class ReportFormatter:
             Formatted subheader string
         """
         return f"\n{title}\n{char * len(title)}"
-    
+
     def print_section(self, title: str, width: int = 70, char: str = '='):
         """
         Print a section header.
@@ -338,7 +338,7 @@ class ReportFormatter:
         """
         header = self.format_header(title, width, char)
         SafeOutput.safe_print(header)
-    
+
     def print_subsection(self, title: str, char: str = '-'):
         """
         Print a subsection header.
@@ -349,11 +349,11 @@ class ReportFormatter:
         """
         subheader = self.format_subheader(title, char)
         SafeOutput.safe_print(subheader)
-    
+
     def print_statistical_result(
-        self, 
-        statistic: str, 
-        value: float, 
+        self,
+        statistic: str,
+        value: float,
         decimals: int = 3,
         use_greek: bool = True
     ):
@@ -370,7 +370,7 @@ class ReportFormatter:
             statistic, value, self.use_unicode_console, decimals
         )
         SafeOutput.safe_print(text)
-    
+
     def format_bullet_list(self, items: list, bullet: str = None, indent: int = 2) -> str:
         """
         Format a bullet list.
@@ -385,12 +385,12 @@ class ReportFormatter:
         """
         if bullet is None:
             bullet = ScientificNotation.get_symbol('bullet', self.use_unicode_console)
-        
+
         lines = []
         for item in items:
             lines.append(f"{' ' * indent}{bullet} {item}")
         return '\n'.join(lines)
-    
+
     def format_numbered_list(self, items: list, indent: int = 2) -> str:
         """
         Format a numbered list.
@@ -406,11 +406,11 @@ class ReportFormatter:
         for i, item in enumerate(items, 1):
             lines.append(f"{' ' * indent}{i}. {item}")
         return '\n'.join(lines)
-    
+
     def save_report(
-        self, 
-        filename: str, 
-        content: str, 
+        self,
+        filename: str,
+        content: str,
         use_unicode: bool = True
     ):
         """
@@ -422,10 +422,10 @@ class ReportFormatter:
             use_unicode: Preserve Unicode symbols in file
         """
         encoding = 'utf-8' if use_unicode else 'ascii'
-        
+
         if not use_unicode:
             content = SafeOutput.to_ascii(content)
-        
+
         with SafeOutput.safe_file_output(filename, 'w', encoding) as f:
             f.write(content)
 
@@ -467,7 +467,7 @@ def format_temperature(temp: float, use_unicode: bool = True, decimals: int = 2,
     """
     if scale == 'K':
         return f"{temp:.{decimals}f} K"
-    
+
     degree = ScientificNotation.get_symbol('degree', use_unicode)
     return f"{temp:.{decimals}f}{degree}{scale}"
 
@@ -485,7 +485,7 @@ def format_pm25(value: float, use_unicode: bool = True, decimals: int = 1) -> st
         Formatted PM2.5 string
     """
     return ScientificNotation.format_units(
-        value, 
+        value,
         "{mu}g/m{cubed}",
         use_unicode,
         decimals

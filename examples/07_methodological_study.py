@@ -17,7 +17,7 @@ because we're making claims about the METHOD, not about real-world phenomena.
 """
 # Standard library imports
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Optional, Tuple
 import json
 
 # Third-party imports
@@ -163,7 +163,7 @@ class PowerAnalysisStudy:
         n_simulations = 1000
         alpha = 0.05
         
-        SafeOutput.safe_print(f"\nSimulation Parameters:")
+        SafeOutput.safe_print("\nSimulation Parameters:")
         SafeOutput.safe_print(f"  Number of simulations per condition: {n_simulations}")
         SafeOutput.safe_print(f"  Significance level: alpha = {alpha}")
         SafeOutput.safe_print(f"  Sample sizes tested: {sample_sizes}")
@@ -171,7 +171,7 @@ class PowerAnalysisStudy:
         
         results = []
         
-        SafeOutput.safe_print(f"\nRunning simulations...")
+        SafeOutput.safe_print("\nRunning simulations...")
         
         for true_r in true_correlations:
             for n in sample_sizes:
@@ -318,7 +318,7 @@ class PowerAnalysisStudy:
         SafeOutput.safe_print(f"Power was assessed across {len(self.results['sample_size'].unique())} ")
         SafeOutput.safe_print(f"sample sizes and {len(self.results['true_correlation'].unique())} ")
         SafeOutput.safe_print(f"effect sizes using {self.results['n_simulations'].iloc[0]} simulations ")
-        SafeOutput.safe_print(f"per condition.")
+        SafeOutput.safe_print("per condition.")
         
         SafeOutput.safe_print("\n--- METHODOLOGY ---")
         SafeOutput.safe_print(f"\nDesign: {self.metadata['design']}")
@@ -417,15 +417,15 @@ class PowerAnalysisStudy:
         pearson_power /= n_simulations
         spearman_power /= n_simulations
         
-        SafeOutput.safe_print(f"\nResults:")
+        SafeOutput.safe_print("\nResults:")
         SafeOutput.safe_print(f"  Pearson correlation power: {pearson_power:.3f} ({pearson_power*100:.1f}%)")
         SafeOutput.safe_print(f"  Spearman correlation power: {spearman_power:.3f} ({spearman_power*100:.1f}%)")
         SafeOutput.safe_print(f"  Difference: {abs(pearson_power - spearman_power):.3f}")
         
         if pearson_power > spearman_power:
-            SafeOutput.safe_print(f"\n  -> Pearson more powerful (for normal data)")
+            SafeOutput.safe_print("\n  -> Pearson more powerful (for normal data)")
         else:
-            SafeOutput.safe_print(f"\n  -> Spearman competitive or better")
+            SafeOutput.safe_print("\n  -> Spearman competitive or better")
     
     def generate_references(self) -> None:
         """Generate APA 7 reference list."""

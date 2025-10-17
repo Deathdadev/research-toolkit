@@ -17,14 +17,11 @@ This demonstrates:
 """
 # Standard library imports
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple
-import json
+from typing import Dict
 
 # Third-party imports
-from scipy import stats
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 
 # Local imports (research_toolkit)
 from research_toolkit import ReportFormatter, SafeOutput, StatisticalFormatter, get_symbol

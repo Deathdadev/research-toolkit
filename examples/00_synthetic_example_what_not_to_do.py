@@ -105,16 +105,16 @@ class SyntheticStudyExample:
         low_prior = self.data[self.data['group'] == 'Low Prior']['test_score']
         
         t_stat, p_value = stats.ttest_ind(high_prior, low_prior)
-        print(f"Independent T-Test (High vs Low Prior Knowledge):")
+        print("Independent T-Test (High vs Low Prior Knowledge):")
         print(f"  t-statistic: {t_stat:.4f}")
         print(f"  p-value: {p_value:.4f}")
-        print(f"  PROBLEM: This 'confirms' what we programmed in!")
+        print("  PROBLEM: This 'confirms' what we programmed in!")
         print()
         
         r, p = stats.pearsonr(self.data['study_hours'], self.data['test_score'])
-        print(f"Pearson Correlation (Study Hours vs Test Score):")
+        print("Pearson Correlation (Study Hours vs Test Score):")
         print(f"  r = {r:.4f}, p = {p:.4f}")
-        print(f"  PROBLEM: We decided this coefficient was 3.5 in the formula!")
+        print("  PROBLEM: We decided this coefficient was 3.5 in the formula!")
         print()
         
     def regression_analysis(self):
@@ -131,11 +131,11 @@ class SyntheticStudyExample:
         y_pred = model.predict(X)
         
         print(f"Intercept: {model.intercept_:.4f}")
-        print(f"  (We set this to ~50 in the formula)")
-        print(f"Coefficients:")
+        print("  (We set this to ~50 in the formula)")
+        print("Coefficients:")
         for name, coef in zip(X.columns, model.coef_):
             print(f"  {name}: {coef:.4f}")
-        print(f"  (We set study_hours to 3.5 and prior_knowledge to 0.4)")
+        print("  (We set study_hours to 3.5 and prior_knowledge to 0.4)")
         print()
         print(f"R-squared Score: {r2_score(y, y_pred):.4f}")
         print(f"RMSE: {np.sqrt(mean_squared_error(y, y_pred)):.4f}")

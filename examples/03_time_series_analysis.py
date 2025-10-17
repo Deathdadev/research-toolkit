@@ -15,7 +15,7 @@ Note: For production use, replace with actual historical API data
 """
 # Standard library imports
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Optional, Tuple
 import json
 import warnings
 
@@ -24,7 +24,6 @@ from scipy import stats
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
 
 warnings.filterwarnings('ignore')
 
@@ -131,7 +130,7 @@ class AirQualityTimeSeriesStudy:
         self.formatter.print_section("DATA COLLECTION")
         SafeOutput.safe_print(f"Data Source: {self.metadata['data_source']}")
         SafeOutput.safe_print(f"Time Period: {self.metadata['time_period']}")
-        SafeOutput.safe_print(f"Frequency: Daily")
+        SafeOutput.safe_print("Frequency: Daily")
         
         # Generate 2 years of daily data
         np.random.seed(42)
@@ -198,7 +197,7 @@ class AirQualityTimeSeriesStudy:
         self.formatter.print_section("DESCRIPTIVE STATISTICS")
         
         SafeOutput.safe_print(f"\nObservations: {len(self.data)}")
-        SafeOutput.safe_print(f"\nPM2.5 Statistics:")
+        SafeOutput.safe_print("\nPM2.5 Statistics:")
         SafeOutput.safe_print(f"  M = {self.data['pm25'].mean():.2f} ug/m3")
         SafeOutput.safe_print(f"  SD = {self.data['pm25'].std():.2f} ug/m3")
         SafeOutput.safe_print(f"  Median = {self.data['pm25'].median():.2f} ug/m3")
@@ -224,7 +223,7 @@ class AirQualityTimeSeriesStudy:
         SafeOutput.safe_print(f"\nAugmented Dickey-Fuller Test ({self.statsmodels_ref}):")
         SafeOutput.safe_print(f"  ADF Statistic = {result[0]:.4f}")
         SafeOutput.safe_print(f"  p-value = {result[1]:.4f}")
-        SafeOutput.safe_print(f"  Critical Values:")
+        SafeOutput.safe_print("  Critical Values:")
         for key, value in result[4].items():
             SafeOutput.safe_print(f"    {key}: {value:.4f}")
         
@@ -251,7 +250,7 @@ class AirQualityTimeSeriesStudy:
         # Linear regression
         slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
         
-        SafeOutput.safe_print(f"\nLinear Trend Analysis:")
+        SafeOutput.safe_print("\nLinear Trend Analysis:")
         SafeOutput.safe_print(f"  Slope = {slope:.4f} ug/m3 per day")
         SafeOutput.safe_print(f"  Yearly change = {slope * 365:.2f} ug/m3 per year")
         SafeOutput.safe_print(f"  R^2 = {r_value**2:.4f}")
@@ -261,7 +260,7 @@ class AirQualityTimeSeriesStudy:
             direction = "decreasing" if slope < 0 else "increasing"
             SafeOutput.safe_print(f"\n  -> Significant {direction} trend detected (p < .05)")
         else:
-            SafeOutput.safe_print(f"\n  -> No significant linear trend (p >= .05)")
+            SafeOutput.safe_print("\n  -> No significant linear trend (p >= .05)")
         
         return slope, p_value
     
@@ -330,14 +329,14 @@ class AirQualityTimeSeriesStudy:
         
         self.formatter.print_section("FORECASTING")
         
-        SafeOutput.safe_print(f"\nFitting ARIMA model...")
+        SafeOutput.safe_print("\nFitting ARIMA model...")
         SafeOutput.safe_print(f"Forecasting next {steps} days")
         
         # Fit ARIMA model
         model = ARIMA(self.data['pm25'], order=(1, 1, 1))
         fitted = model.fit()
         
-        SafeOutput.safe_print(f"\nModel Summary:")
+        SafeOutput.safe_print("\nModel Summary:")
         SafeOutput.safe_print(f"  AIC = {fitted.aic:.2f}")
         SafeOutput.safe_print(f"  BIC = {fitted.bic:.2f}")
         
@@ -349,7 +348,7 @@ class AirQualityTimeSeriesStudy:
             freq='D'
         )
         
-        SafeOutput.safe_print(f"\nForecast Statistics:")
+        SafeOutput.safe_print("\nForecast Statistics:")
         SafeOutput.safe_print(f"  Mean forecast = {forecast.mean():.2f} ug/m3")
         SafeOutput.safe_print(f"  Min forecast = {forecast.min():.2f} ug/m3")
         SafeOutput.safe_print(f"  Max forecast = {forecast.max():.2f} ug/m3")
@@ -492,13 +491,13 @@ class AirQualityTimeSeriesStudy:
         SafeOutput.safe_print(f"\nTitle: {self.metadata['title']}")
         SafeOutput.safe_print(f"\nResearch Question: {self.metadata['research_question']}")
         
-        slope, p_trend = stats.linregress(
+        slope, intercept, r_value, p_trend, std_err = stats.linregress(
             np.arange(len(self.data)),
             self.data['pm25'].values
-        )[:2]
+        )
         
         SafeOutput.safe_print("\n--- RESULTS ---")
-        SafeOutput.safe_print(f"\nTime series analysis of daily PM2.5 measurements over ")
+        SafeOutput.safe_print("\nTime series analysis of daily PM2.5 measurements over ")
         SafeOutput.safe_print(f"{self.metadata['time_period']} (N = {len(self.data)} observations) ")
         SafeOutput.safe_print(f"revealed a mean concentration of {self.data['pm25'].mean():.2f} ug/m3 ")
         SafeOutput.safe_print(f"(SD = {self.data['pm25'].std():.2f}).")
@@ -510,13 +509,13 @@ class AirQualityTimeSeriesStudy:
         
         if STATSMODELS_AVAILABLE:
             SafeOutput.safe_print(f"\nDecomposition analysis ({self.statsmodels_ref}) revealed ")
-            SafeOutput.safe_print(f"seasonal patterns with peak pollution during winter months.")
+            SafeOutput.safe_print("seasonal patterns with peak pollution during winter months.")
         
         SafeOutput.safe_print("\n--- INTERPRETATION ---")
         SafeOutput.safe_print(f"\n{get_symbol('checkmark')} APPROPRIATE CLAIMS:")
         SafeOutput.safe_print(f"  - PM2.5 levels showed a {'decreasing' if slope < 0 else 'increasing'} trend")
-        SafeOutput.safe_print(f"  - Seasonal patterns were observed")
-        SafeOutput.safe_print(f"  - Weekly patterns suggest higher weekday pollution")
+        SafeOutput.safe_print("  - Seasonal patterns were observed")
+        SafeOutput.safe_print("  - Weekly patterns suggest higher weekday pollution")
         
         SafeOutput.safe_print(f"\n{get_symbol('cross')} INAPPROPRIATE CLAIMS:")
         SafeOutput.safe_print("  - 'Policy X CAUSED the decrease' (cannot infer causation)")

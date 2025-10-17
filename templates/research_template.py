@@ -34,15 +34,10 @@ This template follows CONTRIBUTING.md standards:
 # Standard library imports
 import json
 from datetime import datetime
-from typing import Optional, Dict, List, Any
+from typing import Optional
 
 # Third-party imports
-import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-from scipy import stats
-from sklearn.linear_model import LinearRegression
 
 # Local imports (research_toolkit v2.0)
 from research_toolkit import (
@@ -52,7 +47,6 @@ from research_toolkit import (
     ScientificNotation,
     get_symbol,
     format_temperature,
-    format_pm25,
     format_concentration,
     format_percentage
 )
@@ -190,13 +184,13 @@ class ResearchTemplate:
             return False
         
         print(f"\nDataset shape: {self.data.shape}")
-        print(f"\nMissing values:")
+        print("\nMissing values:")
         print(self.data.isnull().sum())
         
-        print(f"\nData types:")
+        print("\nData types:")
         print(self.data.dtypes)
         
-        print(f"\nBasic statistics:")
+        print("\nBasic statistics:")
         print(self.data.describe())
         
         # Add your specific validation checks here
@@ -214,7 +208,7 @@ class ResearchTemplate:
             return
         
         print(f"\nSample Size: {len(self.data)}")
-        print(f"\nDescriptive Statistics:")
+        print("\nDescriptive Statistics:")
         print(self.data.describe())
         
         # Add your specific descriptive analyses here
@@ -255,8 +249,8 @@ class ResearchTemplate:
         self.formatter.print_section("HYPOTHESIS TESTING")
         
         # Example structure:
-        print(f"\nNull Hypothesis (H0): [STATE YOUR NULL HYPOTHESIS]")
-        print(f"Alternative Hypothesis (H1): [STATE YOUR ALTERNATIVE]")
+        print("\nNull Hypothesis (H0): [STATE YOUR NULL HYPOTHESIS]")
+        print("Alternative Hypothesis (H1): [STATE YOUR ALTERNATIVE]")
         
         # Perform your statistical tests here
         # Examples:
@@ -337,16 +331,16 @@ class ResearchTemplate:
         self.formatter.print_section("CONCLUSIONS")
         
         print(f"\nResearch Question: {self.metadata['research_question']}")
-        print(f"\nFindings:")
+        print("\nFindings:")
         print("  1. [FINDING 1 with statistical support]")
         print("  2. [FINDING 2 with statistical support]")
         print("  3. [etc.]")
         
-        print(f"\nInterpretation:")
+        print("\nInterpretation:")
         print("  - [WHAT THIS MEANS]")
         print("  - [PRACTICAL IMPLICATIONS]")
         
-        print(f"\nFuture Research:")
+        print("\nFuture Research:")
         print("  - [SUGGESTED NEXT STEPS]")
     
     def provide_verification_instructions(self):

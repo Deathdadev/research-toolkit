@@ -391,7 +391,7 @@ class CoastalInlandComparison:
         
         self.formatter.print_subsection("Results")
         SafeOutput.safe_print(f"\nDescriptive statistics revealed that coastal cities ({self.stat_formatter.format_mean_sd(coastal.mean(), coastal.std(), len(coastal))})")
-        SafeOutput.safe_print(f"had different average temperatures compared to inland cities")
+        SafeOutput.safe_print("had different average temperatures compared to inland cities")
         SafeOutput.safe_print(f"({self.stat_formatter.format_mean_sd(inland.mean(), inland.std(), len(inland))}).")
         
         t_stat, p_value = stats.ttest_ind(coastal, inland)

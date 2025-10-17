@@ -5,14 +5,13 @@ This module provides standardized formatting for statistical results
 following APA 7 guidelines.
 """
 
-from typing import Tuple
 
 
 class StatisticalFormatter:
     """
     Formats statistical results with proper notation and APA 7 style.
     """
-    
+
     @staticmethod
     def format_p_value(p: float, threshold: float = 0.001, decimals: int = 3) -> str:
         """
@@ -46,11 +45,11 @@ class StatisticalFormatter:
             return f"p = {p_str}"
         else:
             return "p = 1.000"
-    
+
     @staticmethod
     def format_ci(
-        lower: float, 
-        upper: float, 
+        lower: float,
+        upper: float,
         decimals: int = 2,
         percentage: bool = False,
         ci_level: int = 95
@@ -75,7 +74,7 @@ class StatisticalFormatter:
         if percentage:
             return f"{ci_level}% CI [{lower:.{decimals}f}%, {upper:.{decimals}f}%]"
         return f"{ci_level}% CI [{lower:.{decimals}f}, {upper:.{decimals}f}]"
-    
+
     @staticmethod
     def format_mean_sd(mean: float, sd: float, decimals: int = 2, n: int = None) -> str:
         """
@@ -98,7 +97,7 @@ class StatisticalFormatter:
         if n is not None:
             result += f", n = {n}"
         return result
-    
+
     @staticmethod
     def format_correlation(r: float, p: float, n: int = None, decimals: int = 2) -> str:
         """
@@ -123,16 +122,16 @@ class StatisticalFormatter:
             r_str = r_str[1:]  # Remove "0."
         else:
             r_str = "-" + r_str[2:]  # Keep minus, remove "0."
-        
+
         if n is not None:
             df = n - 2
             result = f"r({df}) = {r_str}"
         else:
             result = f"r = {r_str}"
-        
+
         result += f", {StatisticalFormatter.format_p_value(p)}"
         return result
-    
+
     @staticmethod
     def format_t_test(t: float, df: int, p: float, decimals: int = 2) -> str:
         """
@@ -152,7 +151,7 @@ class StatisticalFormatter:
             't(48) = 2.34, p = .023'
         """
         return f"t({df}) = {t:.{decimals}f}, {StatisticalFormatter.format_p_value(p)}"
-    
+
     @staticmethod
     def format_f_test(f: float, df1: int, df2: int, p: float, decimals: int = 2) -> str:
         """
@@ -173,7 +172,7 @@ class StatisticalFormatter:
             'F(2, 47) = 3.45, p = .041'
         """
         return f"F({df1}, {df2}) = {f:.{decimals}f}, {StatisticalFormatter.format_p_value(p)}"
-    
+
     @staticmethod
     def format_chi_square(chi2: float, df: int, p: float, decimals: int = 2) -> str:
         """
@@ -193,7 +192,7 @@ class StatisticalFormatter:
             'χ²(2) = 5.67, p = .059'
         """
         return f"χ²({df}) = {chi2:.{decimals}f}, {StatisticalFormatter.format_p_value(p)}"
-    
+
     @staticmethod
     def interpret_effect_size(effect_size: float, measure: str = 'cohens_d') -> str:
         """
@@ -211,7 +210,7 @@ class StatisticalFormatter:
             'medium'
         """
         abs_effect = abs(effect_size)
-        
+
         if measure == 'cohens_d':
             if abs_effect < 0.2:
                 return 'negligible'
@@ -221,7 +220,7 @@ class StatisticalFormatter:
                 return 'medium'
             else:
                 return 'large'
-        
+
         elif measure == 'correlation':
             if abs_effect < 0.1:
                 return 'negligible'
@@ -231,7 +230,7 @@ class StatisticalFormatter:
                 return 'medium'
             else:
                 return 'large'
-        
+
         elif measure == 'eta_squared':
             if abs_effect < 0.01:
                 return 'negligible'
@@ -241,9 +240,9 @@ class StatisticalFormatter:
                 return 'medium'
             else:
                 return 'large'
-        
+
         return 'unknown'
-    
+
     @staticmethod
     def format_effect_size(
         effect_size: float,
@@ -275,14 +274,14 @@ class StatisticalFormatter:
             'partial_eta_squared': 'ηp²',
             'omega_squared': 'ω²'
         }
-        
+
         symbol = symbols.get(measure, measure)
         result = f"{symbol} = {effect_size:.{decimals}f}"
-        
+
         if include_interpretation:
             interp = StatisticalFormatter.interpret_effect_size(effect_size, measure)
             result += f" ({interp} effect)"
-        
+
         return result
 
 
@@ -319,20 +318,20 @@ class StatisticalFormatter:
         r2_str = f"{r_squared:.{decimals}f}"
         if r2_str.startswith('0.'):
             r2_str = r2_str[1:]
-        
+
         result = f"R² = {r2_str}"
-        
+
         if adj_r_squared is not None:
             adj_str = f"{adj_r_squared:.{decimals}f}"
             if adj_str.startswith('0.'):
                 adj_str = adj_str[1:]
             result += f" (adj. R² = {adj_str})"
-        
+
         if f_stat is not None and df1 is not None and df2 is not None:
             result += f", {StatisticalFormatter.format_f_test(f_stat, df1, df2, p or 0, decimals)}"
-        
+
         return result
-    
+
     @staticmethod
     def format_anova_oneway(
         f: float,
@@ -355,7 +354,7 @@ class StatisticalFormatter:
             Formatted ANOVA string
         """
         return StatisticalFormatter.format_f_test(f, df_between, df_within, p, decimals)
-    
+
     @staticmethod
     def format_mann_whitney(
         u: float,
@@ -382,7 +381,7 @@ class StatisticalFormatter:
             'U = 145.50 (n₁ = 20, n₂ = 20), p = .032'
         """
         return f"U = {u:.{decimals}f} (n₁ = {n1}, n₂ = {n2}), {StatisticalFormatter.format_p_value(p)}"
-    
+
     @staticmethod
     def format_wilcoxon(
         w: float,
@@ -407,7 +406,7 @@ class StatisticalFormatter:
             'W = 234.50 (n = 30), p = .012'
         """
         return f"W = {w:.{decimals}f} (n = {n}), {StatisticalFormatter.format_p_value(p)}"
-    
+
     @staticmethod
     def format_kruskal_wallis(
         h: float,

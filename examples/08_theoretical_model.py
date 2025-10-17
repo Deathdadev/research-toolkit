@@ -16,13 +16,10 @@ This demonstrates:
 """
 # Standard library imports
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple
-import json
 
 # Third-party imports
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 
 # Local imports (research_toolkit)
 from research_toolkit import ReportFormatter, SafeOutput, StatisticalFormatter, get_symbol
@@ -133,7 +130,7 @@ class InformationDiffusionTheory:
         for construct, details in self.constructs.items():
             SafeOutput.safe_print(f"\n{construct}:")
             SafeOutput.safe_print(f"  Definition: {details['definition']}")
-            SafeOutput.safe_print(f"  Properties:")
+            SafeOutput.safe_print("  Properties:")
             for prop in details['properties']:
                 SafeOutput.safe_print(f"    - {prop}")
     
@@ -312,12 +309,12 @@ class InformationDiffusionTheory:
         SafeOutput.safe_print(f"\nResearch Question: {self.metadata['research_question']}")
         
         SafeOutput.safe_print("\n--- ABSTRACT ---")
-        SafeOutput.safe_print(f"\nThis theoretical paper develops a threshold-based model of ")
-        SafeOutput.safe_print(f"information diffusion in social networks, building on diffusion ")
+        SafeOutput.safe_print("\nThis theoretical paper develops a threshold-based model of ")
+        SafeOutput.safe_print("information diffusion in social networks, building on diffusion ")
         SafeOutput.safe_print(f"theory ({self.rogers_ref}) and weak ties theory ({self.granovetter_ref}). ")
-        SafeOutput.safe_print(f"The model proposes that information transmission is governed by ")
-        SafeOutput.safe_print(f"value-cost calculations and network structure. Four key propositions ")
-        SafeOutput.safe_print(f"are derived and translated into testable hypotheses.")
+        SafeOutput.safe_print("The model proposes that information transmission is governed by ")
+        SafeOutput.safe_print("value-cost calculations and network structure. Four key propositions ")
+        SafeOutput.safe_print("are derived and translated into testable hypotheses.")
         
         SafeOutput.safe_print("\n--- THEORETICAL CONTRIBUTION ---")
         SafeOutput.safe_print("\n{get_symbol('checkmark')} THIS THEORY CONTRIBUTES:")

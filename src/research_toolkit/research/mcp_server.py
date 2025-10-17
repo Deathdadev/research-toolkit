@@ -11,7 +11,6 @@ name parsing (v2.0.0 features).
 MCP Specification: https://modelcontextprotocol.io/
 """
 
-import json
 from typing import Dict, List, Any, Optional
 from dataclasses import dataclass, asdict
 from enum import Enum
@@ -60,13 +59,13 @@ class ResearchToolkitMCPServer:
     - Data requirement checking
     - Interpretation validation
     """
-    
+
     def __init__(self):
         """Initialize MCP server."""
         self.name = "research-toolkit"
         self.version = "2.0.0"
         self.apa_manager = APA7ReferenceManager()
-        
+
         # Define tools
         self.tools = [
             self._define_research_type_selector(),
@@ -77,14 +76,14 @@ class ResearchToolkitMCPServer:
             self._define_methodology_advisor(),
             self._define_interpretation_validator()
         ]
-        
+
         # Define resources
         self.resources = [
             self._define_guidelines_resource(),
             self._define_examples_resource(),
             self._define_templates_resource()
         ]
-    
+
     def _define_research_type_selector(self) -> Tool:
         """Tool: Select appropriate research type based on research question."""
         return Tool(
@@ -115,7 +114,7 @@ class ResearchToolkitMCPServer:
                 "required": ["research_question", "data_availability", "goal"]
             }
         )
-    
+
     def _define_apa7_formatter(self) -> Tool:
         """Tool: Format reference in APA 7 style."""
         return Tool(
@@ -130,7 +129,7 @@ class ResearchToolkitMCPServer:
                 "properties": {
                     "reference_type": {
                         "type": "string",
-                        "enum": ["journal", "book", "chapter", "website", "report", 
+                        "enum": ["journal", "book", "chapter", "website", "report",
                                 "conference", "dataset", "software", "dissertation", "government"],
                         "description": "Type of reference (10 types supported in v2.0.0)"
                     },
@@ -155,7 +154,7 @@ class ResearchToolkitMCPServer:
                 "required": ["reference_type", "author", "year", "title"]
             }
         )
-    
+
     def _define_citation_generator(self) -> Tool:
         """Tool: Generate in-text citation."""
         return Tool(
@@ -188,7 +187,7 @@ class ResearchToolkitMCPServer:
                 "required": ["author", "year"]
             }
         )
-    
+
     def _define_reference_validator(self) -> Tool:
         """Tool: Validate APA 7 reference completeness."""
         return Tool(
@@ -202,7 +201,7 @@ class ResearchToolkitMCPServer:
                 "properties": {
                     "reference_type": {
                         "type": "string",
-                        "enum": ["journal", "book", "chapter", "website", "report", 
+                        "enum": ["journal", "book", "chapter", "website", "report",
                                 "conference", "dataset", "software", "dissertation", "government"]
                     },
                     "fields": {
@@ -214,7 +213,7 @@ class ResearchToolkitMCPServer:
                 "required": ["reference_type", "fields"]
             }
         )
-    
+
     def _define_data_requirement_checker(self) -> Tool:
         """Tool: Check data requirements for research type."""
         return Tool(
@@ -229,7 +228,7 @@ class ResearchToolkitMCPServer:
                 "properties": {
                     "research_type": {
                         "type": "string",
-                        "enum": ["correlational", "comparative", "time_series", "observational", 
+                        "enum": ["correlational", "comparative", "time_series", "observational",
                                 "meta_analysis", "simulation", "methodological", "theoretical"],
                         "description": "Type of research"
                     },
@@ -241,7 +240,7 @@ class ResearchToolkitMCPServer:
                 "required": ["research_type"]
             }
         )
-    
+
     def _define_methodology_advisor(self) -> Tool:
         """Tool: Get methodology guidance for research type."""
         return Tool(
@@ -263,7 +262,7 @@ class ResearchToolkitMCPServer:
                 "required": ["research_type"]
             }
         )
-    
+
     def _define_interpretation_validator(self) -> Tool:
         """Tool: Validate interpretation of results."""
         return Tool(
@@ -299,7 +298,7 @@ class ResearchToolkitMCPServer:
                 "required": ["research_type", "proposed_claim"]
             }
         )
-    
+
     def _define_guidelines_resource(self) -> MCPResource:
         """Resource: Research guidelines."""
         return MCPResource(
@@ -308,7 +307,7 @@ class ResearchToolkitMCPServer:
             description="Complete research methodology guidelines covering all 8 research types",
             mimeType="text/markdown"
         )
-    
+
     def _define_examples_resource(self) -> MCPResource:
         """Resource: Research examples."""
         return MCPResource(
@@ -317,7 +316,7 @@ class ResearchToolkitMCPServer:
             description="8 complete working examples demonstrating proper research methodology (all use research_toolkit library)",
             mimeType="application/x-python"
         )
-    
+
     def _define_templates_resource(self) -> MCPResource:
         """Resource: Research templates."""
         return MCPResource(
@@ -326,9 +325,9 @@ class ResearchToolkitMCPServer:
             description="Reusable template for conducting research (uses research_toolkit library v2.0.0)",
             mimeType="application/x-python"
         )
-    
+
     # Tool Implementations
-    
+
     def select_research_type(
         self,
         research_question: str,
@@ -336,7 +335,7 @@ class ResearchToolkitMCPServer:
         goal: str
     ) -> Dict[str, Any]:
         """Implement research type selection."""
-        
+
         # Decision logic
         if data_availability == "no_real_data" or data_availability == "model_only":
             if goal == "theorize":
@@ -368,11 +367,11 @@ class ResearchToolkitMCPServer:
             else:
                 research_type = "observational"
                 data_requirement = "Real data from phenomenon of interest"
-        
+
         # Get methodology guidance
         methodology = self._get_methodology_summary(research_type)
         limitations = self._get_research_limitations(research_type)
-        
+
         return {
             "status": "success",
             "research_type": research_type,
@@ -387,7 +386,7 @@ class ResearchToolkitMCPServer:
                 "Prepare for limitations in interpretation"
             ]
         }
-    
+
     def format_apa7_reference(
         self,
         reference_type: str,
@@ -401,11 +400,11 @@ class ResearchToolkitMCPServer:
             fields = {"author": author, "year": year, "title": title}
             if additional_fields:
                 fields.update(additional_fields)
-            
+
             key = self.apa_manager.add_reference(reference_type, **fields)
             formatted = self.apa_manager.format_reference(key)
             is_valid, issues = self.apa_manager.validate_reference(key)
-            
+
             return {
                 "status": "success",
                 "formatted_reference": formatted,
@@ -418,7 +417,7 @@ class ResearchToolkitMCPServer:
                 "status": "error",
                 "message": str(e)
             }
-    
+
     def generate_citation(
         self,
         author: str,
@@ -438,9 +437,9 @@ class ResearchToolkitMCPServer:
                 volume='1',
                 pages='1'
             )
-            
+
             citation = self.apa_manager.get_in_text_citation(key, page=page, narrative=narrative)
-            
+
             return {
                 "status": "success",
                 "citation": citation,
@@ -451,7 +450,7 @@ class ResearchToolkitMCPServer:
                 "status": "error",
                 "message": str(e)
             }
-    
+
     def validate_reference(
         self,
         reference_type: str,
@@ -462,10 +461,10 @@ class ResearchToolkitMCPServer:
             # Temporarily add reference
             key = self.apa_manager.add_reference(reference_type, **fields)
             is_valid, issues = self.apa_manager.validate_reference(key)
-            
+
             # Simple field validation
             field_validation = {}
-            
+
             # Validate author
             author = fields.get('author', '')
             author_valid = bool(author and len(author) > 0)
@@ -473,7 +472,7 @@ class ResearchToolkitMCPServer:
                 "valid": author_valid,
                 "message": "OK" if author_valid else "Author field is required"
             }
-            
+
             # Validate year
             year = fields.get('year', '')
             year_valid = bool(year and (year == 'n.d.' or year.isdigit()))
@@ -481,7 +480,7 @@ class ResearchToolkitMCPServer:
                 "valid": year_valid,
                 "message": "OK" if year_valid else "Year must be a 4-digit year or 'n.d.'"
             }
-            
+
             # Validate DOI if present
             doi = fields.get('doi', '')
             doi_valid = True if not doi else (doi.startswith('10.') or doi.startswith('http'))
@@ -489,7 +488,7 @@ class ResearchToolkitMCPServer:
                 "valid": doi_valid,
                 "message": "OK" if doi_valid else "DOI should start with '10.' or be a URL"
             }
-            
+
             return {
                 "status": "success",
                 "is_valid": is_valid and author_valid and year_valid and doi_valid,
@@ -501,14 +500,14 @@ class ResearchToolkitMCPServer:
                 "status": "error",
                 "message": str(e)
             }
-    
+
     def check_data_requirements(
         self,
         research_type: str,
         proposed_data_source: Optional[str] = None
     ) -> Dict[str, Any]:
         """Implement data requirement checking."""
-        
+
         empirical_types = {
             "correlational": {
                 "requires_real_data": True,
@@ -562,26 +561,26 @@ class ResearchToolkitMCPServer:
                 "warning": "Generates hypotheses that MUST be tested empirically before claiming validity"
             }
         }
-        
+
         if research_type not in empirical_types:
             return {
                 "status": "error",
                 "message": f"Unknown research type: {research_type}"
             }
-        
+
         requirements = empirical_types[research_type]
-        
+
         response = {
             "status": "success",
             "research_type": research_type,
             **requirements
         }
-        
+
         # Assess proposed data source if provided
         if proposed_data_source:
-            is_synthetic = any(word in proposed_data_source.lower() for word in 
+            is_synthetic = any(word in proposed_data_source.lower() for word in
                              ['synthetic', 'simulated', 'generated', 'random', 'fake'])
-            
+
             if is_synthetic and not requirements['synthetic_acceptable']:
                 response['assessment'] = "INVALID"
                 response['assessment_message'] = (
@@ -594,9 +593,9 @@ class ResearchToolkitMCPServer:
             else:
                 response['assessment'] = "ACCEPTABLE"
                 response['assessment_message'] = "Real data source appears appropriate"
-        
+
         return response
-    
+
     def _get_methodology_summary(self, research_type: str) -> str:
         """Get brief methodology summary."""
         summaries = {
@@ -610,7 +609,7 @@ class ResearchToolkitMCPServer:
             "theoretical": "Define constructs, state axioms, derive propositions, generate testable hypotheses"
         }
         return summaries.get(research_type, "Unknown")
-    
+
     def _get_research_limitations(self, research_type: str) -> List[str]:
         """Get key limitations for research type."""
         limitations = {
@@ -624,7 +623,7 @@ class ResearchToolkitMCPServer:
             "theoretical": ["Requires empirical testing", "No claims about reality without validation"]
         }
         return limitations.get(research_type, [])
-    
+
     def validate_interpretation(
         self,
         research_type: str,
@@ -633,34 +632,34 @@ class ResearchToolkitMCPServer:
         has_random_assignment: bool = False
     ) -> Dict[str, Any]:
         """Implement interpretation validation."""
-        
+
         # Check for causal language
         causal_words = ['cause', 'causes', 'caused', 'effect of', 'due to', 'because of', 'leads to', 'results in']
         has_causal_language = any(word in proposed_claim.lower() for word in causal_words)
-        
+
         # Determine if causal claims are acceptable
         can_claim_causation = has_control_group and has_random_assignment
-        
+
         # Check for appropriate conditional language in non-empirical research
         non_empirical = research_type in ['simulation', 'methodological', 'theoretical']
-        has_conditional = any(phrase in proposed_claim.lower() for phrase in 
+        has_conditional = any(phrase in proposed_claim.lower() for phrase in
                             ['according to', 'if', 'under the assumption', 'the model suggests', 'theoretically'])
-        
+
         issues = []
         warnings = []
-        
+
         if has_causal_language and not can_claim_causation:
             issues.append("Causal language detected but study design does not support causal claims")
             issues.append("Remove words like 'cause', 'effect', 'due to' or redesign as experimental study")
-        
+
         if non_empirical and not has_conditional:
             warnings.append("Non-empirical research should use conditional language (e.g., 'According to the model...')")
-        
+
         if research_type == "correlational" and "correlation" not in proposed_claim.lower():
             warnings.append("Correlational studies should explicitly state findings are correlational")
-        
+
         is_appropriate = len(issues) == 0
-        
+
         return {
             "status": "success",
             "is_appropriate": is_appropriate,
@@ -670,11 +669,11 @@ class ResearchToolkitMCPServer:
             "warnings": warnings,
             "suggested_revision": self._suggest_revision(proposed_claim, research_type, issues) if not is_appropriate else None
         }
-    
+
     def _suggest_revision(self, claim: str, research_type: str, issues: List[str]) -> str:
         """Suggest revised claim."""
         revised = claim
-        
+
         # Remove causal language
         causal_replacements = {
             'causes': 'is associated with',
@@ -686,26 +685,26 @@ class ResearchToolkitMCPServer:
             'leads to': 'is related to',
             'results in': 'correlates with'
         }
-        
+
         for causal, correlational in causal_replacements.items():
             revised = revised.replace(causal, correlational)
-        
+
         # Add conditional prefix for non-empirical
         if research_type in ['simulation', 'theoretical']:
             revised = f"According to the {research_type}, {revised}"
-        
+
         return revised
-    
+
     # MCP Protocol Methods
-    
+
     def list_tools(self) -> List[Dict[str, Any]]:
         """List all available tools (MCP protocol)."""
         return [asdict(tool) for tool in self.tools]
-    
+
     def list_resources(self) -> List[Dict[str, Any]]:
         """List all available resources (MCP protocol)."""
         return [asdict(resource) for resource in self.resources]
-    
+
     def list_prompts(self) -> List[Dict[str, Any]]:
         """List all available prompt templates for AI models (MCP protocol)."""
         return [
@@ -730,7 +729,7 @@ class ResearchToolkitMCPServer:
                 "arguments": []
             }
         ]
-    
+
     def get_prompt(self, prompt_name: str) -> Dict[str, Any]:
         """Get a specific prompt template."""
         prompts_content = {
@@ -739,23 +738,23 @@ class ResearchToolkitMCPServer:
             "claim_validation_guide": self._get_claim_validation_guide(),
             "data_source_guide": self._get_data_source_guide()
         }
-        
+
         if prompt_name not in prompts_content:
             return {
                 "status": "error",
                 "message": f"Prompt not found: {prompt_name}"
             }
-        
+
         prompts = self.list_prompts()
         prompt_info = next((p for p in prompts if p["name"] == prompt_name), None)
-        
+
         return {
             "status": "success",
             "prompt_name": prompt_name,
             "description": prompt_info["description"],
             "prompt": prompts_content[prompt_name]
         }
-    
+
     def _get_research_primer(self) -> str:
         """Get the research methodology primer text."""
         return """# Understanding Research Methodology
@@ -892,7 +891,7 @@ This server provides tools to help you conduct proper research:
 
 Remember: It's better to say "I cannot answer this without real data" than to make unverifiable claims.
 """
-    
+
     def _get_apa_guide(self) -> str:
         """Get the APA formatting guide text."""
         return """# APA 7 Formatting Guide
@@ -923,7 +922,7 @@ Returns: (Smith, 2023, p. 45)
 
 Remember: Consistency is key. Use the tools for ALL citations.
 """
-    
+
     def _get_claim_validation_guide(self) -> str:
         """Get the claim validation guide text."""
         return """# Validating Research Claims
@@ -966,7 +965,7 @@ If `is_appropriate: False`, use the `suggested_revision`.
 
 Remember: Over-claiming damages credibility. Be honest about limitations.
 """
-    
+
     def _get_data_source_guide(self) -> str:
         """Get the data source requirements guide text."""
         return """# Data Source Requirements
@@ -1011,7 +1010,7 @@ data.to_csv('raw_research_data.csv')
 
 Remember: Real-world claims require real-world data.
 """
-    
+
     def call_tool(self, tool_name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Call a tool (MCP protocol)."""
         tool_methods = {
@@ -1022,10 +1021,10 @@ Remember: Real-world claims require real-world data.
             "check_data_requirements": self.check_data_requirements,
             "validate_interpretation": self.validate_interpretation
         }
-        
+
         if tool_name not in tool_methods:
             return {"status": "error", "message": f"Unknown tool: {tool_name}"}
-        
+
         try:
             return tool_methods[tool_name](**arguments)
         except Exception as e:
@@ -1040,36 +1039,36 @@ if __name__ == "__main__":
     print("=" * 70)
     print("Research Toolkit - MCP Server")
     print("=" * 70)
-    
+
     server = ResearchToolkitMCPServer()
-    
+
     print(f"\nServer: {server.name} v{server.version}")
     print(f"Tools available: {len(server.tools)}")
     print(f"Resources available: {len(server.resources)}")
     print(f"Prompts available: {len(server.list_prompts())}")
-    
+
     print("\n" + "=" * 70)
     print("DEMONSTRATION: MCP Server Capabilities")
     print("=" * 70)
-    
+
     # Demo: List available prompts
     print("\n[0] Available AI Model Prompts (Educational Guides):")
     prompts = server.list_prompts()
     for i, prompt in enumerate(prompts, 1):
         print(f"    {i}. {prompt['name']}")
         print(f"       {prompt['description']}")
-    
+
     print("\n" + "=" * 70)
     print("AVAILABLE TOOLS")
     print("=" * 70)
     for tool in server.tools:
         print(f"\n{tool.name}")
         print(f"  {tool.description}")
-    
+
     print("\n" + "=" * 70)
     print("TOOL DEMONSTRATION")
     print("=" * 70)
-    
+
     # Demo: Select research type
     print("\n[1] Selecting research type...")
     result = server.call_tool("select_research_type", {
@@ -1079,7 +1078,7 @@ if __name__ == "__main__":
     })
     print(f"Research type: {result['research_type']}")
     print(f"Data requirement: {result['data_requirement']}")
-    
+
     # Demo: Format APA 7 reference (v2.0.0 with advanced name parsing)
     print("\n[2] Formatting APA 7 reference...")
     print("    (Note: v2.0.0 supports 5+ author name formats)")
@@ -1096,7 +1095,7 @@ if __name__ == "__main__":
         }
     })
     print(f"Formatted:\n{result['formatted_reference']}")
-    
+
     # Demo: Check data requirements
     print("\n[3] Checking data requirements...")
     result = server.call_tool("check_data_requirements", {
@@ -1105,7 +1104,7 @@ if __name__ == "__main__":
     })
     print(f"Assessment: {result['assessment']}")
     print(f"Message: {result['assessment_message']}")
-    
+
     # Demo: Validate interpretation
     print("\n[4] Validating interpretation...")
     result = server.call_tool("validate_interpretation", {
@@ -1118,7 +1117,7 @@ if __name__ == "__main__":
     if not result['is_appropriate']:
         print(f"Issues: {', '.join(result['issues'])}")
         print(f"Suggested: {result['suggested_revision']}")
-    
+
     # Demo: Get a prompt
     print("\n[5] Getting an Educational Prompt...")
     prompt_result = server.get_prompt("research_methodology_primer")
@@ -1128,7 +1127,7 @@ if __name__ == "__main__":
         print(f"Content length: {len(prompt_result['prompt'])} characters")
         print("First 300 chars:")
         print(f"  {prompt_result['prompt'][:300]}...")
-    
+
     print("\n[OK] MCP Server demonstration complete!")
     print("\nKey Features (v2.0.0):")
     print("  - 8 research types supported")

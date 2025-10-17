@@ -23,7 +23,7 @@ from .statistics import StatisticalFormatter
 __all__ = [
     # Output
     'SafeOutput',
-    
+
     # Formatting
     'ScientificNotation',
     'ReportFormatter',
@@ -32,7 +32,7 @@ __all__ = [
     'format_pm25',
     'format_concentration',
     'format_percentage',
-    
+
     # Statistics
     'StatisticalFormatter',
 ]

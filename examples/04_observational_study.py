@@ -15,9 +15,8 @@ Data Source: GitHub API (real, verifiable data)
 """
 # Standard library imports
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Optional
 import json
-import os
 
 # Third-party imports
 from scipy import stats
@@ -192,14 +191,14 @@ class GitHubRepositoryObservation:
         SafeOutput.safe_print(f"\nTotal observations: {len(self.data)}")
         SafeOutput.safe_print(f"Complete cases: {len(self.data.dropna())} ({len(self.data.dropna())/len(self.data)*100:.1f}%)")
         
-        SafeOutput.safe_print(f"\nMissing data:")
+        SafeOutput.safe_print("\nMissing data:")
         missing = self.data.isnull().sum()
         if missing.sum() == 0:
             SafeOutput.safe_print("  No missing data detected")
         else:
             SafeOutput.safe_print(missing[missing > 0])
         
-        SafeOutput.safe_print(f"\nVariable types:")
+        SafeOutput.safe_print("\nVariable types:")
         SafeOutput.safe_print(self.data.dtypes)
     
     def descriptive_statistics(self) -> None:
@@ -393,37 +392,37 @@ class GitHubRepositoryObservation:
         SafeOutput.safe_print(f"\nResearch Question: {self.metadata['research_question']}")
         
         SafeOutput.safe_print("\n--- ABSTRACT ---")
-        SafeOutput.safe_print(f"\nThis observational study described characteristics of popular ")
+        SafeOutput.safe_print("\nThis observational study described characteristics of popular ")
         SafeOutput.safe_print(f"Python repositories on GitHub ({self.github_ref}). ")
         SafeOutput.safe_print(f"A sample of {len(self.data)} repositories was systematically observed. ")
-        SafeOutput.safe_print(f"Descriptive statistics, frequency distributions, and correlation ")
-        SafeOutput.safe_print(f"analyses revealed patterns in repository characteristics.")
+        SafeOutput.safe_print("Descriptive statistics, frequency distributions, and correlation ")
+        SafeOutput.safe_print("analyses revealed patterns in repository characteristics.")
         
         SafeOutput.safe_print("\n--- RESULTS ---")
         SafeOutput.safe_print(f"\nDescriptive analysis of {len(self.data)} Python repositories ")
-        SafeOutput.safe_print(f"revealed the following characteristics:")
+        SafeOutput.safe_print("revealed the following characteristics:")
         
-        SafeOutput.safe_print(f"\nPopularity metrics showed that repositories had an average of ")
+        SafeOutput.safe_print("\nPopularity metrics showed that repositories had an average of ")
         SafeOutput.safe_print(f"{self.data['stars'].mean():.0f} stars (SD = {self.data['stars'].std():.0f}, ")
         SafeOutput.safe_print(f"Median = {self.data['stars'].median():.0f}) and ")
         SafeOutput.safe_print(f"{self.data['forks'].mean():.0f} forks (SD = {self.data['forks'].std():.0f}).")
         
-        SafeOutput.safe_print(f"\nContributor analysis indicated a mean of ")
+        SafeOutput.safe_print("\nContributor analysis indicated a mean of ")
         SafeOutput.safe_print(f"{self.data['contributors'].mean():.1f} contributors per repository ")
         SafeOutput.safe_print(f"(SD = {self.data['contributors'].std():.1f}, ")
         SafeOutput.safe_print(f"Range = [{self.data['contributors'].min():.0f}, {self.data['contributors'].max():.0f}]).")
         
         SafeOutput.safe_print(f"\nLicense distribution showed that {(self.data['license']=='MIT').sum()} ")
         SafeOutput.safe_print(f"repositories ({(self.data['license']=='MIT').sum()/len(self.data)*100:.1f}%) ")
-        SafeOutput.safe_print(f"used MIT license, making it the most common choice.")
+        SafeOutput.safe_print("used MIT license, making it the most common choice.")
         
         SafeOutput.safe_print(f"\nDocumentation was present in {self.data['has_documentation'].sum()} ")
         SafeOutput.safe_print(f"repositories ({self.data['has_documentation'].sum()/len(self.data)*100:.1f}%).")
         
         r_stars_forks, p = stats.pearsonr(self.data['stars'], self.data['forks'])
-        SafeOutput.safe_print(f"\nCorrelation analysis revealed a strong positive correlation ")
+        SafeOutput.safe_print("\nCorrelation analysis revealed a strong positive correlation ")
         SafeOutput.safe_print(f"between stars and forks, r = {r_stars_forks:.3f}, p < .001, ")
-        SafeOutput.safe_print(f"suggesting that popular repositories are more frequently forked.")
+        SafeOutput.safe_print("suggesting that popular repositories are more frequently forked.")
         
         SafeOutput.safe_print("\n--- INTERPRETATION ---")
         SafeOutput.safe_print(f"\n{get_symbol('checkmark')} APPROPRIATE CLAIMS:")
