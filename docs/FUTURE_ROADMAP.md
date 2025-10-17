@@ -1,11 +1,18 @@
 # Research Toolkit - Future Roadmap
 
+# Disclosure
+This roadmap document should be taken with **a grain of salt** as this is an ideal scenario, and in no way reflects what will actually be implemented and when. 
+
+AI has been used as a tool to help implement certain parts of this project, however the blood sweat and tears of current contributers (currently just me) have gone into making this project work.
+
+This project is a proof of concept, and is in no way a finished project.
+
 ## Vision
 
 Transform the Research Toolkit into a comprehensive **AI-powered research platform** that enables AI models to conduct rigorous, verifiable research autonomously through standardized tool interfaces.
 
-**Current Status:** v2.0.0 - Enhanced Foundation Complete  
-**Target:** v3.0.0 - Full AI Integration Platform
+**Current Status:** v2.0.0 - Production-Ready Foundation  
+**Target:** v2.5.0 - Enhanced MCP Integration | v3.0.0 - Full AI Integration Platform
 
 ---
 
@@ -50,28 +57,46 @@ Transform the Research Toolkit into a comprehensive **AI-powered research platfo
   - [x] Automatic initials generation
   - [x] Name component extraction
   - [x] Multiple author parsing with mixed separators
-- [x] 9 APA 7 compliant statistical formatters
+  - [x] Proper in-text citation formatting (replaced placeholder refs like "ref1")
+- [x] 14 APA 7 compliant statistical formatters (expanded from 9)
+  - [x] Added regression, Mann-Whitney, Wilcoxon, Kruskal-Wallis, one-way ANOVA formatters
+- [x] 122 scientific symbols (expanded from 21)
+  - [x] Complete Greek alphabet (α-ω, Α-Ω)
+  - [x] Math operators (×, ÷, ∞, √, ∫, ∑, etc.)
+  - [x] Superscripts and subscripts
+  - [x] Chemical formula support
+- [x] Generalized unit system with template-based formatting
 - [x] Professional src/ package layout
-- [x] All 8 examples updated to use library
-- [x] Unicode compatibility improvements
+- [x] All 8 research examples updated to use library
+- [x] All 8 examples now use proper APA citations (Author, Year) format
+- [x] Unicode compatibility improvements with complete ASCII fallback
 - [x] Graph formatting enhancements
 - [x] Comprehensive documentation updates
-- [x] Cross-platform compatibility verified
+- [x] Cross-platform compatibility verified (Windows, macOS, Linux)
+- [x] Apache 2.0 license
 
 ### Foundation Achievements (v2.0.0)
 
 ✅ **Enhanced Core Features:**
 - Advanced author name parsing (5+ formats supported)
-- Complete APA 7 statistical formatting suite
-- Improved cross-platform compatibility
+- Complete APA 7 statistical formatting suite (14 formatters)
+- Improved cross-platform compatibility (122 symbol fallbacks)
 - Zero code duplication across examples
 - Professional package structure
+- Production-ready citation system
+
+✅ **Publication-Ready:**
+- All citations properly formatted in APA 7 style
+- Examples generate proper in-text citations: (GitHub, 2024), (Rogers, 2003), (Virtanen et al., 2020)
+- No placeholder references (ref1, ref2) in output
+- Complete reference list generation
 
 ✅ **Ready for Advanced AI Integration:**
 - Clean, maintainable codebase
 - Well-documented API
 - Flexible input handling
 - Comprehensive validation mechanisms
+- MCP server architecture in place
 
 ---
 
@@ -373,99 +398,30 @@ Transform the Research Toolkit into a comprehensive **AI-powered research platfo
 
 ### Infrastructure
 
-**v1.5.0:**
-- REST API wrapper for MCP server
-- WebSocket support for real-time updates
-- Docker containerization
-- Cloud deployment (AWS/Azure/GCP)
+**v2.0.0 (COMPLETE):**
+- [x] MCP server architecture (foundation)
+- [x] 7 research guidance tools
+- [x] Professional package structure
+- [x] Cross-platform compatibility
 
-**v2.0.0:**
-- Microservices architecture
-- Load balancing
-- Caching layer
-- Database backend (PostgreSQL)
+**v2.5.0 (PLANNED - 2026):**
+- [ ] Docker containerization
+- [ ] 12+ new MCP tools (statistical, validation, visualization)
 
-**v3.0.0:**
-- Kubernetes orchestration
-- Multi-region deployment
-- High availability
-- Scalable infrastructure
+**v3.0.0 (POTENTIAL):**
+- [ ] Microservices architecture
+- [ ] 12+ additional MCP tools (literature, data collection, peer review)
 
 ### Performance
 
 **Targets:**
-- Tool response time: <100ms (v1.5)
-- Analysis completion: <5s for standard tests (v2.0)
-- Literature search: <10s for 100 papers (v2.0)
-- Figure generation: <2s (v2.0)
-
-### Security
-
-**Implementations:**
-- API authentication (v1.5)
-- Rate limiting (v1.5)
-- Data encryption (v2.0)
-- Audit logging (v2.0)
-- Role-based access control (v3.0)
+- Analysis completion: <5s for standard tests (v3.0.0)
+- Literature search: <10s for 100 papers (v3.0.0)
+- Figure generation: <2s (v2.5.0)
 
 ---
 
-## AI Model Integration Plans
-
-### Phase 1: Claude/GPT Integration
-
-**Timeline:** Q1 2025
-
-**Features:**
-- Native MCP support
-- Tool calling interface
-- Context window optimization
-- Response streaming
-
-**Implementation:**
-```python
-# Example usage
-model.use_tool("select_research_type", {
-    "research_question": "...",
-    "data_availability": "real_data_available",
-    "goal": "correlate"
-})
-```
-
-### Phase 2: Open Source Models
-
-**Timeline:** Q2 2025
-
-**Targets:**
-- LLaMA-based models
-- Mistral family
-- Phi-series
-- Custom fine-tuned models
-
-**Requirements:**
-- Function calling support
-- Structured output capability
-- Sufficient context window (8k+)
-
-### Phase 3: Specialized Research Models
-
-**Timeline:** Q3-Q4 2025
-
-**Goal:** Fine-tune models specifically for research tasks
-
-**Training Data:**
-- All 9 examples
-- Complete guidelines
-- Decision trees
-- Common research scenarios
-
-**Evaluation:**
-- Research design accuracy
-- Citation format correctness
-- Interpretation appropriateness
-- Methodology selection
-
----
+TBD
 
 ## Community and Ecosystem
 
@@ -483,9 +439,7 @@ model.use_tool("select_research_type", {
 - Tool improvements
 - Documentation
 
-### Plugin System
-
-**v2.0.0 Feature:**
+### Potentional Improvements
 - Custom tool registration
 - Third-party integrations
 - Domain-specific extensions
@@ -501,33 +455,38 @@ model.use_tool("select_research_type", {
 
 **Planned:**
 - Video tutorials
-- Interactive workshops
-- Certification program
-- Teaching materials for universities
+- Teaching materials
 
 ---
 
 ## Success Metrics
 
-### Phase 1 (Current)
-- [x] 9/9 examples complete
+### Phase 1 (Complete - v2.0.0)
+- [x] 8/8 research examples complete
 - [x] 100% documentation coverage
-- [x] MCP server functional
-- [x] Zero Unicode errors
+- [x] MCP server functional with 7 research tools
+- [x] Zero Unicode errors (122 symbol fallbacks)
+- [x] 14 statistical formatters
+- [x] Proper APA 7 in-text citations across all examples
+- [x] Apache 2.0 licensed
+- [x] Cross-platform compatibility verified
 
-### Phase 2 Targets (v1.5)
-- [ ] 15+ MCP tools available
-- [ ] <100ms tool response time
-- [ ] 95% test coverage
-- [ ] 10+ AI model integrations
+### Phase 2 Targets (v2.5.0 - Q2-Q3 2026)
+- [ ] 15+ MCP tools available (currently 7)
+- [ ] Statistical analysis tools (correlation, t-test, ANOVA)
+- [ ] Data validation tools
+- [ ] Visualization tools
 
-### Phase 3 Targets (v2.0)
+### Phase 3 Targets (v3.0.0 - Q4 2026-Q1 2027)
 - [ ] Fully autonomous research capability
+- [ ] Literature search integration
+- [ ] Data collection automation
+- [ ] Peer review simulation
 - [ ] 1000+ successful research projects
 - [ ] 50+ community contributors
 - [ ] Published validation study
 
-### Phase 4 Targets (v3.0)
+### Phase 4 Targets (v4.0.0 - 2027+)
 - [ ] Multi-agent collaboration
 - [ ] Real-time research platform
 - [ ] 10,000+ active users
@@ -537,24 +496,28 @@ model.use_tool("select_research_type", {
 
 ## Investment Requirements
 
-### Phase 2 (v1.5.0)
+### Phase 2 (v2.5.0)
 **Estimated Effort:** 3-6 months
-- Statistical tools development
+- Statistical analysis tools (5 new MCP tools)
+- Data validation tools (4 new MCP tools)
+- Visualization tools (3 new MCP tools)
 - API integrations
 - Testing and validation
 - Documentation
 
-### Phase 3 (v2.0.0)
+### Phase 3 (v3.0.0)
 **Estimated Effort:** 6-12 months
-- Literature search integration
-- Data collection automation
-- Peer review simulation
-- Quality assurance
+- Literature search integration (4 new MCP tools)
+- Data collection automation (4 new MCP tools)
+- Peer review simulation (4 new MCP tools)
+- Quality assurance system
+- Production deployment
 
-### Phase 4 (v3.0.0)
+### Phase 4 (v4.0.0)
 **Estimated Effort:** 12-18 months
 - Multi-agent architecture
-- Collaboration features
+- Team collaboration features
+- Version control for research
 - Enterprise features
 - Scalability improvements
 
@@ -610,30 +573,37 @@ model.use_tool("select_research_type", {
 
 ## Conclusion
 
-The Empirical Research Toolkit roadmap outlines a clear path from the current foundation (v1.0) to a comprehensive AI-powered research platform (v3.0+). Each phase builds on the previous, maintaining backward compatibility while adding significant new capabilities.
+The Research Toolkit roadmap outlines a clear path from the current production-ready foundation (v2.0.0) to a comprehensive AI-powered research platform (v4.0.0+). Each phase builds on the previous, maintaining backward compatibility while adding significant new capabilities.
 
-**Current State (v1.0):**
-✅ Solid foundation with MCP architecture
-✅ 7 tools for basic research guidance
-✅ Complete APA 7 support
-✅ Cross-platform compatibility
+**Current State (v2.0.0):**
+✅ Production-ready foundation with MCP architecture
+✅ 7 MCP tools for research guidance
+✅ Complete APA 7 support with proper in-text citations
+✅ 14 statistical formatters
+✅ 122 scientific symbols with complete ASCII fallback
+✅ 8 comprehensive research examples
+✅ Cross-platform compatibility (Windows, macOS, Linux)
+✅ Apache 2.0 licensed
 
-**Near Future (v1.5-v2.0):**
-→ Statistical analysis automation
-→ Data validation and cleaning
+**Near Future (v2.5.0 - 2026):**
+→ Statistical analysis automation (12+ new MCP tools)
+→ Data validation and cleaning tools
+→ Publication-ready visualization tools
+
+**Medium Term (v3.0.0 - 2026-2027):**
 → Literature search integration
-→ Autonomous research capability
+→ Autonomous data collection
+→ Peer review simulation
+→ Full autonomous research capability
 
-**Long-term Vision (v3.0+):**
+**Long-term Vision (v4.0.0+ - 2027+):**
 → Multi-agent collaboration
 → Real-time research platform
-→ Enterprise-scale deployment
-→ Industry-standard research tool
 
 **The future is AI-assisted empirical research that is rigorous, verifiable, and transparent.**
 
 ---
 
 **Last Updated:** 2025-10-17  
-**Version:** 1.0.0  
-**Next Milestone:** v1.5.0 (Statistical Tools) - Target Q2 2025
+**Version:** 2.0.0  
+**Next Milestone:** v2.5.0 (Statistical Analysis Tools) - Target Q2-Q3 2026
