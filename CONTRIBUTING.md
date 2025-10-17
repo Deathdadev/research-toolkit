@@ -48,7 +48,7 @@ Thank you for your interest in contributing to the Research Toolkit! This projec
 
 2. **Explore Examples**
    - Study the 9 research examples in `examples/`
-   - Understand different research methodologies
+   - Understand different research methodologies (correlational, comparative, time series, etc.)
    - Learn proper data handling and statistical reporting
 
 3. **Set Up Development Environment**
@@ -57,12 +57,19 @@ Thank you for your interest in contributing to the Research Toolkit! This projec
    git clone https://github.com/Deathdadev/research-toolkit.git
    cd research-toolkit
 
-   # Install in development mode
+   # Install in development mode using uv (recommended)
    uv pip install -e .
 
-   # Install development dependencies (if any)
-   uv pip install -e ".[dev]"
+   # Or using pip
+   pip install -e .
+
+   # Install with example dependencies
+   uv pip install -e ".[examples]"
    ```
+
+   **Requirements:**
+   - Python >= 3.10
+   - Dependencies: pandas, numpy, scipy, matplotlib, seaborn, scikit-learn, statsmodels, requests, python-dotenv
 
 ### 2. Contribution Workflow
 
@@ -85,14 +92,20 @@ Thank you for your interest in contributing to the Research Toolkit! This projec
 
 4. **Test Your Changes**
    ```bash
-   # Run the test suite
-   python -m pytest
-
    # Test specific functionality
    python examples/your-example.py
 
-   # Check code style
-   python -m flake8 src/  # if configured
+   # Run the package info command
+   research-toolkit-info
+
+   # Check code style with ruff
+   ruff check src/research_toolkit/
+
+   # Auto-fix issues
+   ruff check src/research_toolkit/ --fix
+
+   # Check for functional errors only
+   ruff check src/research_toolkit/ --select F,E9
    ```
 
 5. **Submit a Pull Request**
@@ -196,11 +209,18 @@ def validate_data_source(data_source: str) -> bool:
 
 ### 6. **File Organization**
 ```
-src/research_toolkit/
-├── core/           # Core utilities (formatting, output, statistics)
-├── references/     # APA 7 reference management
-├── research/       # MCP server and research tools
-└── __init__.py     # Package initialization
+research-toolkit/
+├── src/research_toolkit/
+│   ├── core/           # Core utilities (formatting, output, statistics)
+│   ├── references/     # APA 7 reference management
+│   ├── research/       # MCP server and research tools
+│   └── __init__.py     # Package initialization (v2.0.0)
+├── examples/           # 9 research methodology examples
+├── guidelines/         # Research methodology guidelines
+├── docs/              # Library and integration guides
+├── templates/         # Research template for AI agents
+├── pyproject.toml     # Package configuration
+└── LICENSE            # Apache License 2.0
 ```
 
 ---
@@ -367,24 +387,29 @@ When adding new features:
 ### High-Impact Contributions
 
 #### 1. **Research Methodologies**
-- New statistical methods
+- New statistical methods and formatters
 - Improved research workflows
 - Enhanced data validation
+- Support for additional statistical tests (e.g., non-parametric tests)
 
 #### 2. **APA 7 Formatting**
-- New reference types
+- New reference types (currently 10 supported)
 - Updated formatting rules
-- Improved parsing algorithms
+- Improved author name parsing algorithms
+- Enhanced citation formatting
 
 #### 3. **MCP Server Tools**
 - New AI research guidance tools
 - Enhanced validation functions
 - Better error messages and guidance
+- Additional research type support
 
-#### 4. **Core Utilities**
+#### 4. **Core Utilities (v2.0 Focus)**
+- Expanded scientific notation system (122 symbols in v2.0!)
+- Better Unicode/ASCII fallback handling
+- Generalized unit formatting system
+- New convenience functions (concentrations, percentages, etc.)
 - Performance improvements
-- Better error handling
-- Enhanced Unicode support
 
 ### Documentation Contributions
 
@@ -461,6 +486,26 @@ When adding new features:
 - **Discussions**: Use GitHub Discussions for questions and ideas
 - **Documentation**: Check existing docs before asking questions
 - **Examples**: Study existing examples for guidance
+
+---
+
+## License
+
+By contributing to this project, you agree that your contributions will be licensed under the Apache License 2.0.
+
+Copyright 2025 Deathdadev
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
 ---
 
