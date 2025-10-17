@@ -191,6 +191,7 @@ research-toolkit/
 ├── docs/                       # Documentation
 │   ├── LIBRARY_GUIDE.md        # Complete library guide
 │   ├── MCP_INTEGRATION_GUIDE.md # AI integration
+│   ├── AI_MODEL_PROMPTS.md     # AI model prompts (NEW!)
 │   └── FUTURE_ROADMAP.md       # Future plans
 ├── templates/                  # Reusable templates
 ├── README.md                   # This file
@@ -219,9 +220,25 @@ research-toolkit/
 ## Documentation
 
 - **Library Guide**: `docs/LIBRARY_GUIDE.md` - Complete API reference
-- **MCP Integration**: `docs/MCP_INTEGRATION_GUIDE.md` - AI model integration
+- **MCP Integration**: `docs/MCP_INTEGRATION_GUIDE.md` - AI model integration with educational prompts
 - **Research Guidelines**: `guidelines/` - Methodology guides for all research types
 - **Examples**: `examples/` - 9 working examples with full code
+
+### AI Model Prompts (NEW!)
+
+The MCP server now includes **4 educational prompts** that teach AI models proper research methodology:
+
+1. **research_methodology_primer** - Teaches core principles: verifiable, reproducible, falsifiable, transparent
+2. **apa_formatting_guide** - Teaches APA 7 formatting using MCP tools
+3. **claim_validation_guide** - Teaches matching claims to evidence by research design
+4. **data_source_guide** - Teaches data requirements (when real data is needed vs synthetic)
+
+**Educational Approach:** Instead of step-by-step instructions, these prompts teach principles and point AI models to:
+- `guidelines/AI_RESEARCH_GUIDELINES.md` - Complete methodology guide
+- `templates/research_template.py` - Structured workflow template
+- `examples/` directory - Working examples for each research type
+
+Each prompt explains decision-making, shows how to use MCP validation tools, and encourages studying examples. See `docs/MCP_INTEGRATION_GUIDE.md` for details.
 
 ---
 

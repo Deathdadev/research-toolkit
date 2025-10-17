@@ -39,6 +39,12 @@ Research Toolkit MCP Server
 │   ├── get_methodology_guidance   # Step-by-step research guidance
 │   └── validate_interpretation    # Check claims for appropriateness
 │
+├── Prompts (4 available - Educational Guides)
+│   ├── research_methodology_primer      # Teaches research principles
+│   ├── apa_formatting_guide             # Teaches APA 7 formatting
+│   ├── claim_validation_guide           # Teaches claim validation
+│   └── data_source_guide                # Teaches data requirements
+│
 ├── Resources (3 available)
 │   ├── guidelines/all             # Complete methodology guidelines
 │   ├── examples/all               # 9 working research examples
@@ -47,6 +53,123 @@ Research Toolkit MCP Server
 └── APA 7 Manager
     └── Complete reference management system
 ```
+
+---
+
+## Available Prompts (Educational Guides)
+
+The MCP server provides **4 educational prompts** that teach AI models proper research methodology by pointing them to the comprehensive guidelines, templates, and examples in the repository.
+
+**Philosophy:** Rather than providing step-by-step instructions, these prompts educate AI models about research principles and direct them to detailed resources for learning.
+
+### 1. research_methodology_primer
+
+**Purpose:** Core primer on conducting proper research
+
+**What it teaches:**
+- The four principles: Verifiable, Reproducible, Falsifiable, Transparent
+- Critical question: "Am I making claims about the real world?"
+- When real data is required vs when synthetic is acceptable
+- How to use the MCP server tools
+- Research workflow
+
+**Points to:**
+- `guidelines/AI_RESEARCH_GUIDELINES.md` - Complete methodology guide
+- `templates/research_template.py` - Structured template
+- `examples/` directory - Working examples for each research type
+
+**Usage:**
+```python
+prompt = server.get_prompt("research_methodology_primer")
+# Returns educational content teaching research principles
+```
+
+---
+
+### 2. apa_formatting_guide
+
+**Purpose:** Guide to APA 7 formatting using MCP tools
+
+**What it teaches:**
+- Core principle: Every claim needs a source
+- How to use format_apa7_reference, generate_citation, validate_reference
+- Parenthetical vs narrative citations
+- When to include page numbers
+
+**Points to:**
+- `examples/01_correlational_study.py` - See reference management
+- `examples/02_comparative_study.py` - See in-text citations
+
+**Usage:**
+```python
+prompt = server.get_prompt("apa_formatting_guide")
+# Returns guide on using MCP tools for citations
+```
+
+---
+
+### 3. claim_validation_guide
+
+**Purpose:** Guide to validating research claims match evidence
+
+**What it teaches:**
+- Design limitations by research type
+- What each design can and cannot claim
+- Correlational: Association only, never causation
+- Experimental: Only design supporting causal claims
+- How to use validate_interpretation tool
+
+**Points to:**
+- `examples/01_correlational_study.py` - Proper correlational language
+- `examples/02_comparative_study.py` - Acknowledging confounds
+- `examples/06_simulation_study.py` - Conditional claims
+
+**Usage:**
+```python
+prompt = server.get_prompt("claim_validation_guide")
+# Returns guide on matching claims to evidence
+```
+
+---
+
+### 4. data_source_guide
+
+**Purpose:** Guide to acceptable data sources by research type
+
+**What it teaches:**
+- Decision tree: Real world claims need real data
+- When synthetic data is acceptable (methods/theory)
+- How to use check_data_requirements tool
+- Documentation requirements
+
+**Points to:**
+- `examples/01_correlational_study.py` - Real API data usage
+- `examples/07_methodological_study.py` - Synthetic for methods
+- `examples/00_synthetic_example_what_not_to_do.py` - Common mistakes
+
+**Usage:**
+```python
+prompt = server.get_prompt("data_source_guide")
+# Returns guide on data requirements
+```
+
+---
+
+## Key Difference from Procedural Prompts
+
+**These prompts are NOT step-by-step instructions.** Instead, they:
+- Teach principles and decision-making
+- Point to comprehensive resources
+- Show how to use validation tools
+- Encourage reading guidelines and studying examples
+
+The AI model should:
+1. Read the educational prompt
+2. Study the referenced guidelines
+3. Examine relevant examples
+4. Use MCP tools for validation throughout
+
+This approach teaches research methodology rather than just providing a checklist.
 
 ---
 
@@ -269,6 +392,75 @@ Research Toolkit MCP Server
 ---
 
 ## Integration with AI Models
+
+### Using Prompts for Guided Workflows
+
+The MCP server provides **4 educational prompts** that teach AI models proper research methodology rather than providing step-by-step instructions.
+
+**Educational Philosophy:**
+
+These prompts teach principles and point to comprehensive resources:
+- `guidelines/AI_RESEARCH_GUIDELINES.md` - Complete methodology guide
+- `templates/research_template.py` - Structured workflow template
+- `examples/` directory - Working examples for each research type
+
+**Quick Start:**
+
+```python
+from research_toolkit.research.mcp_server import ResearchToolkitMCPServer
+
+server = ResearchToolkitMCPServer()
+
+# List available prompts
+prompts = server.list_prompts()
+for prompt in prompts:
+    print(f"{prompt['name']}: {prompt['description']}")
+
+# Get an educational prompt
+prompt_result = server.get_prompt("research_methodology_primer")
+# Returns educational content teaching research principles
+```
+
+**Available Prompts:**
+
+1. **research_methodology_primer** - Teaches core research principles
+2. **apa_formatting_guide** - Teaches APA 7 formatting with MCP tools
+3. **claim_validation_guide** - Teaches matching claims to evidence
+4. **data_source_guide** - Teaches data requirements by research type
+
+Each prompt:
+- Explains principles and decision-making
+- Points to detailed guidelines and examples
+- Shows how to use MCP validation tools
+- Encourages studying examples for learning
+
+**Example: Using a Prompt**
+
+```python
+# Step 1: Get the educational prompt
+prompt_result = server.get_prompt("data_source_guide")
+
+# Step 2: Read and understand the principles taught
+# The prompt teaches:
+# - Decision tree for data requirements
+# - When real data is required
+# - When synthetic is acceptable
+# - How to use check_data_requirements tool
+
+# Step 3: Follow the guidance to study resources
+# - Read guidelines/AI_RESEARCH_GUIDELINES.md
+# - Study examples/01_correlational_study.py (real data)
+# - Study examples/07_methodological_study.py (synthetic OK)
+
+# Step 4: Use MCP tools for validation
+data_check = server.call_tool("check_data_requirements", {
+    "research_type": "correlational",
+    "proposed_data_source": "OpenWeatherMap API data"
+})
+# Returns: "ACCEPTABLE" - real data source
+```
+
+---
 
 ### Workflow Example
 
