@@ -3,7 +3,7 @@ name = "research-toolkit"
 version = "2.0.0"
 description = "A comprehensive Python library for conducting research across multiple methodologies with proper scientific notation, encoding-safe output, APA 7 referencing, and AI integration."
 readme = "README.md"
-license = { text = "MIT" }
+license = { text = "Apache-2.0" }
 authors = [
     { name = "Death", email = "deathdev06@gmail.com" }
 ]
@@ -24,7 +24,7 @@ classifiers = [
     'Intended Audience :: Education',
     'Topic :: Scientific/Engineering',
     'Topic :: Education',
-    'License :: OSI Approved :: MIT License',
+    'License :: OSI Approved :: Apache Software License',
     'Programming Language :: Python :: 3',
     'Programming Language :: Python :: 3.8',
     'Programming Language :: Python :: 3.9',
