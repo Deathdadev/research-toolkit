@@ -22,7 +22,7 @@ The Research Toolkit provides everything needed to conduct rigorous research acr
 ## Installation
 
 ```bash
-pip install -e .
+uv pip install -e .
 ```
 
 ---
