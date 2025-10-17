@@ -1,0 +1,53 @@
+[project]
+name = "research-toolkit"
+version = "2.0.0"
+description = "A comprehensive Python library for conducting research across multiple methodologies with proper scientific notation, encoding-safe output, APA 7 referencing, and AI integration."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [
+    { name = "Death", email = "deathdev06@gmail.com" }
+]
+keywords = [
+    "research",
+    "statistics",
+    "empirical",
+    "apa",
+    "apa7",
+    "scientific-notation",
+    "mcp",
+    "ai",
+    "methodology"
+]
+classifiers = [
+    'Development Status :: 4 - Beta',
+    'Intended Audience :: Science/Research',
+    'Intended Audience :: Education',
+    'Topic :: Scientific/Engineering',
+    'Topic :: Education',
+    'License :: OSI Approved :: MIT License',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
+    'Programming Language :: Python :: 3.11',
+    'Programming Language :: Python :: 3.12',
+]
+requires-python = ">=3.8"
+dependencies = [
+    "matplotlib>=3.7.5",
+    "numpy>=1.24.4",
+    "pandas>=2.0.3",
+    "python-dotenv>=1.0.1",
+    "requests>=2.32.4",
+    "scikit-learn>=1.3.2",
+    "scipy>=1.10.1",
+    "seaborn>=0.13.2",
+    "statsmodels>=0.14.1",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project.scripts]
+research-toolkit-info = "research_toolkit:print_info"
